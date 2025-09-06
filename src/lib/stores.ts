@@ -1,7 +1,7 @@
 import { writable, type Writable } from "svelte/store"
-// import { persisted } from 'svelte-persisted-store';
+import { persisted } from 'svelte-persisted-store';
 import type {User} from "$lib/user";
-import type {Recipe} from "$lib/recipes";
+import type {Recipe, RecipePreview} from "$lib/recipes";
 
 const jsonParser = {
     parse: (text: string) => {
@@ -15,129 +15,265 @@ const jsonParser = {
     stringify: (object: object) => JSON.stringify(object)
 }
 
-// export const accessToken = persisted('accessToken', '', {
-//     syncTabs: true,
-//     serializer: jsonParser,
-// });
-// export const refreshToken = persisted('refreshToken', '', {
-//     syncTabs: true,
-//     serializer: jsonParser,
-// });
-
-export const accessToken = writable<string | null>("")
-export const refreshToken = writable<string | null>("")
+export const accessToken = persisted('accessToken', '', {
+    syncTabs: true,
+    serializer: jsonParser,
+});
+export const refreshToken = persisted('refreshToken', '', {
+    syncTabs: true,
+    serializer: jsonParser,
+});
 
 export const user = writable<User | null>(null)
 export const darkMode = writable<boolean>(false)
 
 const sampleRecipes: Recipe[] = [
     {
-        id: 1,
+        id: "1",
         title: "Classic Margherita Pizza",
         description: "A traditional Italian pizza with fresh tomatoes, mozzarella, and basil",
-        author: "Chef Mario",
-        authorId: 1,
-        servings: 4,
-        type: "dish",
-        prepTime: 30,
-        cookTime: 15,
-        heating: "oven",
-        image: "/public/margherita-pizza.png",
-        ingredients: ["Pizza dough", "Tomato sauce", "Fresh mozzarella", "Fresh basil leaves", "Olive oil", "Salt"],
+        author: {
+            username: "Chef Mario",
+            id: "1",
+            picture: ""
+        },
+        quantity: 4,
+        kind: "dish",
+        preparation_time: 30,
+        cooking_time: 15,
+        resting_time: 0,
+        pictures: ["/margherita-pizza.png"],
+        ingredients: [
+            {
+                name: "Pizza dough",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Tomato sauce",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Fresh mozzarella",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Fresh basil leaves",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Olive oil",
+                unit: "",
+                quantity: 3
+            },
+
+            {
+                name: "Salt",
+                unit: "",
+                quantity: 3
+            }
+        ],
         steps: [
-            "Preheat oven to 475°F (245°C)",
-            "Roll out pizza dough on floured surface",
-            "Spread tomato sauce evenly",
-            "Add torn mozzarella pieces",
-            "Bake for 12-15 minutes until golden",
-            "Top with fresh basil and drizzle olive oil",
+            {
+                title: "Step 1",
+                description: "Preheat oven to 475°F (245°C)"
+            },
+            {
+                title: "Step 2",
+                description: "Roll out pizza dough on floured surface"
+            },
+            {
+                title: "Step 3",
+                description: "Spread tomato sauce evenly"
+            },
+            {
+                title: "Step 4",
+                description: "Add torn mozzarella pieces"
+            },
+            {
+                title: "Step 5",
+                description: "Bake for 12-15 minutes until golden"
+            },
+            {
+                title: "Step 6",
+                description: "Top with fresh basil and drizzle olive oil"
+            }
         ],
     },
     {
-        id: 2,
+        id: "2",
         title: "Chocolate Chip Cookies",
         description: "Soft and chewy homemade chocolate chip cookies",
-        author: "Baker Sarah",
-        authorId: 2,
-        servings: 24,
-        type: "dessert",
-        prepTime: 15,
-        cookTime: 12,
-        heating: "oven",
-        image: "/public/chocolate-chip-cookies.png",
+        author: {
+            username: "Baker Sarah",
+            id: "2",
+            picture: ""
+        },
+        quantity: 24,
+        kind: "dessert",
+        preparation_time: 15,
+        cooking_time: 12,
+        resting_time: 0,
+        pictures: ["/chocolate-chip-cookies.png"],
         ingredients: [
-            "All-purpose flour",
-            "Butter",
-            "Brown sugar",
-            "White sugar",
-            "Eggs",
-            "Vanilla extract",
-            "Chocolate chips",
+            {
+                name: "All-purpose flour",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Butter",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Brown sugar",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "White sugar",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Eggs",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Vanilla extract",
+                unit: "",
+                quantity: 3
+            },
+            {
+                name: "Chocolate chips",
+                unit: "",
+                quantity: 3
+            },
         ],
         steps: [
-            "Preheat oven to 375°F (190°C)",
-            "Cream butter and sugars together",
-            "Add eggs and vanilla",
-            "Mix in flour gradually",
-            "Fold in chocolate chips",
-            "Bake for 10-12 minutes",
+            {
+                title: "Step 1",
+                description: "Preheat oven to 375°F (190°C)",
+            },
+            {
+                title: "Step 2",
+                description: "Cream butter and sugars together",
+            },
+            {
+                title: "Step 3",
+                description: "Add eggs and vanilla",
+            },
+            {
+                title: "Step 4",
+                description: "Mix in flour gradually",
+            },
+            {
+                title: "Step 5",
+                description: "Fold in chocolate chips",
+            },
+            {
+                title: "Step 6",
+                description: "Bake for 10-12 minutes",
+            }
         ],
     },
     {
-        id: 3,
+        id: "3",
         title: "Caesar Salad",
-        description: "Crisp romaine lettuce with homemade Caesar dressing",
-        author: "Chef Julia",
-        authorId: 3,
-        servings: 4,
-        type: "dish",
-        prepTime: 20,
-        cookTime: 0,
-        heating: "none",
-        image: "/public/caesar-salad.png",
+        description: "Crisp romaine lettuce with homemade Caesar dressing quis sunt laboris deserunt id non sit aute duis tempor fugiat Lorem consequat ad nostrud velit dolore velit Lorem consequat minim labore irure ipsum sint culpa cillum voluptate fugiat ad amet laborum aute esse id nisi duis sint deserunt magna",
+        author: {
+            username: "Chef Julia",
+            id: "3",
+            picture: ""
+        },
+        quantity: 4,
+        kind: "dish",
+        preparation_time: 20,
+        cooking_time: 0,
+        resting_time: 0,
+        pictures: ["/caesar-salad.png"],
         ingredients: [
-            "Romaine lettuce",
-            "Parmesan cheese",
-            "Croutons",
-            "Anchovies",
-            "Garlic",
-            "Lemon juice",
-            "Olive oil",
-            "Egg yolk",
+            {
+                name: "Romaine lettuce",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Parmesan cheese",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Croutons",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Anchovies",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Garlic",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Lemon juice",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Olive oil",
+                quantity: 3,
+                unit: "4"
+            },
+            {
+                name: "Egg yolk",
+                quantity: 3,
+                unit: "4"
+            }
         ],
         steps: [
-            "Wash and chop romaine lettuce",
-            "Make dressing with garlic, anchovies, lemon juice",
-            "Whisk in olive oil and egg yolk",
-            "Toss lettuce with dressing",
-            "Top with parmesan and croutons",
+            {
+                title: "Step 1",
+                description: "Wash and chop romaine lettuce"
+            },
+            {
+                title: "Step 2",
+                description: "Make dressing with garlic, anchovies, lemon juice"
+            },
+            {
+                title: "Step 3",
+                description: "Whisk in olive oil and egg yolk"
+            },
+            {
+                title: "Step 4",
+                description: "Toss lettuce with dressing"
+            },
+            {
+                title: "Step 5",
+                description: "Top with parmesan and croutons"
+            }
         ],
     },
 ]
 
 export const recipes = writable(sampleRecipes)
-export const selectedRecipe = writable(null)
-export const editingRecipe = writable(null)
 
 export const recipeTypeColors: {
     [key: string]: string
 } = {
     dish: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
     "side-dish": "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300",
-    dessert: "bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-300",
+    dessert: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-300",
     starter: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
-    Soup: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
-    Beverage: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
-    Snack: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
-}
-
-export function getUserAvatar(user: User | null): string | null {
-    if (user?.picture) {
-        return user.picture
-    }
-    return null
-}
-
-export function getUserInitial(user: User | null): string {
-    return user?.username?.charAt(0)?.toUpperCase() || "?"
+    sauce: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
+    drink: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
+    snack: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
 }

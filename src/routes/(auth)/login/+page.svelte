@@ -49,7 +49,7 @@
                     <Label for="id" required>Email / Username</Label>
                     <Input
                             id="id"
-                            type="email"
+                            type="text"
                             bind:value={id}
                             placeholder="Enter your email / username"
                     />

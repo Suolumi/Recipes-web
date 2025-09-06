@@ -1,75 +1,67 @@
-<script>
-    import { run } from 'svelte/legacy';
-
+<script lang="ts">
     import Button from '../../../components/Button.svelte';
     import Input from '../../../components/Input.svelte';
     import Label from '../../../components/Label.svelte';
-    import { user, users, recipes } from "$lib/stores";
     import RecipeCard from '../../../components/RecipeCard.svelte';
     import {goto} from "$app/navigation";
+    import {getRecipes, type RecipePreview} from "$lib/recipes";
+    import {user} from "$lib/stores";
+    import {PUBLIC_SERVER_URL} from "$env/static/public";
+    import { SquarePen, Trash } from '@lucide/svelte';
+    import {updateSelf, type User} from "$lib/user";
 
-    let username = $state('');
-    let email = $state('');
-    let firstName = $state('');
-    let profilePictureUrl = $state('');
-    let message = $state('');
+    let userForm: User = $state($user ?? {
+        username: '',
+        email: '',
+        id: '',
+        picture: ''
+    })
 
-    const userRecipes = $recipes.filter(recipe => recipe.authorId === $user?.id);
+    let userRecipes: RecipePreview[] = $state([])
 
-    function updateProfile(event) {
+    function updateProfile(event: Event) {
         event.preventDefault();
-        if (!username || !email) {
-            message = 'Please fill in all required fields';
-            return;
-        }
-
-        // Update user in store
-        users.update(userList =>
-            userList.map(user =>
-                user.id === $user.id
-                    ? {
-                        ...user,
-                        username,
-                        email,
-                        firstName,
-                        profilePicture: profilePictureUrl || user.profilePicture
-                    }
-                    : user
-            )
-        );
-
-        // Update current user
-        user.set({
-            ...$user,
-            username,
-            email,
-            firstName,
-            profilePicture: profilePictureUrl || $user.profilePicture
-        });
-
-        message = 'Profile updated successfully!';
-        setTimeout(() => {
-            message = '';
-        }, 3000);
+        updateSelf(userForm).then(res => {
+            if (res.data)
+                user.set(res.data)
+        })
     }
 
-    function editRecipe() {
-        // Navigate to edit page with recipe data
-        goto('/edit')
-        // You would set the editing recipe here
-    }
+    $effect(() => {
+        getRecipes({
+            author: $user?.username ?? '',
+        }).then(res => userRecipes = res.data?.items ?? [])
+    })
 
-    run(() => {
-        username = $user?.username || '';
-        email = $user?.email || '';
-        firstName = $user?.firstName || '';
-    });
+    $effect(() => {
+        if ($user)
+            userForm = $user
+    })
+
+    function editRecipe(id: string) {
+        goto(`/recipes/${id}/edit`)
+    }
 </script>
 
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-5xl mx-auto px-4 py-8">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-foreground mb-2">Settings</h1>
-        <p class="text-muted-foreground">Manage your account and recipes</p>
+        <div class="flex items-center gap-x-4">
+            {#if $user && $user.picture}
+                <img
+                        src={`${PUBLIC_SERVER_URL}/pictures/${$user.picture}` || "/placeholder.svg"}
+                        alt="{$user.username} profile"
+                        class="w-24 h-24 rounded-full border-2 border-card object-cover"
+                />
+            {:else}
+                <div class="w-24 h-24 rounded-full bg-primary text-primary-foreground border-2 border-card flex items-center justify-center text-4xl font-medium">
+                    {($user?.username ?? '?').charAt(0)}
+                </div>
+            {/if}
+            <div>
+                <h1 class="text-3xl font-bold text-foreground mb-2">{$user?.username ?? 'No username??'}</h1>
+                <p class="text-muted-foreground">{$user?.email ?? 'No email'}</p>
+            </div>
+        </div>
     </div>
 
     <!-- Profile Settings -->
@@ -79,51 +71,26 @@
         <form class="space-y-4" onsubmit={updateProfile}>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <Label for="firstName">First Name</Label>
-                    <Input
-                            id="firstName"
-                            type="text"
-                            bind:value={firstName}
-                            placeholder="Enter your first name"
-                    />
-                </div>
-
-                <div>
                     <Label for="username" required>Username</Label>
                     <Input
                             id="username"
                             type="text"
-                            bind:value={username}
+                            bind:value={userForm.username}
                             required
                             placeholder="Enter your username"
                     />
                 </div>
             </div>
-
             <div>
                 <Label for="email" required>Email</Label>
                 <Input
                         id="email"
                         type="email"
-                        bind:value={email}
+                        bind:value={userForm.email}
                         required
                         placeholder="Enter your email"
                 />
             </div>
-
-            <div>
-                <Label for="profilePicture">Profile Picture URL</Label>
-                <Input
-                        id="profilePicture"
-                        type="url"
-                        bind:value={profilePictureUrl}
-                        placeholder="Enter image URL"
-                />
-            </div>
-
-            {#if message}
-                <div class="text-primary text-sm">{message}</div>
-            {/if}
 
             <Button type="submit">
                 Update Profile
@@ -143,13 +110,20 @@
                         <Button
                                 variant="outline"
                                 size="sm"
-                                onclick={() => editRecipe(recipe)}
-                                class="absolute top-2 right-2 p-2 bg-card/90 hover:bg-card border border-border"
+                                onclick={() => editRecipe(recipe.id)}
+                                class="absolute top-2 right-14 p-2 bg-card/90 hover:bg-card border border-border"
                                 aria-label="Edit recipe"
                         >
-                            <svg class="w-4 h-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
+                            <SquarePen class="text-black dark:text-white" size="16" />
+                        </Button>
+                        <Button
+                                variant="destructive"
+                                size="sm"
+                                onclick={() => alert("Too lazy to make a modal right now, doesn't work")}
+                                class="absolute top-2 right-2 p-2 bg-card/90 hover:bg-card"
+                                aria-label="Edit recipe"
+                        >
+                            <Trash size="16" />
                         </Button>
                     </div>
                 {/each}

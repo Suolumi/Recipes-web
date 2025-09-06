@@ -8,5 +8,9 @@ export type User = {
 }
 
 export async function getSelf() {
-    return apiFetchJson<User>("/users/me", "GET")
+    return apiFetchJson<User>("/users/me")
+}
+
+export async function updateSelf(user: User) {
+    return apiFetchJson<User>(`/users/me`, 'PUT', user)
 }

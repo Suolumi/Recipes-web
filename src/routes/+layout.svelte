@@ -14,13 +14,13 @@
 	})
 
     afterNavigate(async () => {
-        if ($accessToken && !$user) {
+        if ($accessToken && $accessToken !== '' && !$user) {
             const response = await getSelf()
             if (response.data) {
                 user.set(response.data)
             } else {
-                accessToken.set(null)
-                refreshToken.set(null)
+                accessToken.set('')
+                refreshToken.set('')
                 console.error(response.response)
             }
         }

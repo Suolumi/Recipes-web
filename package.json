@@ -30,5 +30,10 @@
 		"vite-plugin-devtools-json": "^1.0.0",
 		"vitest": "^3.2.3",
 		"vitest-browser-svelte": "^0.1.0"
+	},
+	"dependencies": {
+		"@lucide/svelte": "^0.542.0",
+		"embla-carousel-svelte": "^8.6.0",
+		"svelte-persisted-store": "^0.12.0"
 	}
 }

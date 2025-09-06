@@ -2,17 +2,19 @@ import { PUBLIC_SERVER_URL } from '$env/static/public';
 import { accessToken, refreshToken, user } from '$lib/stores';
 import { get } from 'svelte/store';
 
-function buildRequest(url: string, method: string, body: object | null, token: string | null, headers = {
-    'Content-Type': 'application/json',
-}) {
-    // @TODO change
+function buildRequest(url: string, method: string, body: object | null, query: object | null, token: string | null, headers?: object) {
     const config: any = {
         method,
-        headers
     }
 
+    config.headers = headers ?? {'Content-Type': 'application/json'};
     if (body) {
-        config.body = JSON.stringify(body);
+        config.body = body instanceof FormData ? body : JSON.stringify(body);
+    }
+    if (query) {
+        Object.entries(query).forEach(([key, value], i) => {
+            url += `${i === 0 ? '?': '&'}${key}=${value}`
+        })
     }
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
@@ -23,7 +25,7 @@ function buildRequest(url: string, method: string, body: object | null, token: s
 export async function refreshAccessToken() {
     const response = await buildRequest(`${PUBLIC_SERVER_URL}/refresh`, 'POST', {
         refresh_token: get(refreshToken),
-    }, null)
+    }, null, null)
 
     if (response.ok) {
         const {access_token} = await response.json()
@@ -39,17 +41,24 @@ export async function refreshAccessToken() {
     user.set(null)
 }
 
-export async function apiFetch<T>(url: string, method = "GET", body: object | null = null, json = false, headers = undefined): Promise<{
+export async function apiFetch<T>(
+    url: string,
+    method = "GET",
+    body: object | null = null,
+    query: object | null = null,
+    json = false,
+    headers?: object
+): Promise<{
     data?: T
     response: Response
 }> {
-    let response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, get(accessToken), headers);
+    let response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, query, get(accessToken), headers);
 
     if (response.status === 401) {
         const newToken = await refreshAccessToken();
 
         if (newToken) {
-            response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, newToken, headers);
+            response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, query, newToken, headers);
 
             if (response.status === 401) {
                 return {response}
@@ -65,6 +74,12 @@ export async function apiFetch<T>(url: string, method = "GET", body: object | nu
     return {response}
 }
 
-export function apiFetchJson<T>(url: string, method = "GET", body: object | null = null, headers = undefined) {
-    return apiFetch<T>(url, method, body, true, headers)
+export function apiFetchJson<T>(
+    url: string,
+    method = "GET",
+    body: object | null = null,
+    query: object | null = null,
+    headers?: object
+) {
+    return apiFetch<T>(url, method, body, query, true, headers)
 }

@@ -1,7 +1,9 @@
 <script lang="ts">
-    import { user, darkMode } from '$lib/stores';
+    import {user, darkMode, accessToken, refreshToken} from '$lib/stores';
     import {goto} from "$app/navigation";
     import Button from "./Button.svelte";
+    import {onDestroy, onMount} from "svelte";
+    import {browser} from "$app/environment";
 
     function toggleDarkMode(): void {
         darkMode.update((mode: boolean) => {
@@ -16,13 +18,28 @@
     }
 
     let showProfileDropdown: boolean = $state(false);
+    let dropdownRef: HTMLElement | undefined = $state();
 
-    function toggleProfileDropdown(): void {
-        showProfileDropdown = !showProfileDropdown;
+    function toggleProfileDropdown(e: MouseEvent): void {
+        if (dropdownRef && !dropdownRef.contains(e.target as Node) && showProfileDropdown) {
+            showProfileDropdown = false;
+        }
     }
+
+    onMount(() => {
+        if (browser)
+            document.addEventListener("click", toggleProfileDropdown);
+    });
+
+    onDestroy(() => {
+        if (browser)
+            document.removeEventListener("click", toggleProfileDropdown);
+    });
 
     function logout(): void {
         user.set(null);
+        accessToken.set('')
+        refreshToken.set('')
         showProfileDropdown = false;
         goto('/home');
     }
@@ -78,7 +95,8 @@
                 {#if $user}
                     <div class="relative">
                         <button
-                                onclick={toggleProfileDropdown}
+                                onclick={() => showProfileDropdown = true}
+                                bind:this={dropdownRef}
                                 class="flex items-center space-x-2 p-1 rounded-full hover:bg-muted transition-colors hover:cursor-pointer"
                                 aria-label="Profile menu"
                         >

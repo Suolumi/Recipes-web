@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    /* Updated color tokens to match the recipe website design brief */
+    /* Updated color tokens to match the recipes website design brief */
     --background: oklch(1 0 0);
     --foreground: oklch(0.35 0 0);
     --card: oklch(0.98 0 0);

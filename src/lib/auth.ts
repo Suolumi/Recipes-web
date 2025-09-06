@@ -17,7 +17,6 @@ export type RegisterRequest = {
     username: string
     password: string
 }
-
 export type RegisterResponse = {
     access_token: string
     refresh_token: string
