@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { recipes as sampleRecipes } from '$lib/stores';
     import RecipeCard from '../../../components/RecipeCard.svelte';
     import {getRecipes, type GetRecipesRequest, type RecipePreview, type RecipeType, RecipeTypes} from "$lib/recipes";
     import {toPretty} from "$lib/scripts.js";
@@ -18,7 +17,7 @@
         getRecipes(request).then(res => {
             if (!res.data)
                 return
-            recipes = [...res.data.items, ...$sampleRecipes as RecipePreview[]];
+            recipes = [...res.data.items];
         })
     })
 

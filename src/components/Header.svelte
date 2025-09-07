@@ -113,13 +113,13 @@
                             <div class="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-1 z-50">
                                 <button
                                         onclick={() => { goto('/settings'); showProfileDropdown = false; }}
-                                        class="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors hover:cursor-pointer"
+                                        class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                                 >
                                     Settings
                                 </button>
                                 <button
                                         onclick={logout}
-                                        class="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors hover:cursor-pointer"
+                                        class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                                 >
                                     Logout
                                 </button>

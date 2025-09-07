@@ -2,7 +2,6 @@
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
     import {getIngredientName, getRecipe, type Recipe} from "$lib/recipes";
-    import {recipes} from "$lib/stores";
     import {FileText, List, Users, Wind, Flame, Clock} from "@lucide/svelte";
     import {toPretty} from "$lib/scripts";
     import {PUBLIC_SERVER_URL} from "$env/static/public";
@@ -13,7 +12,7 @@
     $effect(() => {
         if (!id)
             return
-        getRecipe(id).then(r => recipe = r.data || $recipes[0])
+        getRecipe(id).then(r => recipe = r.data)
     })
 </script>
 

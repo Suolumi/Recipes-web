@@ -1,14 +1,33 @@
 <script lang="ts">
-    import {recipeTypeColors} from '$lib/stores';
+    import {recipeTypeColors} from '$lib/recipes';
     import {goto} from "$app/navigation";
     import {toPretty} from "$lib/scripts.js";
     import type {RecipePreview} from "$lib/recipes";
     import {PUBLIC_SERVER_URL} from "$env/static/public";
+    import emblaCarouselSvelte from "embla-carousel-svelte";
+    import {ArrowLeft, ArrowRight} from "@lucide/svelte";
 
     let { recipe }: { recipe: RecipePreview } = $props();
+    let emblaApi: any = $state();
 
     function viewRecipe(id: string) {
         goto(`/recipes/${id}`);
+    }
+
+    function emblaInit(e) {
+        emblaApi = e.detail
+    }
+
+    function next(e: MouseEvent) {
+        e.stopPropagation();
+        if (emblaApi)
+            emblaApi.scrollNext()
+    }
+
+    function prev(e: MouseEvent) {
+        e.stopPropagation();
+        if (emblaApi)
+            emblaApi.scrollPrev()
     }
 
     const typeColorClass = $derived(recipeTypeColors[recipe.kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
@@ -21,12 +40,32 @@
         onclick={() => viewRecipe(recipe.id)}
         onkeydown={(e) => e.key === 'Enter' && viewRecipe(recipe.id)}
 >
-    <div class="aspect-video overflow-hidden">
-        <img
-                src={`${PUBLIC_SERVER_URL}/recipe-pictures/${recipe.pictures[0]}` || "/placeholder.svg"}
-                alt={recipe.title || 'Recipe Title'}
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-        />
+    <div class="relative">
+        {#if recipe.pictures.length > 1}
+            <button class="absolute h-full flex flex-col justify-center left-0 z-20 hover:cursor-pointer"
+                    onclick={prev}>
+                <ArrowLeft class="text-white" />
+            </button>
+            <button class="absolute h-full flex flex-col justify-center right-0 z-20 hover:cursor-pointer"
+                    onclick={next}>
+                <ArrowRight class="text-white" />
+            </button>
+        {/if}
+        <div class="embla" use:emblaCarouselSvelte onemblaInit={emblaInit}>
+            {#if recipe.pictures.length >= 1}
+                <div class="embla__container">
+                    {#each recipe.pictures as picture}
+                        <img
+                                src={`${PUBLIC_SERVER_URL}/recipe-pictures/${picture}`}
+                                alt={recipe.title || 'Recipe Title'}
+                                class="embla__slide__img aspect-video object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                    {/each}
+                </div>
+            {:else}
+                <p class="embla__slide flex items-center justify-center h-full border-b border-b-border">No pictures added yet.</p>
+            {/if}
+        </div>
     </div>
 
     <div class="p-6 flex-1">
@@ -71,3 +110,16 @@
         </div>
     </div>
 </div>
+
+<style>
+    .embla {
+        overflow: hidden;
+    }
+    .embla__container {
+        display: flex;
+    }
+    .embla__slide {
+        flex: 0 0 100%;
+        min-width: 0;
+    }
+</style>

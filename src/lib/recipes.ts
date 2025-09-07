@@ -5,6 +5,18 @@ export type RecipeType = "snack" | "starter" | "dish" | "side-dish" | "sauce" | 
 
 export const RecipeTypes: RecipeType[] = ["snack","starter","dish","side-dish","sauce","dessert","drink"]
 
+export const recipeTypeColors: {
+    [key: string]: string
+} = {
+    dish: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
+    "side-dish": "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300",
+    dessert: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-300",
+    starter: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
+    sauce: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
+    drink: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
+    snack: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
+}
+
 export type Step = {
     title: string
     description: string

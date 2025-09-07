@@ -16,6 +16,7 @@ function buildRequest(url: string, method: string, body: object | null, query: o
             url += `${i === 0 ? '?': '&'}${key}=${value}`
         })
     }
+    console.log(url)
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
     }
