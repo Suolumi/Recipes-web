@@ -73,13 +73,24 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
+      - name: Prepare Docker tags
+        id: prep_tags
+        run: |
+          tags=""
+          for tag in $(echo "${{ inputs.tags }}" | tr ',' ' '); do
+            tags="${tags}${{ env.REGISTRY }}/${{ steps.prep.outputs.imagename }}:${tag}"$'\n'
+          done
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "${tags}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ steps.prep.outputs.imagename }}:${{ inputs.tags }}
+          tags: ${{ steps.prep_tags.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
