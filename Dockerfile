@@ -11,6 +11,9 @@ RUN npm ci
 ARG VITE_PUBLIC_SERVER_URL=http://localhost:5173
 ENV VITE_PUBLIC_SERVER_URL=${VITE_PUBLIC_SERVER_URL}
 
+# Ensure .env exists with PUBLIC_SERVER_URL for SvelteKit static env import
+RUN [ -f .env ] || echo "PUBLIC_SERVER_URL=${VITE_PUBLIC_SERVER_URL}" > .env
+
 COPY . .
 RUN npm run build
 
