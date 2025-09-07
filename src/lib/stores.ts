@@ -25,3 +25,4 @@ export const refreshToken = persisted('refreshToken', '', {
 
 export const user = writable<User | null>(null)
 export const darkMode = writable<boolean>(false)
+export const serverUrl = writable<string>('https://recipes.suolumi.fr/api/v1')

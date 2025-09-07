@@ -5,8 +5,7 @@
     import RecipeCard from '../../../components/RecipeCard.svelte';
     import {goto} from "$app/navigation";
     import {getRecipes, type RecipePreview} from "$lib/recipes";
-    import {user} from "$lib/stores";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
+    import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash } from '@lucide/svelte';
     import {updateSelf, type User} from "$lib/user";
 
@@ -48,7 +47,7 @@
         <div class="flex items-center gap-x-4">
             {#if $user && $user.picture}
                 <img
-                        src={`${PUBLIC_SERVER_URL}/pictures/${$user.picture}` || "/placeholder.svg"}
+                        src={`${$serverUrl}/pictures/${$user.picture}` || "/placeholder.svg"}
                         alt="{$user.username} profile"
                         class="w-24 h-24 rounded-full border-2 border-card object-cover"
                 />

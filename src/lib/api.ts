@@ -1,5 +1,4 @@
-import { PUBLIC_SERVER_URL } from '$env/static/public';
-import { accessToken, refreshToken, user } from '$lib/stores';
+import {accessToken, refreshToken, serverUrl, user} from '$lib/stores';
 import { get } from 'svelte/store';
 
 function buildRequest(url: string, method: string, body: object | null, query: object | null, token: string | null, headers?: object) {
@@ -23,7 +22,7 @@ function buildRequest(url: string, method: string, body: object | null, query: o
 }
 
 export async function refreshAccessToken() {
-    const response = await buildRequest(`${PUBLIC_SERVER_URL}/refresh`, 'POST', {
+    const response = await buildRequest(`${serverUrl}/refresh`, 'POST', {
         refresh_token: get(refreshToken),
     }, null, null)
 
@@ -52,13 +51,13 @@ export async function apiFetch<T>(
     data?: T
     response: Response
 }> {
-    let response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, query, get(accessToken), headers);
+    let response = await buildRequest(serverUrl + url, method, body, query, get(accessToken), headers);
 
     if (response.status === 401) {
         const newToken = await refreshAccessToken();
 
         if (newToken) {
-            response = await buildRequest(PUBLIC_SERVER_URL + url, method, body, query, newToken, headers);
+            response = await buildRequest(serverUrl + url, method, body, query, newToken, headers);
 
             if (response.status === 401) {
                 return {response}

@@ -3,9 +3,9 @@
     import {goto} from "$app/navigation";
     import {toPretty} from "$lib/scripts.js";
     import type {RecipePreview} from "$lib/recipes";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {ArrowLeft, ArrowRight} from "@lucide/svelte";
+    import {serverUrl} from "$lib/stores";
 
     let { recipe }: { recipe: RecipePreview } = $props();
     let emblaApi: any = $state();
@@ -56,7 +56,7 @@
                 <div class="embla__container">
                     {#each recipe.pictures as picture}
                         <img
-                                src={`${PUBLIC_SERVER_URL}/recipe-pictures/${picture}`}
+                                src={`${$serverUrl}/recipe-pictures/${picture}`}
                                 alt={recipe.title || 'Recipe Title'}
                                 class="embla__slide__img aspect-video object-cover hover:scale-105 transition-transform duration-300"
                         />
@@ -83,7 +83,7 @@
         <div class="flex justify-center items-center gap-x-2">
             {#if recipe.author.picture}
                 <img
-                        src={`${PUBLIC_SERVER_URL}/pictures/${recipe.author.picture}` || "/placeholder.svg"}
+                        src={`${$serverUrl}/pictures/${recipe.author.picture}` || "/placeholder.svg"}
                         alt="{recipe.author.username} profile"
                         class="w-8 h-8 rounded-full border-2 border-card object-cover"
                 />

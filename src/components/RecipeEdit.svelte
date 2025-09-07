@@ -7,8 +7,7 @@
     import RecipeCard from "./RecipeCard.svelte";
     import {type Ingredient, type RecipeForm, RecipeTypes, saveRecipeFile, type Step} from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
-    import {user} from "$lib/stores";
+    import {serverUrl, user} from "$lib/stores";
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
@@ -171,7 +170,7 @@
                             {#each formData.pictures as image, index}
                                 <div class="relative group">
                                     <img
-                                            src={`${PUBLIC_SERVER_URL}/recipe-pictures/${image}`}
+                                            src={`${$serverUrl}/recipe-pictures/${image}`}
                                             alt="Recipe image {index + 1}"
                                             class="w-full h-24 object-cover rounded-lg border border-border"
                                     />

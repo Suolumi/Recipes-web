@@ -4,7 +4,7 @@
     import {getIngredientName, getRecipe, type Recipe} from "$lib/recipes";
     import {FileText, List, Users, Wind, Flame, Clock} from "@lucide/svelte";
     import {toPretty} from "$lib/scripts";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
+    import {serverUrl} from "$lib/stores";
 
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
@@ -31,7 +31,7 @@
         <div class="bg-card rounded-lg border border-border overflow-hidden mb-8">
             <div class="aspect-video overflow-hidden">
                 <img
-                        src={`${PUBLIC_SERVER_URL}/recipe-pictures/${recipe.pictures[0]}` || "/placeholder.svg"}
+                        src={`${$serverUrl}/recipe-pictures/${recipe.pictures[0]}` || "/placeholder.svg"}
                         alt={recipe.title}
                         class="w-full h-full object-cover"
                 />
