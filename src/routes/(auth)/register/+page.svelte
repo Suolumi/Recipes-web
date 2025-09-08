@@ -27,7 +27,7 @@
             return;
         }
 
-        if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,}$/.test(str)) {
+        if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,}$/.test(password)) {
             error = 'Password must be at least 12 characters, a special character and a number';
             return;
         }
