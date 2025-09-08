@@ -27,8 +27,8 @@
             return;
         }
 
-        if (password.length < 10) {
-            error = 'Password must be at least 10 characters';
+        if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,}$/.test(str)) {
+            error = 'Password must be at least 12 characters, a special character and a number';
             return;
         }
 
