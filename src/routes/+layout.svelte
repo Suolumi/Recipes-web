@@ -5,7 +5,7 @@
 	import {onMount} from "svelte";
     import {accessToken, refreshToken, serverUrl, user} from "$lib/stores";
     import {getSelf} from "$lib/user";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
+    import {SvelteToast} from "@zerodevx/svelte-toast";
 
 	let { children } = $props();
 
@@ -31,3 +31,13 @@
 
 <Header />
 {@render children?.()}
+<SvelteToast options={{ reversed: true, intro: { y: 192 } }} />
+
+<style>
+    :root {
+        --toastContainerTop: auto;
+        --toastContainerRight: auto;
+        --toastContainerBottom: 8rem;
+        --toastContainerLeft: calc(50vw - 8rem);
+    }
+</style>

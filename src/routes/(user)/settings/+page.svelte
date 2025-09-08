@@ -8,6 +8,7 @@
     import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash } from '@lucide/svelte';
     import {updateSelf, type User} from "$lib/user";
+    import {toastError} from "$lib/utils";
 
     let userForm: User = $state($user ?? {
         username: '',
@@ -23,13 +24,20 @@
         updateSelf(userForm).then(res => {
             if (res.data)
                 user.set(res.data)
+            else
+                toastError('Error while updating profile');
         })
     }
 
     $effect(() => {
         getRecipes({
             author: $user?.username ?? '',
-        }).then(res => userRecipes = res.data?.items ?? [])
+        }).then(res => {
+            if (res.data)
+                userRecipes = res.data.items
+            else
+                toastError("Server error, couldn't get recipes.")
+        })
     })
 
     $effect(() => {

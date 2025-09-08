@@ -6,6 +6,7 @@
 
     import {goto} from "$app/navigation";
     import {register, type RegisterRequest} from "$lib/auth";
+    import {toastError, toastSuccess} from "$lib/utils";
 
     let email = $state('');
     let username = $state('');
@@ -43,9 +44,10 @@
         if (response.data) {
             accessToken.set(response.data.access_token);
             refreshToken.set(response.data.refresh_token);
+            toastSuccess("Successfully registered");
             await goto('/home')
         } else {
-            console.error(response.response)
+            toastError("Failed to register");
         }
     }
 </script>

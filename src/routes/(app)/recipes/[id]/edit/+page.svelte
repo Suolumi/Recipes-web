@@ -4,6 +4,7 @@
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import {page} from "$app/state";
+    import {toastError} from "$lib/utils";
 
     const id = page.params.id ?? ''
     let recipe: RecipeForm | undefined = $state(undefined);
@@ -12,7 +13,8 @@
         const res = await editRecipe(recipe, id)
         if (res.data) {
             goto(`/recipes/${res.data.id}`)
-        }
+        } else
+            toastError("Couldn't save recipe")
     }
 
     onMount(() => {

@@ -5,6 +5,7 @@
     import {goto} from "$app/navigation";
     import {login, type LoginRequest} from "$lib/auth";
     import {accessToken, refreshToken} from "$lib/stores";
+    import {toastError, toastSuccess} from "$lib/utils";
 
     let id = $state('');
     let password = $state('');
@@ -27,8 +28,10 @@
         if (response.data) {
             accessToken.set(response.data.access_token);
             refreshToken.set(response.data.refresh_token);
+            toastSuccess("Successfully logged in");
             await goto('/home')
-        }
+        } else
+            toastError("Failed to login");
     }
 
     function goToRegister() {
