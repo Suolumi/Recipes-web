@@ -12,7 +12,7 @@
 	onMount(() => {
 		if (window.location.pathname === "/")
 			goto("/home")
-        serverUrl.set(PUBLIC_SERVER_URL || 'https://recipes.suolumi.fr/api/v1')
+        serverUrl.set(PUBLIC_SERVER_URL || 'https://recipes-api.suolumi.fr/api/v1')
 	})
 
     afterNavigate(async () => {
