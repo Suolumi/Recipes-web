@@ -1,14 +1,15 @@
 <script lang="ts">
-    import Button from '../../../components/Button.svelte';
-    import Input from '../../../components/Input.svelte';
-    import Label from '../../../components/Label.svelte';
-    import RecipeCard from '../../../components/RecipeCard.svelte';
+    import Button from '../../../../components/Button.svelte';
+    import Input from '../../../../components/Input.svelte';
+    import Label from '../../../../components/Label.svelte';
+    import RecipeCard from '../../../../components/RecipeCard.svelte';
     import {goto} from "$app/navigation";
     import {getRecipes, type RecipePreview} from "$lib/recipes";
     import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash } from '@lucide/svelte';
     import {updateSelf, type User} from "$lib/user";
     import {toastError} from "$lib/utils";
+    import {locale, _} from "svelte-i18n";
 
     let userForm: User = $state($user ?? {
         username: '',
@@ -25,7 +26,7 @@
             if (res.data)
                 user.set(res.data)
             else
-                toastError('Error while updating profile');
+                toastError($_('settings.errors.update'));
         })
     }
 
@@ -36,7 +37,7 @@
             if (res.data)
                 userRecipes = res.data.items
             else
-                toastError("Server error, couldn't get recipes.")
+                toastError($_('settings.errors.getRecipes'))
         })
     })
 
@@ -46,7 +47,7 @@
     })
 
     function editRecipe(id: string) {
-        goto(`/recipes/${id}/edit`)
+        goto(`/${$locale}/recipes/${id}/edit`)
     }
 </script>
 
@@ -73,41 +74,41 @@
 
     <!-- Profile Settings -->
     <div class="bg-card rounded-lg border border-border p-6 mb-8">
-        <h2 class="text-xl font-semibold text-card-foreground mb-4">Profile Information</h2>
+        <h2 class="text-xl font-semibold text-card-foreground mb-4">{$_('settings.info')}</h2>
 
         <form class="space-y-4" onsubmit={updateProfile}>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <Label for="username" required>Username</Label>
+                    <Label for="username" required>{$_('settings.username.label')}</Label>
                     <Input
                             id="username"
                             type="text"
                             bind:value={userForm.username}
                             required
-                            placeholder="Enter your username"
+                            placeholder={$_('settings.username.placeholder')}
                     />
                 </div>
             </div>
             <div>
-                <Label for="email" required>Email</Label>
+                <Label for="email" required>{$_('settings.email.label')}</Label>
                 <Input
                         id="email"
                         type="email"
                         bind:value={userForm.email}
                         required
-                        placeholder="Enter your email"
+                        placeholder={$_('settings.email.placeholder')}
                 />
             </div>
 
             <Button type="submit">
-                Update Profile
+                {$_('settings.submit')}
             </Button>
         </form>
     </div>
 
     <!-- User's Recipes -->
     <div class="bg-card rounded-lg border border-border p-6">
-        <h2 class="text-xl font-semibold text-card-foreground mb-4">Your Recipes ({userRecipes.length})</h2>
+        <h2 class="text-xl font-semibold text-card-foreground mb-4">{$_('settings.recipeCount')} ({userRecipes.length})</h2>
 
         {#if userRecipes.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -137,9 +138,9 @@
             </div>
         {:else}
             <div class="text-center py-8">
-                <p class="text-muted-foreground mb-4">You haven't created any recipes yet.</p>
-                <Button onclick={() => goto('/create')}>
-                    Create Your First Recipe
+                <p class="text-muted-foreground mb-4">{$_('settings.noRecipes')}</p>
+                <Button onclick={() => goto(`/${$locale}/create`)}>
+                    {$_('settings.createRecipe')}
                 </Button>
             </div>
         {/if}

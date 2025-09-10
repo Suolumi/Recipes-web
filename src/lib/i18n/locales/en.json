@@ -1,0 +1,191 @@
+{
+  "header": {
+    "appName": "Recipes",
+    "allRecipes": "All Recipes",
+    "createRecipe": "Create Recipe",
+    "login": "Login",
+    "register": "Register"
+  },
+  "fileUpload": {
+    "click": "Click to upload",
+    "drag": "or drag and drop",
+    "multiple": "Multiple images supported"
+  },
+  "recipeCard": {
+    "by": "By"
+  },
+  "home": {
+    "mainText": "What's on the menu today?",
+    "secondaryText": "Maybe this, or that ! Or how about...",
+    "search": "Search Recipes...",
+    "notFound": "No recipes found",
+    "adjustSearch": "Try adjusting your search or filter criteria"
+  },
+  "login": {
+    "errors": {
+      "field": "Please fill in all fields."
+    },
+    "toasts": {
+      "success": "Successfully logged in.",
+      "error": "Failed to login."
+    },
+    "signIn": "Sign in to Recipes",
+    "welcome": "Welcome back! Please sign in to your account",
+    "id": {
+      "label": "Email / Username",
+      "placeholder": "Enter your email / username"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password"
+    },
+    "submit": "Sign in",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
+  "register": {
+    "errors": {
+      "field": "Please fill in all fields.",
+      "passwords": "Passwords do not match.",
+      "password": "Password must be at least 12 characters, a special character and a number."
+    },
+    "toasts": {
+      "success": "Successfully registered !",
+      "error": "Failed to register."
+    },
+    "join": "Join Recipes",
+    "create": "Create your account to start sharing recipes",
+    "email": {
+      "label": "Email address",
+      "placeholder": "Enter your email"
+    },
+    "username": {
+      "label": "Username",
+      "placeholder": "Choose an username"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Create a password"
+    },
+    "passwordConfirm": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm your password"
+    },
+    "submit": "Create Account",
+    "already": "Already have an account?",
+    "signIn": "Sign in"
+  },
+  "settings": {
+    "errors": {
+      "update": "Error while updating profile.",
+      "getRecipes": "Server error, couldn't get recipes."
+    },
+    "info": "Profile",
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter your username"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter your email"
+    },
+    "submit": "Update profile",
+    "recipeCount": "Your Recipes",
+    "noRecipes": "You haven't created any recipes yet.",
+    "createRecipe": "Create Your First Recipe"
+  },
+  "recipe": {
+    "back": "Back to Recipes",
+    "prep": "Prep",
+    "cook": "Cook",
+    "rest": "Rest",
+    "servings": "Servings",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "notFound": "Recipe not found"
+  },
+  "edit": {
+    "toasts": {
+      "save": "Couldn't save recipe"
+    },
+    "headLabel": "Edit",
+    "commentLabel": "I knew I forgot something !",
+    "details": "Recipe Details",
+    "title": {
+      "label": "Recipe Title",
+      "placeholder": "Enter recipe title"
+    },
+    "type": {
+      "label": "Type"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Describe your recipe"
+    },
+    "servings": {
+      "label": "Servings"
+    },
+    "prep": {
+      "label": "Prep Time"
+    },
+    "cook": {
+      "label": "Cook Time"
+    },
+    "rest": {
+      "label": "Rest Time"
+    },
+    "images": "Recipe Images",
+    "ingredients": {
+      "label": "Ingredients",
+      "add": "Add Ingredient",
+      "name": {
+        "label": "Name",
+        "placeholder": "Ingredient name"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Quantity"
+      },
+      "unit": {
+        "label": "Unit",
+        "placeholder": "Unit"
+      }
+    },
+    "instructions": {
+      "label": "Instructions",
+      "add": "Add step",
+      "title": {
+        "label": "Step Title",
+        "placeholder": "Step Title"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Description"
+      },
+      "remove": "Remove"
+    },
+    "submit": "Save Recipe",
+    "preview": "Live Preview"
+  },
+  "create": {
+    "toasts": {
+      "save": "Failed to create recipe",
+      "noAccount": "You need to create an account first"
+    },
+    "headLabel": "Create",
+    "commentLabel": "Today I will surprise everyone with..."
+  },
+  "recipes": {
+    "types": {
+      "all": "All",
+      "snack": "Snack",
+      "starter": "Starter",
+      "dish": "Dish",
+      "side-dish": "Side dish",
+      "sauce": "Sauce",
+      "dessert": "Dessert",
+      "drink": "Drink"
+    },
+    "min": "min"
+  }
+}

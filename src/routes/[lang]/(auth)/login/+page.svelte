@@ -1,11 +1,12 @@
 <script lang="ts">
-    import Button from '../../../components/Button.svelte';
-    import Input from '../../../components/Input.svelte';
-    import Label from '../../../components/Label.svelte';
+    import Button from '../../../../components/Button.svelte';
+    import Input from '../../../../components/Input.svelte';
+    import Label from '../../../../components/Label.svelte';
     import {goto} from "$app/navigation";
     import {login, type LoginRequest} from "$lib/auth";
     import {accessToken, refreshToken} from "$lib/stores";
     import {toastError, toastSuccess} from "$lib/utils";
+    import {locale, _} from "svelte-i18n";
 
     let id = $state('');
     let password = $state('');
@@ -16,7 +17,7 @@
         error = '';
 
         if (!id || !password) {
-            error = 'Please fill in all fields';
+            error = $_('login.errors.field');
             return;
         }
 
@@ -28,43 +29,43 @@
         if (response.data) {
             accessToken.set(response.data.access_token);
             refreshToken.set(response.data.refresh_token);
-            toastSuccess("Successfully logged in");
-            await goto('/home')
+            toastSuccess($_('login.toasts.success'));
+            await goto(`/${$locale}/home`)
         } else
-            toastError("Failed to login");
+            toastError($_('login.toasts.error'));
     }
 
     function goToRegister() {
-        goto('/register');
+        goto(`/${$locale}/register`);
     }
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-background px-4">
     <div class="max-w-md w-full space-y-8">
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-foreground">Sign in to Recipes</h2>
-            <p class="mt-2 text-muted-foreground">Welcome back! Please sign in to your account</p>
+            <h2 class="text-3xl font-bold text-foreground">{$_('login.signIn')}</h2>
+            <p class="mt-2 text-muted-foreground">{$_('login.welcome')}</p>
         </div>
 
         <form class="mt-8 space-y-6" onsubmit={handleLogin}>
             <div class="space-y-4">
                 <div>
-                    <Label for="id" required>Email / Username</Label>
+                    <Label for="id" required>{$_('login.id.label')}</Label>
                     <Input
                             id="id"
                             type="text"
                             bind:value={id}
-                            placeholder="Enter your email / username"
+                            placeholder={$_('login.id.placeholder')}
                     />
                 </div>
 
                 <div>
-                    <Label for="password" required>Password</Label>
+                    <Label for="password" required>{$_('login.password.label')}</Label>
                     <Input
                             id="password"
                             type="password"
                             bind:value={password}
-                            placeholder="Enter your password"
+                            placeholder={$_('login.password.placeholder')}
                     />
                 </div>
             </div>
@@ -74,14 +75,14 @@
             {/if}
 
             <Button type="submit" class="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                Sign in
+                {$_('login.submit')}
             </Button>
 
             <div class="text-center">
                 <p class="text-muted-foreground">
-                    Don't have an account?
+                    {$_('login.noAccount')}
                     <Button variant="link" onclick={goToRegister} class="p-0 h-auto font-medium">
-                        Sign up
+                        {$_('login.signUp')}
                     </Button>
                 </p>
             </div>

@@ -36,6 +36,7 @@
 		"@lucide/svelte": "^0.542.0",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"embla-carousel-svelte": "^8.6.0",
+		"svelte-i18n": "^4.0.1",
 		"svelte-persisted-store": "^0.12.0"
 	}
 }

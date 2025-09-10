@@ -1,7 +1,7 @@
 <script lang="ts">
     interface Props {
         value: string;
-        options: string[];
+        options: {value: string, label: string}[];
         disabled?: boolean;
         required?: boolean;
         id?: string;
@@ -31,6 +31,6 @@
         {...props}
 >
     {#each options as option}
-        <option value={option}>{option}</option>
+        <option value={option.value}>{option.label}</option>
     {/each}
 </select>

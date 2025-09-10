@@ -1,4 +1,5 @@
 <script lang="ts">
+    import {_} from 'svelte-i18n'
     interface Props {
         accept?: string
         onFilesSelected: (files: FileList) => void
@@ -69,12 +70,12 @@
                     type="button"
                     class="text-primary hover:text-primary/80 font-medium"
             >
-                Click to upload
+                {$_('fileUpload.click')}
             </button>
-            <span class="text-muted-foreground"> or drag and drop</span>
+            <span class="text-muted-foreground"> {$_('fileUpload.drag')}</span>
         </div>
         <p class="text-sm text-muted-foreground">
-            Multiple images supported
+            {$_('fileUpload.multiple')}
         </p>
     </div>
 </div>

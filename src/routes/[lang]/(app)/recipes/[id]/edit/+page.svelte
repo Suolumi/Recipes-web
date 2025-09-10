@@ -1,10 +1,11 @@
 <script lang="ts">
-    import RecipeEdit from "../../../../../components/RecipeEdit.svelte";
+    import RecipeEdit from "../../../../../../components/RecipeEdit.svelte";
     import {editRecipe, getRecipe, type RecipeForm} from "$lib/recipes.js";
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import {page} from "$app/state";
     import {toastError} from "$lib/utils";
+    import {locale, _} from "svelte-i18n";
 
     const id = page.params.id ?? ''
     let recipe: RecipeForm | undefined = $state(undefined);
@@ -12,9 +13,9 @@
     async function submit(recipe: RecipeForm) {
         const res = await editRecipe(recipe, id)
         if (res.data) {
-            goto(`/recipes/${res.data.id}`)
+            goto(`/${$locale}/recipes/${res.data.id}`)
         } else
-            toastError("Couldn't save recipe")
+            toastError($_('edit.toasts.save'))
     }
 
     onMount(() => {
@@ -27,4 +28,4 @@
     })
 </script>
 
-<RecipeEdit onSubmit={submit} {recipe} headLabel="Edit" commentLabel="I knew I forgot something !" />
+<RecipeEdit onSubmit={submit} {recipe} headLabel={$_('edit.headLabel')} commentLabel={$_('edit.commentLabel')} />

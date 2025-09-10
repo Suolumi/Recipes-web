@@ -1,17 +1,17 @@
 <script lang="ts">
     import {recipeTypeColors} from '$lib/recipes';
     import {goto} from "$app/navigation";
-    import {toPretty} from "$lib/scripts.js";
     import type {RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {ArrowLeft, ArrowRight} from "@lucide/svelte";
     import {serverUrl} from "$lib/stores";
+    import {locale, _} from "svelte-i18n";
 
     let { recipe }: { recipe: RecipePreview } = $props();
     let emblaApi: any = $state();
 
     function viewRecipe(id: string) {
-        goto(`/recipes/${id}`);
+        goto(`/${$locale}/recipes/${id}`);
     }
 
     function emblaInit(e) {
@@ -72,7 +72,7 @@
         <div class="flex items-start justify-between mb-3">
             <h3 class="text-xl font-semibold text-card-foreground text-balance">{recipe.title || 'Recipe Title'}</h3>
             <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-2">
-        {toPretty(recipe.kind)}
+        {$_('recipes.types.' + recipe.kind)}
       </span>
         </div>
 
@@ -92,14 +92,14 @@
                     {recipe.author.username.charAt(0) || "?"}
                 </div>
             {/if}
-            <span class="font-medium">By {recipe.author?.username || 'Author Name'}</span>
+            <span class="font-medium">{$_('recipeCard.by')} {recipe.author?.username || 'Author Name'}</span>
         </div>
         <div class="flex items-center space-x-4">
         <span class="flex items-center">
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-            {recipe.preparation_time + recipe.cooking_time + recipe.resting_time} min
+            {recipe.preparation_time + recipe.cooking_time + recipe.resting_time} {$_('recipes.min')}
         </span>
             <span class="flex items-center">
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

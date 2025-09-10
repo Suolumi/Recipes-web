@@ -1,12 +1,13 @@
 <script lang="ts">
-    import Button from '../../../components/Button.svelte';
-    import Input from '../../../components/Input.svelte';
-    import Label from '../../../components/Label.svelte';
+    import Button from '../../../../components/Button.svelte';
+    import Input from '../../../../components/Input.svelte';
+    import Label from '../../../../components/Label.svelte';
     import {accessToken, refreshToken} from '$lib/stores';
 
     import {goto} from "$app/navigation";
     import {register, type RegisterRequest} from "$lib/auth";
     import {toastError, toastSuccess} from "$lib/utils";
+    import {_, locale} from "svelte-i18n";
 
     let email = $state('');
     let username = $state('');
@@ -19,17 +20,17 @@
         error = '';
 
         if (!email || !username || !password || !confirmPassword) {
-            error = 'Please fill in all fields';
+            error = $_('register.errors.field');
             return;
         }
 
         if (password !== confirmPassword) {
-            error = 'Passwords do not match';
+            error = $_('register.errors.passwords');
             return;
         }
 
         if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{12,}$/.test(password)) {
-            error = 'Password must be at least 12 characters, a special character and a number';
+            error = $_('register.errors.password');
             return;
         }
 
@@ -44,10 +45,10 @@
         if (response.data) {
             accessToken.set(response.data.access_token);
             refreshToken.set(response.data.refresh_token);
-            toastSuccess("Successfully registered");
-            await goto('/home')
+            toastSuccess($_('register.toasts.success'));
+            await goto(`/${$locale}/home`)
         } else {
-            toastError("Failed to register");
+            toastError($_('register.toasts.error'));
         }
     }
 </script>
@@ -55,49 +56,49 @@
 <div class="min-h-screen flex items-center justify-center bg-background px-4">
     <div class="max-w-md w-full space-y-8">
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-foreground">Join Recipes</h2>
-            <p class="mt-2 text-muted-foreground">Create your account to start sharing recipes</p>
+            <h2 class="text-3xl font-bold text-foreground">{$_('register.join')}</h2>
+            <p class="mt-2 text-muted-foreground">{$_('register.create')}</p>
         </div>
 
         <form class="mt-8 space-y-6" onsubmit={handleRegister}>
             <div class="space-y-4">
                 <div>
-                    <Label for="email" required>Email address</Label>
+                    <Label for="email" required>{$_('register.email.label')}</Label>
                     <Input
                             id="email"
                             type="email"
                             bind:value={email}
-                            placeholder="Enter your email"
+                            placeholder={$_('register.email.placeholder')}
                     />
                 </div>
 
                 <div>
-                    <Label for="username" required>Username</Label>
+                    <Label for="username" required>{$_('register.username.label')}</Label>
                     <Input
                             id="username"
                             type="text"
                             bind:value={username}
-                            placeholder="Choose a username"
+                            placeholder={$_('register.username.placeholder')}
                     />
                 </div>
 
                 <div>
-                    <Label for="password" required>Password</Label>
+                    <Label for="password" required>{$_('register.password.label')}</Label>
                     <Input
                             id="password"
                             type="password"
                             bind:value={password}
-                            placeholder="Create a password"
+                            placeholder={$_('register.password.placeholder')}
                     />
                 </div>
 
                 <div>
-                    <Label for="confirmPassword" required>Confirm Password</Label>
+                    <Label for="confirmPassword" required>{$_('register.passwordConfirm.label')}</Label>
                     <Input
                             id="confirmPassword"
                             type="password"
                             bind:value={confirmPassword}
-                            placeholder="Confirm your password"
+                            placeholder={$_('register.passwordConfirm.placeholder')}
                     />
                 </div>
             </div>
@@ -107,14 +108,14 @@
             {/if}
 
             <Button type="submit" class="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                Create Account
+                {$_('register.submit')}
             </Button>
 
             <div class="text-center">
                 <p class="text-muted-foreground">
-                    Already have an account?
-                    <Button variant="link" onclick={() => goto('/login')} class="p-0 h-auto font-medium">
-                        Sign in
+                    {$_('register.already')}
+                    <Button variant="link" onclick={() => goto(`/${$locale}/login`)} class="p-0 h-auto font-medium">
+                        {$_('register.signIn')}
                     </Button>
                 </p>
             </div>

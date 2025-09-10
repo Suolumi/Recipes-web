@@ -1,0 +1,191 @@
+{
+  "header": {
+    "appName": "Recettes",
+    "allRecipes": "Toutes les recettes",
+    "createRecipe": "Créer une recette",
+    "login": "Connexion",
+    "register": "Inscription"
+  },
+  "fileUpload": {
+    "click": "Cliquez pour ajouter",
+    "drag": "ou glissez et déposez",
+    "multiple": "Plusieurs images possible"
+  },
+  "recipeCard": {
+    "by": "Par"
+  },
+  "home": {
+    "mainText": "Qu'y a-t-il au menu aujourd'hui ?",
+    "secondaryText": "Peut-être ça, ou ça ! Ou alors...",
+    "search": "Rechercher des recettes...",
+    "notFound": "Aucune recette trouvée",
+    "adjustSearch": "Essayez d'ajuster votre recherche ou vos filtres"
+  },
+  "login": {
+    "errors": {
+      "field": "Veuillez remplir tous les champs."
+    },
+    "toasts": {
+      "success": "Connexion réussie.",
+      "error": "Échec de la connexion."
+    },
+    "signIn": "Se connecter à Recettes",
+    "welcome": "Bon retour ! Veuillez vous connecter à votre compte",
+    "id": {
+      "label": "Email / Nom d'utilisateur",
+      "placeholder": "Entrez votre email / nom d'utilisateur"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Entrez votre mot de passe"
+    },
+    "submit": "Se connecter",
+    "noAccount": "Pas de compte ?",
+    "signUp": "S'inscrire"
+  },
+  "register": {
+    "errors": {
+      "field": "Veuillez remplir tous les champs.",
+      "passwords": "Les mots de passe ne correspondent pas.",
+      "password": "Le mot de passe doit comporter au moins 12 caractères, un caractère spécial et un chiffre."
+    },
+    "toasts": {
+      "success": "Inscription réussie !",
+      "error": "Échec de l'inscription."
+    },
+    "join": "Rejoindre Recettes",
+    "create": "Créez votre compte pour commencer à partager des recettes",
+    "email": {
+      "label": "Adresse email",
+      "placeholder": "Entrez votre email"
+    },
+    "username": {
+      "label": "Nom d'utilisateur",
+      "placeholder": "Choisissez un nom d'utilisateur"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Créez un mot de passe"
+    },
+    "passwordConfirm": {
+      "label": "Confirmez le mot de passe",
+      "placeholder": "Confirmez votre mot de passe"
+    },
+    "submit": "Créer un compte",
+    "already": "Vous avez déjà un compte ?",
+    "signIn": "Se connecter"
+  },
+  "settings": {
+    "errors": {
+      "update": "Erreur lors de la mise à jour du profil.",
+      "getRecipes": "Erreur serveur, impossible de récupérer les recettes."
+    },
+    "info": "Profil",
+    "username": {
+      "label": "Nom d'utilisateur",
+      "placeholder": "Entrez votre nom d'utilisateur"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Entrez votre email"
+    },
+    "submit": "Mettre à jour le profil",
+    "recipeCount": "Vos recettes",
+    "noRecipes": "Vous n'avez pas encore créé de recettes.",
+    "createRecipe": "Créez votre première recette"
+  },
+  "recipe": {
+    "back": "Retour aux recettes",
+    "prep": "Prép",
+    "cook": "Cuisson",
+    "rest": "Repos",
+    "servings": "Portions",
+    "ingredients": "Ingrédients",
+    "instructions": "Instructions",
+    "notFound": "Recette non trouvée"
+  },
+  "edit": {
+    "toasts": {
+      "save": "Impossible d'enregistrer la recette"
+    },
+    "headLabel": "Éditer",
+    "commentLabel": "Je savais que j'avais oublié quelque chose !",
+    "details": "Détails de la recette",
+    "title": {
+      "label": "Titre de la recette",
+      "placeholder": "Entrez le titre de la recette"
+    },
+    "type": {
+      "label": "Type"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Décrivez votre recette"
+    },
+    "servings": {
+      "label": "Portions"
+    },
+    "prep": {
+      "label": "Préparation"
+    },
+    "cook": {
+      "label": "Cuisson"
+    },
+    "rest": {
+      "label": "Repos"
+    },
+    "images": "Images",
+    "ingredients": {
+      "label": "Ingrédients",
+      "add": "Ajouter un ingrédient",
+      "name": {
+        "label": "Nom",
+        "placeholder": "Nom de l'ingrédient"
+      },
+      "quantity": {
+        "label": "Quantité",
+        "placeholder": "Quantité"
+      },
+      "unit": {
+        "label": "Unité",
+        "placeholder": "Unité"
+      }
+    },
+    "instructions": {
+      "label": "Instructions",
+      "add": "Ajouter une étape",
+      "title": {
+        "label": "Titre",
+        "placeholder": "Titre"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Description"
+      },
+      "remove": "Supprimer"
+    },
+    "submit": "Enregistrer",
+    "preview": "Aperçu en direct"
+  },
+  "create": {
+    "toasts": {
+      "save": "Échec de la création de la recette",
+      "noAccount": "Vous devez d'abord créer un compte"
+    },
+    "headLabel": "Créer",
+    "commentLabel": "Aujourd'hui je vais les surprendre avec..."
+  },
+  "recipes": {
+    "types": {
+      "all": "Toutes",
+      "snack": "Snack",
+      "starter": "Entrée",
+      "dish": "Plat",
+      "side-dish": "Accompagnement",
+      "sauce": "Sauce",
+      "dessert": "Dessert",
+      "drink": "Boisson"
+    },
+    "min": "min"
+  }
+}

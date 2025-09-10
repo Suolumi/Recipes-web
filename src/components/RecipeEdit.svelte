@@ -8,6 +8,7 @@
     import {type Ingredient, type RecipeForm, RecipeTypes, saveRecipeFile, type Step} from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
     import {serverUrl, user} from "$lib/stores";
+    import {_} from 'svelte-i18n'
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
@@ -88,40 +89,40 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="bg-card rounded-lg border border-border p-6">
-            <h2 class="text-2xl font-semibold text-card-foreground mb-6">Recipe Details</h2>
+            <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.details')}</h2>
             <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <Label for="recipe-title" required>Recipe Title</Label>
+                        <Label for="recipe-title" required>{$_('edit.title.label')}</Label>
                         <Input
                                 id="recipe-title"
                                 type="text"
                                 bind:value={formData.title}
-                                placeholder="Enter recipe title"
+                                placeholder={$_('edit.title.placeholder')}
                         />
                     </div>
                     <div>
-                        <Label for="recipe-type">Type</Label>
+                        <Label for="recipe-type">{$_('edit.type')}</Label>
                         <Select
                                 id="recipe-type"
                                 bind:value={formData.kind}
-                                options={RecipeTypes}
+                                options={RecipeTypes.map(e => ({label: $_('recipes.types.' + e), value: e}))}
                         />
                     </div>
                 </div>
 
                 <div>
-                    <Label for="description" required>Description</Label>
+                    <Label for="description" required>{$_('edit.description.label')}</Label>
                     <Textarea
                             id="description"
                             bind:value={formData.description}
-                            placeholder="Describe your recipe"
+                            placeholder={$_('edit.description.placeholder')}
                             rows={3}
                     />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <Label for="servings">Servings</Label>
+                        <Label for="servings">{$_('edit.servings')}</Label>
                         <Input
                                 id="servings"
                                 type="number"
@@ -131,7 +132,7 @@
                     </div>
 
                     <div>
-                        <Label for="prep-time">Prep Time (min)</Label>
+                        <Label for="prep-time">{$_('edit.prep.label')} ({$_('recipes.min')})</Label>
                         <Input
                                 id="prep-time"
                                 type="number"
@@ -141,7 +142,7 @@
                     </div>
 
                     <div>
-                        <Label for="cook-time">Cook Time (min)</Label>
+                        <Label for="cook-time">{$_('edit.cook.label')} ({$_('recipes.min')})</Label>
                         <Input
                                 id="cook-time"
                                 type="number"
@@ -151,7 +152,7 @@
                     </div>
 
                     <div>
-                        <Label for="resting-time">Rest Time (min)</Label>
+                        <Label for="resting-time">{$_('edit.rest.label')} ({$_('recipes.min')})</Label>
                         <Input
                                 id="resting-time"
                                 type="number"
@@ -162,7 +163,7 @@
                 </div>
 
                 <div>
-                    <Label>Recipe Images</Label>
+                    <Label>{$_('edit.images')}</Label>
                     <FileUpload onFilesSelected={onFileUpload} class="mb-4" />
 
                     {#if formData.pictures.length > 0 && !formData.pictures[0].includes('placeholder')}
@@ -188,7 +189,7 @@
                 </div>
                 <div>
                     <div class="flex items-center justify-between mb-4">
-                        <Label>Ingredients</Label>
+                        <Label>{$_('edit.ingredients.label')}</Label>
                         <Button
                                 variant="outline"
                                 size="sm"
@@ -198,7 +199,7 @@
                                     unit: ''
                                 })}
                         >
-                            Add Ingredient
+                            {$_('edit.ingredients.add')}
                         </Button>
                     </div>
 
@@ -206,30 +207,30 @@
                         {#each formData.ingredients as ingredient, index}
                             <div class="grid grid-cols-12 gap-2 items-end">
                                 <div class="col-span-6">
-                                    <Label for={`ingredient-name-${index}`} required>Name</Label>
+                                    <Label for={`ingredient-name-${index}`} required>{$_('edit.ingredients.name.label')}</Label>
                                     <Input
                                             id={`ingredient-name-${index}`}
                                             type="text"
                                             bind:value={formData.ingredients[index].name}
-                                            placeholder="Ingredient name"
+                                            placeholder={$_('edit.ingredients.name.placeholder')}
                                     />
                                 </div>
                                 <div class="col-span-2">
-                                    <Label for={`ingredient-quantity-${index}`}>Quantity</Label>
+                                    <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.name')}</Label>
                                     <Input
                                             id={`ingredient-quantity-${index}`}
                                             type="number"
                                             bind:value={formData.ingredients[index].quantity}
-                                            placeholder="quantity"
+                                            placeholder={$_('edit.ingredients.quantity.placeholder')}
                                     />
                                 </div>
                                 <div class="col-span-3">
-                                    <Label for={`ingredient-unit-${index}`}>Unit</Label>
+                                    <Label for={`ingredient-unit-${index}`}>{$_('edit.ingredients.unit.label')}</Label>
                                     <Input
                                             id={`ingredient-unit-${index}`}
                                             type="text"
                                             bind:value={formData.ingredients[index].unit}
-                                            placeholder="unit"
+                                            placeholder={$_('edit.ingredients.unit.placeholder')}
                                     />
                                 </div>
                                 <div class="col-span-1">
@@ -249,13 +250,13 @@
                 </div>
                 <div>
                     <div class="flex items-center justify-between mb-4">
-                        <Label>Instructions</Label>
+                        <Label>{$_('edit.instructions.label')}</Label>
                         <Button
                                 variant="outline"
                                 size="sm"
                                 onclick={() => addStep({description: '', title: ''})}
                         >
-                            Add Step
+                            {$_('edit.instructions.add')}
                         </Button>
                     </div>
 
@@ -267,20 +268,20 @@
                                 </span>
                                 <div class="flex-1 space-y-2">
                                     <div>
-                                        <Label for={`step-title-${index}`}>Step Title</Label>
+                                        <Label for={`step-title-${index}`}>{$_('edit.instructions.title.label')}</Label>
                                         <Input
                                                 id={`step-title-${index}`}
                                                 type="text"
                                                 bind:value={formData.steps[index].title}
-                                                placeholder="Step title"
+                                                placeholder={$_('edit.instructions.title.placeholder')}
                                         />
                                     </div>
                                     <div>
-                                        <Label for={`step-description-${index}`}>Description</Label>
+                                        <Label for={`step-description-${index}`}>{$_('edit.instructions.description.label')}</Label>
                                         <Textarea
                                                 id={`step-description-${index}`}
                                                 bind:value={formData.steps[index].description}
-                                                placeholder="Description"
+                                                placeholder={$_('edit.instructions.description.placeholder')}
                                                 rows={2}
                                         />
                                     </div>
@@ -292,7 +293,7 @@
                                             onclick={() => removeStep(index)}
                                             class="mt-6"
                                     >
-                                        Remove
+                                        {$_('edit.instructions.remove')}
                                     </Button>
                                 {/if}
                             </div>
@@ -304,12 +305,12 @@
                         onclick={saveRecipe}
                         class="w-full"
                 >
-                    Save Recipe
+                    {$_('edit.submit')}
                 </Button>
             </div>
         </div>
         <div class="bg-card rounded-lg border border-border p-6">
-            <h2 class="text-2xl font-semibold text-card-foreground mb-6">Live Preview</h2>
+            <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.preview')}</h2>
 
             <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: ''}} />
         </div>

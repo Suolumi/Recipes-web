@@ -4,6 +4,8 @@
     import Button from "./Button.svelte";
     import {onDestroy, onMount} from "svelte";
     import {browser} from "$app/environment";
+    import {_, locale} from "svelte-i18n";
+    import LanguageSelect from "./LanguageSelect.svelte";
 
     function toggleDarkMode(): void {
         darkMode.update((mode: boolean) => {
@@ -41,7 +43,7 @@
         accessToken.set('')
         refreshToken.set('')
         showProfileDropdown = false;
-        goto('/home');
+        goto(`/${$locale}home`);
     }
 </script>
 
@@ -50,32 +52,33 @@
         <div class="flex justify-between items-center h-16">
             <div class="flex items-center space-x-8">
                 <button
-                        onclick={() => goto('/home')}
+                        onclick={() => goto(`/${$locale}/home`)}
                         class="text-2xl font-bold text-primary hover:text-primary/80 transition-colors hover:cursor-pointer"
                         aria-label="Recipes"
                 >
-                    Recipes
+                    {$_('header.appName')}
                 </button>
 
                 <div class="hidden md:flex space-x-6">
                     <button
-                            onclick={() => goto('/home')}
+                            onclick={() => goto(`/${$locale}/home`)}
                             class="text-foreground hover:text-primary transition-colors font-medium hover:cursor-pointer"
                             aria-label="All Recipes"
                     >
-                        All Recipes
+                        {$_('header.allRecipes')}
                     </button>
                     <button
-                            onclick={() => goto('/create')}
+                            onclick={() => goto(`/${$locale}/create`)}
                             class="text-foreground hover:text-primary transition-colors font-medium hover:cursor-pointer"
                             aria-label="Create Recipe"
                     >
-                        Create Recipe
+                        {$_('header.createRecipe')}
                     </button>
                 </div>
             </div>
 
             <div class="flex items-center space-x-4">
+                <LanguageSelect />
                 <button
                         onclick={toggleDarkMode}
                         class="p-2 text-foreground hover:text-primary hover:cursor-pointer transition-colors rounded-lg hover:bg-muted"
@@ -112,7 +115,7 @@
                         {#if showProfileDropdown}
                             <div class="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-1 z-50">
                                 <button
-                                        onclick={() => { goto('/settings'); showProfileDropdown = false; }}
+                                        onclick={() => { goto(`/${$locale}/settings`); showProfileDropdown = false; }}
                                         class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                                 >
                                     Settings
@@ -129,17 +132,17 @@
                 {:else}
                     <div class="flex space-x-2">
                         <button
-                                onclick={() => goto('login')}
+                                onclick={() => goto(`/${$locale}/login`)}
                                 class="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors hover:cursor-pointer"
                         >
-                            Login
+                            {$_('header.login')}
                         </button>
                         <Button
                                 variant="primary"
-                                onclick={() => goto('register')}
+                                onclick={() => goto(`/${$locale}/register`)}
                                 class="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors hover:cursor-pointer"
                         >
-                            Register
+                            {$_('header.register')}
                         </Button>
                     </div>
                 {/if}

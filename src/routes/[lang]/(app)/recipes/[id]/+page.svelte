@@ -3,8 +3,8 @@
     import {page} from "$app/state";
     import {getIngredientName, getRecipe, type Recipe} from "$lib/recipes";
     import {FileText, List, Users, Wind, Flame, Clock} from "@lucide/svelte";
-    import {toPretty} from "$lib/scripts";
     import {serverUrl} from "$lib/stores";
+    import {_, locale} from "svelte-i18n";
 
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
@@ -19,7 +19,7 @@
 {#if recipe}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
-                onclick={() => goto('/home')}
+                onclick={() => goto(`/${$locale}/home`)}
                 class="flex items-center text-primary hover:text-primary/80 transition-colors mb-6"
         >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@
                 <div class="flex items-start justify-between mb-4">
                     <h1 class="text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
                     <span class="bg-primary/10 text-primary px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
-            {toPretty(recipe.kind)}
+            {$_('recipes.types.' + recipe.kind)}
           </span>
                 </div>
 
@@ -66,19 +66,19 @@
                     <div class="flex items-center space-x-6 text-muted-foreground">
                         <div class="flex items-center">
                             <Clock size="20" class="mr-2 text-black" />
-                            <span>Prep: {recipe.preparation_time}min</span>
+                            <span>{$_('recipe.prep')}: {recipe.preparation_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Flame size="20" class="mr-2 text-black" />
-                            <span>Cook: {recipe.preparation_time}min</span>
+                            <span>{$_('recipe.cook')}: {recipe.preparation_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Wind size="20" class="mr-2 text-black" />
-                            <span>Rest: {recipe.preparation_time}min</span>
+                            <span>{$_('recipe.rest')}: {recipe.preparation_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black" />
-                            <span>Servings: {recipe.quantity}</span>
+                            <span>{$_('recipe.servings')}: {recipe.quantity}</span>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                 <div class="bg-card rounded-lg border border-border p-6 sticky top-24">
                     <h2 class="text-2xl font-semibold text-card-foreground mb-6 flex items-center">
                         <FileText class="mr-3 text-primary" />
-                        Ingredients
+                        {$_('recipe.ingredients')}
                     </h2>
 
                     <ul class="space-y-3">
@@ -108,7 +108,7 @@
                 <div class="bg-card rounded-lg border border-border p-6">
                     <h2 class="text-2xl font-semibold text-card-foreground mb-6 flex items-center">
                         <List class="mr-3 text-primary" />
-                        Instructions
+                        {$_('recipe.instructions')}
                     </h2>
 
                     <div class="space-y-4">
@@ -130,12 +130,12 @@
 {:else}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="text-center">
-            <h2 class="text-2xl font-semibold text-foreground mb-4">Recipe not found</h2>
+            <h2 class="text-2xl font-semibold text-foreground mb-4">{$_('recipe.notFound')}</h2>
             <button
-                    onclick={() => goto('/home')}
+                    onclick={() => goto(`/${$locale}/home`)}
                     class="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
             >
-                Back to Recipes
+                {$_('recipe.back')}
             </button>
         </div>
     </div>

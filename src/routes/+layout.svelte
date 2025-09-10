@@ -6,13 +6,14 @@
     import {accessToken, refreshToken, serverUrl, user} from "$lib/stores";
     import {getSelf} from "$lib/user";
     import {SvelteToast} from "@zerodevx/svelte-toast";
+    import {locale} from "svelte-i18n";
 
 	let { children } = $props();
 
 	onMount(() => {
 		if (window.location.pathname === "/")
-			goto("/home")
-        serverUrl.set('https://recipes-api.suolumi.fr/api/v1')
+			goto(`/${$locale ?? 'en'}/home`)
+        serverUrl.set('http://localhost:8081/api/v1')
 	})
 
     afterNavigate(async () => {
@@ -32,12 +33,3 @@
 <Header />
 {@render children?.()}
 <SvelteToast options={{ reversed: true, intro: { y: 192 } }} />
-
-<style>
-    :root {
-        --toastContainerTop: auto;
-        --toastContainerRight: auto;
-        --toastContainerBottom: 8rem;
-        --toastContainerLeft: calc(50vw - 8rem);
-    }
-</style>
