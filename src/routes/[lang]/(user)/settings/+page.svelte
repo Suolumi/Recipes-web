@@ -7,15 +7,14 @@
     import {getRecipes, type RecipePreview} from "$lib/recipes";
     import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash } from '@lucide/svelte';
-    import {updateSelf, type User} from "$lib/user";
+    import {updateSelf, type UserSettingsForm} from "$lib/user";
     import {toastError} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
 
-    let userForm: User = $state($user ?? {
+    let userForm: UserSettingsForm = $state($user ?? {
         username: '',
         email: '',
-        id: '',
-        picture: ''
+        password: '',
     })
 
     let userRecipes: RecipePreview[] = $state([])
@@ -88,18 +87,27 @@
                             placeholder={$_('settings.username.placeholder')}
                     />
                 </div>
+                <div>
+                    <Label for="email" required>{$_('settings.email.label')}</Label>
+                    <Input
+                            id="email"
+                            type="email"
+                            bind:value={userForm.email}
+                            required
+                            placeholder={$_('settings.email.placeholder')}
+                    />
+                </div>
             </div>
-            <div>
-                <Label for="email" required>{$_('settings.email.label')}</Label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Label for="email" required>{$_('settings.password.label')}</Label>
                 <Input
-                        id="email"
-                        type="email"
-                        bind:value={userForm.email}
+                        id="password"
+                        type="password"
+                        bind:value={userForm.password}
                         required
-                        placeholder={$_('settings.email.placeholder')}
+                        placeholder={$_('settings.password.placeholder')}
                 />
             </div>
-
             <Button type="submit">
                 {$_('settings.submit')}
             </Button>

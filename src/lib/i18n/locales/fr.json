@@ -12,7 +12,10 @@
     "multiple": "Plusieurs images possible"
   },
   "recipeCard": {
-    "by": "Par"
+    "by": "Par",
+    "noPicture": "Pas d'images pour l'instant.",
+    "title": "Titre de la recette",
+    "description": "La description apparaît ici..."
   },
   "home": {
     "mainText": "Qu'y a-t-il au menu aujourd'hui ?",
@@ -83,11 +86,15 @@
     "info": "Profil",
     "username": {
       "label": "Nom d'utilisateur",
-      "placeholder": "Entrez votre nom d'utilisateur"
+      "placeholder": "Entrez votre nouveau nom d'utilisateur"
     },
     "email": {
       "label": "Email",
-      "placeholder": "Entrez votre email"
+      "placeholder": "Entrez votre nouvel email"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Entre votre nouveau mot de passe"
     },
     "submit": "Mettre à jour le profil",
     "recipeCount": "Vos recettes",

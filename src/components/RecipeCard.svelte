@@ -41,7 +41,7 @@
         onkeydown={(e) => e.key === 'Enter' && viewRecipe(recipe.id)}
 >
     <div class="relative">
-        {#if recipe.pictures.length > 1}
+        {#if (recipe.pictures?.length ?? 0) > 1}
             <button class="absolute h-full flex flex-col justify-center left-0 z-20 hover:cursor-pointer"
                     onclick={prev}>
                 <ArrowLeft class="text-white" />
@@ -52,7 +52,7 @@
             </button>
         {/if}
         <div class="embla" use:emblaCarouselSvelte onemblaInit={emblaInit}>
-            {#if recipe.pictures.length >= 1}
+            {#if (recipe.pictures?.length ?? 0) >= 1}
                 <div class="embla__container">
                     {#each recipe.pictures as picture}
                         <img
@@ -63,20 +63,20 @@
                     {/each}
                 </div>
             {:else}
-                <p class="embla__slide flex items-center justify-center h-full border-b border-b-border">No pictures added yet.</p>
+                <p class="embla__slide flex items-center justify-center h-full border-b border-b-border">{$_('recipeCard.noPicture')}</p>
             {/if}
         </div>
     </div>
 
     <div class="p-6 flex-1">
         <div class="flex items-start justify-between mb-3">
-            <h3 class="text-xl font-semibold text-card-foreground text-balance">{recipe.title || 'Recipe Title'}</h3>
+            <h3 class="text-xl font-semibold text-card-foreground text-balance">{recipe.title || $_('recipeCard.title')}</h3>
             <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-2">
         {$_('recipes.types.' + recipe.kind)}
       </span>
         </div>
 
-        <p class="text-muted-foreground mb-4 text-pretty">{recipe.description ? recipe.description.length > 200 ? recipe.description.slice(0, 200) + '...' : recipe.description : 'Recipe description will appear here...'}</p>
+        <p class="text-muted-foreground mb-4 text-pretty">{recipe.description ? recipe.description.length > 200 ? recipe.description.slice(0, 200) + '...' : recipe.description : $_('recipeCard.description')}</p>
 
     </div>
     <div class="px-6 pb-6 flex items-center justify-between text-sm text-muted-foreground">

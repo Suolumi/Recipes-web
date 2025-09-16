@@ -12,7 +12,10 @@
     "multiple": "Multiple images supported"
   },
   "recipeCard": {
-    "by": "By"
+    "by": "By",
+    "noPicture": "No pictures added yet.",
+    "title": "Recipe Title",
+    "description": "Recipe description will appear here..."
   },
   "home": {
     "mainText": "What's on the menu today?",
@@ -83,11 +86,15 @@
     "info": "Profile",
     "username": {
       "label": "Username",
-      "placeholder": "Enter your username"
+      "placeholder": "Enter your new username"
     },
     "email": {
       "label": "Email",
-      "placeholder": "Enter your email"
+      "placeholder": "Enter your new email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your new password"
     },
     "submit": "Update profile",
     "recipeCount": "Your Recipes",

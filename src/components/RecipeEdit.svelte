@@ -102,7 +102,7 @@
                         />
                     </div>
                     <div>
-                        <Label for="recipe-type">{$_('edit.type')}</Label>
+                        <Label for="recipe-type">{$_('edit.type.label')}</Label>
                         <Select
                                 id="recipe-type"
                                 bind:value={formData.kind}
@@ -122,7 +122,7 @@
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <Label for="servings">{$_('edit.servings')}</Label>
+                        <Label for="servings">{$_('edit.servings.label')}</Label>
                         <Input
                                 id="servings"
                                 type="number"

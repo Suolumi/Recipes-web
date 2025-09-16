@@ -9,6 +9,20 @@ export default defineConfig({
 		sveltekit(),
 		devtoolsJson()
 	],
+	optimizeDeps: {
+		include: ['lodash', 'lodash/unescape']
+	},
+	define: {
+		global: 'globalThis'
+	},
+	resolve: {
+		alias: {
+			lodash: 'lodash-es'
+		}
+	},
+	ssr: {
+		noExternal: ['anylang']
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
