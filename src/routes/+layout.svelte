@@ -13,7 +13,7 @@
 	onMount(() => {
 		if (window.location.pathname === "/")
 			goto(`/${$locale ?? 'en'}/home`)
-        serverUrl.set('http://localhost:8081/api/v1')
+        serverUrl.set('https://recipes-api.suolumi.fr/api/v1')
 	})
 
     afterNavigate(async () => {
