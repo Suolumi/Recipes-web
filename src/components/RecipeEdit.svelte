@@ -7,7 +7,7 @@
     import RecipeCard from "./RecipeCard.svelte";
     import {type Ingredient, type RecipeForm, RecipeTypes, saveRecipeFile, type Step} from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
-    import {serverUrl} from "$lib/stores";
+    import {serverUrl, user} from "$lib/stores";
     import {_} from 'svelte-i18n'
 
     interface Props {
