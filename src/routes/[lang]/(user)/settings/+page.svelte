@@ -11,9 +11,9 @@
     import {toastError} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
 
-    let userForm: UserSettingsForm = $state($user ?? {
-        username: '',
-        email: '',
+    let userForm: UserSettingsForm = $state({
+        username: $user?.username ?? '',
+        email: $user?.email ?? '',
         password: '',
     })
 

@@ -3,7 +3,7 @@ import { persisted } from 'svelte-persisted-store';
 import type {User} from "$lib/user";
 
 const jsonParser = {
-    parse: (text: string) => {
+    parse: (text: any) => {
         try {
             return JSON.parse(text);
         } catch (e) {
@@ -11,7 +11,7 @@ const jsonParser = {
             return "";
         }
     },
-    stringify: (object: object) => JSON.stringify(object)
+    stringify: (object: any) => JSON.stringify(object)
 }
 
 export const accessToken = persisted('accessToken', '', {
@@ -24,5 +24,8 @@ export const refreshToken = persisted('refreshToken', '', {
 });
 
 export const user = writable<User | null>(null)
-export const darkMode = writable<boolean>(false)
+export const darkMode = persisted<boolean>('darkMode', false, {
+    syncTabs: true,
+    serializer: jsonParser,
+})
 export const serverUrl = writable<string>('https://recipes-api.suolumi.fr/api/v1')

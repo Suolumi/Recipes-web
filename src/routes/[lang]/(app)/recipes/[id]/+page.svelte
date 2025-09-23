@@ -44,7 +44,7 @@
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            Back to Recipes
+            {$_('recipes.back')}
         </button>
 
         <div class="bg-card rounded-lg border border-border overflow-hidden mb-8">
@@ -109,11 +109,11 @@
                         </div>
                         <div class="flex items-center">
                             <Flame size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.cook')}: {recipe.preparation_time}{$_('recipes.min')}</span>
+                            <span>{$_('recipe.cook')}: {recipe.cooking_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Wind size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.rest')}: {recipe.preparation_time}{$_('recipes.min')}</span>
+                            <span>{$_('recipe.rest')}: {recipe.resting_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black" />

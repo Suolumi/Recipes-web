@@ -30,6 +30,8 @@
     });
 </script>
 
-<Header />
+{#if $locale}
+    <Header />
+{/if}
 {@render children?.()}
 <SvelteToast options={{ reversed: true, intro: { y: 192 } }} />

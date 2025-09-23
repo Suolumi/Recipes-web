@@ -7,7 +7,7 @@
     import RecipeCard from "./RecipeCard.svelte";
     import {type Ingredient, type RecipeForm, RecipeTypes, saveRecipeFile, type Step} from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
-    import {serverUrl, user} from "$lib/stores";
+    import {serverUrl} from "$lib/stores";
     import {_} from 'svelte-i18n'
 
     interface Props {
@@ -216,7 +216,7 @@
                                     />
                                 </div>
                                 <div class="col-span-2">
-                                    <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.name')}</Label>
+                                    <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.label')}</Label>
                                     <Input
                                             id={`ingredient-quantity-${index}`}
                                             type="number"
