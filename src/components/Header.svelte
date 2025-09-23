@@ -31,6 +31,8 @@
     onMount(() => {
         if (browser)
             document.addEventListener("click", toggleProfileDropdown);
+        if ($darkMode)
+            toggleDarkMode()
     });
 
     onDestroy(() => {
