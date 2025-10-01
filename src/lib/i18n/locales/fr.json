@@ -4,7 +4,9 @@
     "allRecipes": "Toutes les recettes",
     "createRecipe": "Créer une recette",
     "login": "Connexion",
-    "register": "Inscription"
+    "register": "Inscription",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
   },
   "fileUpload": {
     "click": "Cliquez pour ajouter",

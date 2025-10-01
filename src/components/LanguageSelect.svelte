@@ -13,7 +13,7 @@
     }
 </script>
 
-<button class="flex items-center gap-2 hover:text-primary transition-colors group">
+<button class="flex items-center hover:text-primary transition-colors group">
     <select bind:value={value} onchange={e => switchLocale(e.target.value)} class="bg-transparent border-0 appearance-none pr-0 py-2 text-sm focus:outline-none focus:ring-0 focus:border-0" style="background-image: none">
         {#each locales as l}
             <option value={l.code}>{`${l.label}  ${l.flag}`}</option>

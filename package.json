@@ -38,6 +38,7 @@
 		"embla-carousel-svelte": "^8.6.0",
 		"lodash-es": "^4.17.21",
 		"svelte-i18n": "^4.0.1",
-		"svelte-persisted-store": "^0.12.0"
+		"svelte-persisted-store": "^0.12.0",
+		"vaul-svelte": "^0.3.2"
 	}
 }

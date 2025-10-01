@@ -4,7 +4,9 @@
     "allRecipes": "All Recipes",
     "createRecipe": "Create Recipe",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "fileUpload": {
     "click": "Click to upload",
