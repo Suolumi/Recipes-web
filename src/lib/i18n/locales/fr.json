@@ -45,7 +45,8 @@
       "placeholder": "Entrez votre mot de passe"
     },
     "submit": "Se connecter",
-    "noAccount": "Pas de compte ?",
+    "noAccount": "Pas de compte?",
+    "forgotPassword": "Mot de passe oublié?",
     "signUp": "S'inscrire"
   },
   "register": {
@@ -111,7 +112,8 @@
     "servings": "Portions",
     "ingredients": "Ingrédients",
     "instructions": "Instructions",
-    "notFound": "Recette non trouvée"
+    "notFound": "Recette non trouvée",
+    "translate": "Traduire"
   },
   "edit": {
     "toasts": {
@@ -196,5 +198,36 @@
       "drink": "Boisson"
     },
     "min": "min"
+  },
+  "forgot": {
+    "reset": "Réinitialisez votre mot de passe",
+    "resetDesc": "Entrez votre adresse mail ou nom d'utilisateur et nous vous enverrons un mail pour réinitialiser votre mot de passe, si votre compte existe",
+    "id": {
+      "label": "Adresse mail / Nom d'utilisateur",
+      "placeholder": "Entrez votre adresse mail / nom d'utilisateur"
+    },
+    "submit": "Envoyer le mail",
+    "remember": "Vous avez retrouvé votre mot de passe?",
+    "back": "Retour à la connexion",
+    "sent": "Email envoyé",
+    "failed": "Erreur lors de l'envoi du mail"
+  },
+  "reset": {
+    "create": "Réinitialisation de mot de passe",
+    "enter": "Entrez votre nouveau mot de passe",
+    "new": {
+      "label": "Nouveau mot de passe",
+      "placeholder": "Entrez un nouveau mot de passe"
+    },
+    "confirm": {
+      "label": "Confirmez le mot de passe",
+      "placeholder": "Confirmez votre nouveau mot de passe"
+    },
+    "submit": "Réinitialiser le mot de passe",
+    "success": "Mot de passe réinitialisé",
+    "error": "Erreur lors de la réinitialisation de mot de passe"
+  },
+  "tmp": {
+    "translation": "Ça marche pas encore"
   }
 }

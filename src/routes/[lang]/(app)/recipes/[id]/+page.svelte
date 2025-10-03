@@ -1,11 +1,12 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {getIngredientName, getRecipe, type Recipe} from "$lib/recipes";
+    import {getIngredientName, getRecipe, type Recipe, recipeTypeColors} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight} from "@lucide/svelte";
+    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
     import {serverUrl} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
+    import {toast} from "@zerodevx/svelte-toast";
 
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
@@ -33,13 +34,15 @@
         if (emblaApi)
             emblaApi.scrollPrev()
     }
+
+    const typeColorClass = $derived(recipeTypeColors[(recipe ?? {kind: ''}).kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
 </script>
 
 {#if recipe}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
                 onclick={() => goto(`/${$locale}/home`)}
-                class="flex items-center text-primary hover:text-primary/80 transition-colors mb-6"
+                class="flex items-center hover:cursor-pointer text-primary hover:text-primary/80 transition-colors mb-6"
         >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -77,17 +80,28 @@
             </div>
 
             <div class="p-8">
-                <div class="flex items-start justify-between mb-4">
-                    <h1 class="text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
-                    <span class="bg-primary/10 text-primary px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
-            {$_('recipes.types.' + recipe.kind)}
-          </span>
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
+                    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                        <span class="{typeColorClass} px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
+                            {$_('recipes.types.' + recipe.kind)}
+                        </span>
+                        <button
+                                onclick={() => toast.push($_('tmp.translation'))}
+                                class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary hover:text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
+                                aria-label="Translate recipe"
+                                title="Translate recipe"
+                        >
+                            <Languages size="20" />
+                            <span class="text-sm font-semibold">{$_('recipe.translate')}</span>
+                        </button>
+                    </div>
                 </div>
 
                 <p class="text-xl text-muted-foreground mb-6 text-pretty">{recipe.description}</p>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex justify-center items-center gap-x-2">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center gap-x-2">
                         {#if recipe.author.picture}
                             <img
                                     src={recipe.author.picture || "/placeholder.svg"}
@@ -99,25 +113,25 @@
                                 {recipe.author.username.charAt(0) || "?"}
                             </div>
                         {/if}
-                        <span class="text-lg font-medium text-card-foreground">By {recipe.author?.username || 'Author Name'}</span>
+                        <span class="text-lg font-medium text-card-foreground">{$_('recipeCard.by')} {recipe.author?.username || 'Author Name'}</span>
                     </div>
 
-                    <div class="flex items-center space-x-6 text-muted-foreground">
+                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-muted-foreground text-sm sm:text-base">
                         <div class="flex items-center">
                             <Clock size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.prep')}: {recipe.preparation_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.prep')}: {recipe.preparation_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Flame size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.cook')}: {recipe.cooking_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.cook')}: {recipe.cooking_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Wind size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.rest')}: {recipe.resting_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.rest')}: {recipe.resting_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black" />
-                            <span>{$_('recipe.servings')}: {recipe.quantity}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.servings')}: {recipe.quantity}</span>
                         </div>
                     </div>
                 </div>
@@ -172,7 +186,7 @@
             <h2 class="text-2xl font-semibold text-foreground mb-4">{$_('recipe.notFound')}</h2>
             <button
                     onclick={() => goto(`/${$locale}/home`)}
-                    class="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
+                    class="bg-primary hover:cursor-pointer text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
             >
                 {$_('recipe.back')}
             </button>

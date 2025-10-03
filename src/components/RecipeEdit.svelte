@@ -312,7 +312,7 @@
         <div class="bg-card rounded-lg border border-border p-6">
             <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.preview')}</h2>
 
-            <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: ''}} />
+            <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: ''}} translate={false} />
         </div>
     </div>
 </div>

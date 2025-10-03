@@ -2,80 +2,57 @@
     import Button from '../../../../components/Button.svelte';
     import Input from '../../../../components/Input.svelte';
     import Label from '../../../../components/Label.svelte';
+    import {goto} from "$app/navigation";
+    import {_, locale} from "svelte-i18n";
+    import {toastError, toastSuccess} from "$lib/utils";
+    import {forgotPassword} from "$lib/auth.js";
 
     let email = $state('');
-    let message = $state('');
-    let isSubmitted = $state(false);
 
-    function handleSubmit(event: Event) {
+    async function handleSubmit(event: Event) {
         event.preventDefault();
+        if (email.length === 0)
+            return toastError($_('forgot.empty'))
 
-        if (!email) {
-            message = 'Please enter your email address';
-            return;
-        }
-
-        // Simulate password reset email sending
-        isSubmitted = true;
-        message = `Password reset instructions have been sent to ${email}`;
-    }
-
-    function goToLogin() {
-        currentPage.set('login');
+        const {response} = await forgotPassword({id: email, locale: $locale ?? ''});
+        if (response.ok)
+            toastSuccess($_('forgot.sent'))
+        else
+            toastError($_('forgot.failed'))
     }
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-background px-4">
     <div class="max-w-md w-full space-y-8">
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-foreground">Reset your password</h2>
+            <h2 class="text-3xl font-bold text-foreground">{$_('forgot.reset')}</h2>
             <p class="mt-2 text-muted-foreground">
-                {#if !isSubmitted}
-                    Enter your email address and we'll send you instructions to reset your password
-                {:else}
-                    Check your email for reset instructions
-                {/if}
+                {$_('forgot.resetDesc')}
             </p>
         </div>
 
-        {#if !isSubmitted}
-            <form class="mt-8 space-y-6" onsubmit={handleSubmit}>
-                <div>
-                    <Label for="email" required>Email address</Label>
-                    <Input
-                            id="email"
-                            type="email"
-                            bind:value={email}
-                            required
-                            placeholder="Enter your email address"
-                    />
-                </div>
-
-                {#if message && !isSubmitted}
-                    <div class="text-destructive text-sm text-center">{message}</div>
-                {/if}
-
-                <Button type="submit" class="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                    Send reset instructions
-                </Button>
-            </form>
-        {:else}
-            <div class="mt-8 space-y-6">
-                <div class="text-center p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-                    <div class="text-emerald-600 dark:text-emerald-400 text-sm">{message}</div>
-                </div>
-
-                <Button onclick={goToLogin} class="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                    Back to sign in
-                </Button>
+        <form class="mt-8 space-y-6" onsubmit={handleSubmit}>
+            <div>
+                <Label for="email" required>{$_('forgot.id.label')}</Label>
+                <Input
+                        id="email"
+                        type="text"
+                        bind:value={email}
+                        required
+                        placeholder={$_('forgot.id.placeholder')}
+                />
             </div>
-        {/if}
+
+            <Button type="submit" class="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                {$_('forgot.submit')}
+            </Button>
+        </form>
 
         <div class="text-center">
             <p class="text-muted-foreground">
-                Remember your password?
-                <Button variant="link" onclick={goToLogin} class="p-0 h-auto font-medium">
-                    Back to sign in
+                {$_('forgot.remember')}
+                <Button variant="link" onclick={() => goto(`/${$locale}/login`)} class="p-0 h-auto font-medium">
+                    {$_('forgot.back')}
                 </Button>
             </p>
         </div>

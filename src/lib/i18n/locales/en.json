@@ -46,6 +46,7 @@
     },
     "submit": "Sign in",
     "noAccount": "Don't have an account?",
+    "forgotPassword": "Forgot your password?",
     "signUp": "Sign up"
   },
   "register": {
@@ -111,7 +112,8 @@
     "servings": "Servings",
     "ingredients": "Ingredients",
     "instructions": "Instructions",
-    "notFound": "Recipe not found"
+    "notFound": "Recipe not found",
+    "translate": "Translate"
   },
   "edit": {
     "toasts": {
@@ -196,5 +198,36 @@
       "drink": "Drink"
     },
     "min": "min"
+  },
+  "forgot": {
+    "reset": "Reset your password",
+    "resetDesc": "Enter your email address or username and we'll send you instructions to reset your password if your account exists",
+    "id": {
+      "label": "Email address / Username",
+      "placeholder": "Enter your email address / username"
+    },
+    "submit": "Send email",
+    "remember": "Remember your password?",
+    "back": "Back to sign in",
+    "sent": "Email sent",
+    "failed": "Error while sending the mail"
+  },
+  "reset": {
+    "create": "Create a new password",
+    "enter": "Enter your new password below",
+    "new": {
+      "label": "New password",
+      "placeholder": "Enter a new password"
+    },
+    "confirm": {
+      "label": "Confirm password",
+      "placeholder": "Confirm your new password"
+    },
+    "submit": "Reset password",
+    "success": "Password successfully reset",
+    "error": "Error while trying to reset the password"
+  },
+  "tmp": {
+    "translation": "That doesn't work yet"
   }
 }

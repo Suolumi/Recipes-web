@@ -1,4 +1,4 @@
-import {apiFetchJson} from "$lib/api";
+import {apiFetch, apiFetchJson} from "$lib/api";
 
 export type LoginRequest = {
     id: string
@@ -23,4 +23,19 @@ export type RegisterResponse = {
 }
 export function register(data: RegisterRequest) {
     return apiFetchJson<RegisterResponse>("/register", "POST", data)
+}
+
+export type ForgotPasswordRequest = {
+    id: string
+    locale: string
+}
+export function forgotPassword(data: ForgotPasswordRequest) {
+    return apiFetch("/forgot-password", "POST", data)
+}
+
+export type ResetPasswordRequest = {
+    password: string
+}
+export function resetPassword(data: ResetPasswordRequest, token: string) {
+    return apiFetch(`/forgot-password/${token}`, "POST", data)
 }

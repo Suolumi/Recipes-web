@@ -79,6 +79,12 @@
             </Button>
 
             <div class="text-center">
+                <Button variant="link" onclick={() => goto(`/${$locale}/forgot-password`)} class="p-0 h-auto text-sm text-muted-foreground hover:text-foreground">
+                    Forgot your password?
+                </Button>
+            </div>
+
+            <div class="text-center">
                 <p class="text-muted-foreground">
                     {$_('login.noAccount')}
                     <Button variant="link" onclick={goToRegister} class="p-0 h-auto font-medium">

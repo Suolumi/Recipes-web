@@ -3,11 +3,12 @@
     import {goto} from "$app/navigation";
     import type {RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {ArrowLeft, ArrowRight} from "@lucide/svelte";
+    import {ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
     import {serverUrl} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
+    import {toast} from "@zerodevx/svelte-toast";
 
-    let { recipe }: { recipe: RecipePreview } = $props();
+    let { recipe, translate }: { recipe: RecipePreview, translate: boolean } = $props();
     let emblaApi: any = $state();
 
     function viewRecipe(id: string) {
@@ -42,11 +43,11 @@
 >
     <div class="relative">
         {#if (recipe.pictures?.length ?? 0) > 1}
-            <button class="absolute h-full flex flex-col justify-center left-0 z-20 hover:cursor-pointer"
+            <button class="absolute h-full flex flex-col justify-center z-1 left-0 hover:cursor-pointer"
                     onclick={prev}>
                 <ArrowLeft class="text-white" />
             </button>
-            <button class="absolute h-full flex flex-col justify-center right-0 z-20 hover:cursor-pointer"
+            <button class="absolute h-full flex flex-col justify-center z-1 right-0 hover:cursor-pointer"
                     onclick={next}>
                 <ArrowRight class="text-white" />
             </button>
@@ -66,6 +67,16 @@
                 <p class="embla__slide flex items-center justify-center h-full border-b border-b-border">{$_('recipeCard.noPicture')}</p>
             {/if}
         </div>
+        {#if translate}
+            <button
+                    onclick={(e) => { e.stopPropagation(); toast.push($_('tmp.translation')); }}
+                    class="absolute top-2 z-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-lg p-1.5 transition-all duration-200"
+                    aria-label="Translate recipe"
+                    title="Translate recipe"
+            >
+                <Languages size="20" />
+            </button>
+        {/if}
     </div>
 
     <div class="p-6 flex-1">
