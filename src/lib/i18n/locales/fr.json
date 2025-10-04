@@ -195,7 +195,8 @@
       "side-dish": "Accompagnement",
       "sauce": "Sauce",
       "dessert": "Dessert",
-      "drink": "Boisson"
+      "drink": "Boisson",
+      "plate": "Plateau télé"
     },
     "min": "min"
   },
@@ -226,8 +227,5 @@
     "submit": "Réinitialiser le mot de passe",
     "success": "Mot de passe réinitialisé",
     "error": "Erreur lors de la réinitialisation de mot de passe"
-  },
-  "tmp": {
-    "translation": "Ça marche pas encore"
   }
 }

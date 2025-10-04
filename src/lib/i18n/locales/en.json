@@ -195,7 +195,8 @@
       "side-dish": "Side dish",
       "sauce": "Sauce",
       "dessert": "Dessert",
-      "drink": "Drink"
+      "drink": "Drink",
+      "plate": "Snack platter"
     },
     "min": "min"
   },
@@ -226,8 +227,5 @@
     "submit": "Reset password",
     "success": "Password successfully reset",
     "error": "Error while trying to reset the password"
-  },
-  "tmp": {
-    "translation": "That doesn't work yet"
   }
 }

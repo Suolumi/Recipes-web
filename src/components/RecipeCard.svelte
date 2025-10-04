@@ -1,12 +1,11 @@
 <script lang="ts">
-    import {recipeTypeColors} from '$lib/recipes';
+    import {getRecipe, recipeTypeColors} from '$lib/recipes';
     import {goto} from "$app/navigation";
     import type {RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
     import {serverUrl} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
-    import {toast} from "@zerodevx/svelte-toast";
 
     let { recipe, translate }: { recipe: RecipePreview, translate: boolean } = $props();
     let emblaApi: any = $state();
@@ -29,6 +28,13 @@
         e.stopPropagation();
         if (emblaApi)
             emblaApi.scrollPrev()
+    }
+
+    async function translateRecipe() {
+        const {data, response} = await getRecipe(recipe.id, $locale ?? '')
+        if (response.ok) {
+            recipe = data as RecipePreview;
+        }
     }
 
     const typeColorClass = $derived(recipeTypeColors[recipe.kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
@@ -69,7 +75,7 @@
         </div>
         {#if translate}
             <button
-                    onclick={(e) => { e.stopPropagation(); toast.push($_('tmp.translation')); }}
+                    onclick={(e) => { e.stopPropagation(); translateRecipe(); }}
                     class="absolute top-2 z-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-lg p-1.5 transition-all duration-200"
                     aria-label="Translate recipe"
                     title="Translate recipe"
@@ -103,7 +109,7 @@
                     {recipe.author.username.charAt(0) || "?"}
                 </div>
             {/if}
-            <span class="font-medium">{$_('recipeCard.by')} {recipe.author?.username || 'Author Name'}</span>
+            <span class="font-medium text-black dark:text-white">{$_('recipeCard.by')} {recipe.author?.username || 'Author Name'}</span>
         </div>
         <div class="flex items-center space-x-4">
         <span class="flex items-center">

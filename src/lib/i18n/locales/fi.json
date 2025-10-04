@@ -1,0 +1,231 @@
+{
+  "header": {
+    "appName": "Reseptit",
+    "allRecipes": "Kaikki reseptit",
+    "createRecipe": "Luo resepti",
+    "login": "Kirjaudu sisään",
+    "register": "Rekisteröidy",
+    "settings": "Asetukset",
+    "logout": "Kirjaudu ulos"
+  },
+  "fileUpload": {
+    "click": "Klikkaa ladataksesi",
+    "drag": "tai vedä ja pudota",
+    "multiple": "Useita kuvia tuettu"
+  },
+  "recipeCard": {
+    "by": "Tekijä",
+    "noPicture": "Ei kuvia lisätty vielä.",
+    "title": "Reseptin otsikko",
+    "description": "Reseptin kuvaus näkyy tässä..."
+  },
+  "home": {
+    "mainText": "Mitä on tänään ruokalistalla?",
+    "secondaryText": "Ehkä tätä, tai tuota! Tai entäpä...",
+    "search": "Hae reseptejä...",
+    "notFound": "Reseptejä ei löytynyt",
+    "adjustSearch": "Kokeile muuttaa hakua tai suodattimia"
+  },
+  "login": {
+    "errors": {
+      "field": "Täytä kaikki kentät."
+    },
+    "toasts": {
+      "success": "Kirjautuminen onnistui.",
+      "error": "Kirjautuminen epäonnistui."
+    },
+    "signIn": "Kirjaudu sisään Reseptit-sovellukseen",
+    "welcome": "Tervetuloa takaisin! Kirjaudu tilillesi",
+    "id": {
+      "label": "Sähköposti / Käyttäjänimi",
+      "placeholder": "Syötä sähköpostisi / käyttäjänimesi"
+    },
+    "password": {
+      "label": "Salasana",
+      "placeholder": "Syötä salasanasi"
+    },
+    "submit": "Kirjaudu sisään",
+    "noAccount": "Eikö sinulla ole tiliä?",
+    "forgotPassword": "Unohditko salasanasi?",
+    "signUp": "Rekisteröidy"
+  },
+  "register": {
+    "errors": {
+      "field": "Täytä kaikki kentät.",
+      "passwords": "Salasanat eivät täsmää.",
+      "password": "Salasanassa tulee olla vähintään 12 merkkiä, erikoismerkki ja numero."
+    },
+    "toasts": {
+      "success": "Rekisteröinti onnistui!",
+      "error": "Rekisteröinti epäonnistui."
+    },
+    "join": "Liity Reseptit-sovellukseen",
+    "create": "Luo tili ja ala jakaa reseptejä",
+    "email": {
+      "label": "Sähköpostiosoite",
+      "placeholder": "Syötä sähköpostisi"
+    },
+    "username": {
+      "label": "Käyttäjänimi",
+      "placeholder": "Valitse käyttäjänimi"
+    },
+    "password": {
+      "label": "Salasana",
+      "placeholder": "Luo salasana"
+    },
+    "passwordConfirm": {
+      "label": "Vahvista salasana",
+      "placeholder": "Vahvista salasanasi"
+    },
+    "submit": "Luo tili",
+    "already": "Onko sinulla jo tili?",
+    "signIn": "Kirjaudu sisään"
+  },
+  "settings": {
+    "errors": {
+      "update": "Virhe profiilia päivitettäessä.",
+      "getRecipes": "Palvelinvirhe, reseptejä ei voitu hakea."
+    },
+    "info": "Profiili",
+    "username": {
+      "label": "Käyttäjänimi",
+      "placeholder": "Syötä uusi käyttäjänimi"
+    },
+    "email": {
+      "label": "Sähköposti",
+      "placeholder": "Syötä uusi sähköposti"
+    },
+    "password": {
+      "label": "Salasana",
+      "placeholder": "Syötä uusi salasana"
+    },
+    "submit": "Päivitä profiili",
+    "recipeCount": "Reseptisi",
+    "noRecipes": "Et ole vielä luonut reseptejä.",
+    "createRecipe": "Luo ensimmäinen reseptisi"
+  },
+  "recipe": {
+    "back": "Takaisin resepteihin",
+    "prep": "Valmistelu",
+    "cook": "Kypsennys",
+    "rest": "Lepo",
+    "servings": "Annoskoko",
+    "ingredients": "Ainekset",
+    "instructions": "Ohjeet",
+    "notFound": "Reseptiä ei löytynyt",
+    "translate": "Käännä"
+  },
+  "edit": {
+    "toasts": {
+      "save": "Reseptiä ei voitu tallentaa"
+    },
+    "headLabel": "Muokkaa",
+    "commentLabel": "Tiesin että unohdin jotain!",
+    "details": "Reseptin tiedot",
+    "title": {
+      "label": "Reseptin otsikko",
+      "placeholder": "Syötä reseptin otsikko"
+    },
+    "type": {
+      "label": "Tyyppi"
+    },
+    "description": {
+      "label": "Kuvaus",
+      "placeholder": "Kuvaile reseptiäsi"
+    },
+    "servings": {
+      "label": "Annoskoko"
+    },
+    "prep": {
+      "label": "Valmisteluaika"
+    },
+    "cook": {
+      "label": "Kypsennysaika"
+    },
+    "rest": {
+      "label": "Lepoaika"
+    },
+    "images": "Reseptin kuvat",
+    "ingredients": {
+      "label": "Ainekset",
+      "add": "Lisää ainesosa",
+      "name": {
+        "label": "Nimi",
+        "placeholder": "Ainesosan nimi"
+      },
+      "quantity": {
+        "label": "Määrä",
+        "placeholder": "Määrä"
+      },
+      "unit": {
+        "label": "Yksikkö",
+        "placeholder": "Yksikkö"
+      }
+    },
+    "instructions": {
+      "label": "Ohjeet",
+      "add": "Lisää vaihe",
+      "title": {
+        "label": "Vaiheen otsikko",
+        "placeholder": "Vaiheen otsikko"
+      },
+      "description": {
+        "label": "Kuvaus",
+        "placeholder": "Kuvaus"
+      },
+      "remove": "Poista"
+    },
+    "submit": "Tallenna resepti",
+    "preview": "Esikatselu"
+  },
+  "create": {
+    "toasts": {
+      "save": "Reseptin luominen epäonnistui",
+      "noAccount": "Sinun täytyy ensin luoda tili"
+    },
+    "headLabel": "Luo",
+    "commentLabel": "Tänään yllätän kaikki..."
+  },
+  "recipes": {
+    "types": {
+      "all": "Kaikki",
+      "snack": "Välipala",
+      "starter": "Alkuruoka",
+      "dish": "Pääruoka",
+      "side-dish": "Lisuke",
+      "sauce": "Kastike",
+      "dessert": "Jälkiruoka",
+      "drink": "Juoma",
+      "plate": "Tarjotin"
+    },
+    "min": "min"
+  },
+  "forgot": {
+    "reset": "Nollaa salasanasi",
+    "resetDesc": "Syötä sähköpostisi tai käyttäjänimesi, niin lähetämme ohjeet salasanan palauttamiseksi, jos tilisi löytyy",
+    "id": {
+      "label": "Sähköpostiosoite / Käyttäjänimi",
+      "placeholder": "Syötä sähköpostisi / käyttäjänimesi"
+    },
+    "submit": "Lähetä sähköposti",
+    "remember": "Muistatko salasanasi?",
+    "back": "Takaisin kirjautumiseen",
+    "sent": "Sähköposti lähetetty",
+    "failed": "Virhe sähköpostia lähettäessä"
+  },
+  "reset": {
+    "create": "Luo uusi salasana",
+    "enter": "Syötä uusi salasana alle",
+    "new": {
+      "label": "Uusi salasana",
+      "placeholder": "Syötä uusi salasana"
+    },
+    "confirm": {
+      "label": "Vahvista salasana",
+      "placeholder": "Vahvista uusi salasana"
+    },
+    "submit": "Nollaa salasana",
+    "success": "Salasana nollattu onnistuneesti",
+    "error": "Virhe salasanaa nollattaessa"
+  }
+}

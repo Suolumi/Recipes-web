@@ -1,9 +1,9 @@
 import type {User} from "$lib/user";
 import {apiFetchJson} from "$lib/api";
 
-export type RecipeType = "snack" | "starter" | "dish" | "side-dish" | "sauce" | "dessert" | "drink"
+export type RecipeType = "snack" | "starter" | "dish" | "side-dish" | "sauce" | "dessert" | "drink" | "plate"
 
-export const RecipeTypes: RecipeType[] = ["snack","starter","dish","side-dish","sauce","dessert","drink"]
+export const RecipeTypes: RecipeType[] = ["snack","starter","dish","side-dish","sauce","dessert","drink","plate"]
 
 export const recipeTypeColors: {
     [key: string]: string
@@ -15,6 +15,7 @@ export const recipeTypeColors: {
     sauce: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
     drink: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
     snack: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
+    plate: "bg-amber-100 text-amber-800 dark:bg-amber-100/20 dark:text-amber-300",
 }
 
 export type Step = {
@@ -99,8 +100,8 @@ export function getIngredientName(ingredient: Ingredient): string {
     return ingredient.name
 }
 
-export function getRecipe(id: string) {
-    return apiFetchJson<Recipe>(`/recipes/${id}`)
+export function getRecipe(id: string, locale?: string) {
+    return apiFetchJson<Recipe>(`/recipes/${id}?locale=${locale ?? ''}`)
 }
 
 export function getRecipes(params: GetRecipesRequest) {

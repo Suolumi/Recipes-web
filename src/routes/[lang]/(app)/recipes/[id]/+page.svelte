@@ -1,7 +1,7 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {getIngredientName, getRecipe, type Recipe, recipeTypeColors} from "$lib/recipes";
+    import {getIngredientName, getRecipe, type Recipe, type RecipePreview, recipeTypeColors} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
     import {serverUrl} from "$lib/stores";
@@ -33,6 +33,15 @@
         e.stopPropagation();
         if (emblaApi)
             emblaApi.scrollPrev()
+    }
+
+    async function translateRecipe() {
+        if (!recipe)
+            return
+        const {data, response} = await getRecipe(recipe.id, $locale ?? '')
+        if (response.ok) {
+            recipe = data;
+        }
     }
 
     const typeColorClass = $derived(recipeTypeColors[(recipe ?? {kind: ''}).kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
@@ -87,7 +96,7 @@
                             {$_('recipes.types.' + recipe.kind)}
                         </span>
                         <button
-                                onclick={() => toast.push($_('tmp.translation'))}
+                                onclick={translateRecipe}
                                 class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary hover:text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
                                 aria-label="Translate recipe"
                                 title="Translate recipe"
@@ -118,19 +127,19 @@
 
                     <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-muted-foreground text-sm sm:text-base">
                         <div class="flex items-center">
-                            <Clock size="20" class="mr-2 text-black" />
+                            <Clock size="20" class="mr-2 text-black dark:text-current" />
                             <span class="whitespace-nowrap">{$_('recipe.prep')}: {recipe.preparation_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
-                            <Flame size="20" class="mr-2 text-black" />
+                            <Flame size="20" class="mr-2 text-black dark:text-current" />
                             <span class="whitespace-nowrap">{$_('recipe.cook')}: {recipe.cooking_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
-                            <Wind size="20" class="mr-2 text-black" />
+                            <Wind size="20" class="mr-2 text-black dark:text-current" />
                             <span class="whitespace-nowrap">{$_('recipe.rest')}: {recipe.resting_time}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
-                            <Users size="20" class="mr-2 text-black" />
+                            <Users size="20" class="mr-2 text-black dark:text-current" />
                             <span class="whitespace-nowrap">{$_('recipe.servings')}: {recipe.quantity}</span>
                         </div>
                     </div>
