@@ -6,6 +6,7 @@
     "login": "Connexion",
     "register": "Inscription",
     "settings": "Paramètres",
+    "myRecipes": "Mes recettes",
     "logout": "Déconnexion"
   },
   "fileUpload": {

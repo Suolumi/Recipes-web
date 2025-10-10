@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {user, darkMode, accessToken, refreshToken} from '$lib/stores';
+    import {user, darkMode, accessToken, refreshToken, serverUrl} from '$lib/stores';
     import {goto} from "$app/navigation";
     import Button from "./Button.svelte";
     import {onDestroy, onMount} from "svelte";
@@ -109,7 +109,7 @@
                                 aria-label="Profile menu"
                         >
                             {#if $user.picture}
-                                <img src={$user.picture || "/placeholder.svg"} alt="Profile" class="w-8 h-8 rounded-full object-cover" />
+                                <img src={`${$serverUrl}/pictures/${$user.picture}` || "/placeholder.svg"} alt="Profile" class="w-8 h-8 rounded-full object-cover" />
                             {:else}
                                 <div class="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                                     {$user.username?.charAt(0) || '?'}
@@ -124,6 +124,12 @@
                                         class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                                 >
                                     {$_('header.settings')}
+                                </button>
+                                <button
+                                        onclick={() => { goto(`/${$locale}/settings`); showProfileDropdown = false; }}
+                                        class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                                >
+                                    {$_('header.myRecipes')}
                                 </button>
                                 <button
                                         onclick={logout}

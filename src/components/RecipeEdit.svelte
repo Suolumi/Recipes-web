@@ -74,6 +74,8 @@
         for (const file of files) {
             saveRecipeFile(file).then(res => {
                 if (res.data) {
+                    if (!formData.pictures)
+                        formData.pictures = []
                     formData.pictures.push(res.data.id);
                 }
             })
@@ -188,20 +190,7 @@
                     {/if}
                 </div>
                 <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <Label>{$_('edit.ingredients.label')}</Label>
-                        <Button
-                                variant="outline"
-                                size="sm"
-                                onclick={() => addIngredient({
-                                    name: '',
-                                    quantity: 0,
-                                    unit: ''
-                                })}
-                        >
-                            {$_('edit.ingredients.add')}
-                        </Button>
-                    </div>
+                    <Label class="mb-4">{$_('edit.ingredients.label')}</Label>
 
                     <div class="space-y-3">
                         {#each formData.ingredients as ingredient, index}
@@ -233,7 +222,7 @@
                                             placeholder={$_('edit.ingredients.unit.placeholder')}
                                     />
                                 </div>
-                                <div class="col-span-1">
+                                <div class="col-span-1 flex justify-center">
                                     {#if formData.ingredients.length > 1}
                                         <Button
                                                 variant="destructive"
@@ -247,18 +236,23 @@
                             </div>
                         {/each}
                     </div>
-                </div>
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <Label>{$_('edit.instructions.label')}</Label>
+                    <div class="flex justify-center items-center mt-4">
                         <Button
                                 variant="outline"
-                                size="sm"
-                                onclick={() => addStep({description: '', title: ''})}
+                                class="w-full"
+                                size="md"
+                                onclick={() => addIngredient({
+                                    name: '',
+                                    quantity: 0,
+                                    unit: ''
+                                })}
                         >
-                            {$_('edit.instructions.add')}
+                            {$_('edit.ingredients.add')}
                         </Button>
                     </div>
+                </div>
+                <div>
+                    <Label class="mb-4">{$_('edit.instructions.label')}</Label>
 
                     <div class="space-y-3">
                         {#each formData.steps as step, index}
@@ -298,6 +292,16 @@
                                 {/if}
                             </div>
                         {/each}
+                    </div>
+                    <div class="flex justify-center items-center mt-4">
+                        <Button
+                                variant="outline"
+                                class="w-full"
+                                size="md"
+                                onclick={() => addStep({description: '', title: ''})}
+                        >
+                            {$_('edit.instructions.add')}
+                        </Button>
                     </div>
                 </div>
 
