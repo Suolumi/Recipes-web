@@ -6,8 +6,8 @@
     import {goto} from "$app/navigation";
     import {getRecipes, type RecipePreview} from "$lib/recipes";
     import {serverUrl, user} from "$lib/stores";
-    import { SquarePen, Trash } from '@lucide/svelte';
-    import {updateSelf, type UserSettingsForm} from "$lib/user";
+    import { SquarePen, Trash, Camera } from '@lucide/svelte';
+    import {updateSelf, updateUserPicture, type UserSettingsForm} from "$lib/user";
     import {toastError} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
 
@@ -18,6 +18,7 @@
     })
 
     let userRecipes: RecipePreview[] = $state([])
+    let fileInput = $state();
 
     function updateProfile(event: Event) {
         event.preventDefault();
@@ -48,22 +49,60 @@
     function editRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}/edit`)
     }
+
+    function triggerFileInput() {
+        fileInput?.click();
+    }
+
+    async function updatePicture(e: Event) {
+        const target = e.target as HTMLInputElement;
+        let file;
+        if (target.files && target.files.length > 0) {
+            file = target.files[0];
+        }
+        if (!file)
+            return;
+        const {data} = await updateUserPicture(file)
+        if (data && $user) {
+            $user.picture = data.id
+        }
+    }
 </script>
 
 <div class="max-w-5xl mx-auto px-4 py-8">
     <div class="mb-8">
         <div class="flex items-center gap-x-4">
-            {#if $user && $user.picture}
-                <img
-                        src={`${$serverUrl}/pictures/${$user.picture}` || "/placeholder.svg"}
-                        alt="{$user.username} profile"
-                        class="w-24 h-24 rounded-full border-2 border-card object-cover"
-                />
-            {:else}
-                <div class="w-24 h-24 rounded-full bg-primary text-primary-foreground border-2 border-card flex items-center justify-center text-4xl font-medium">
-                    {($user?.username ?? '?').charAt(0)}
-                </div>
-            {/if}
+            <button
+                    type="button"
+                    onclick={triggerFileInput}
+                    class="relative group cursor-pointer"
+                    aria-label="Upload profile picture"
+            >
+                {#if $user && $user.picture}
+                    <img
+                            src={`${$serverUrl}/pictures/${$user.picture}` || "/placeholder.svg"}
+                            alt="{$user.username} profile"
+                            class="w-24 h-24 rounded-full object-cover transition-colors"
+                    />
+                {:else}
+                    <div class="w-24 h-24 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-4xl font-medium">
+                        {($user?.username ?? '?').charAt(0)}
+                    </div>
+                {/if}
+
+                <!-- Upload overlay on hover -->
+                <span class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Camera color="white" />
+                </span>
+            </button>
+            <input
+                    bind:this={fileInput}
+                    type="file"
+                    accept="image/*"
+                    onchange={e => updatePicture(e)}
+                    class="hidden"
+                    aria-label="Profile picture file input"
+            />
             <div>
                 <h1 class="text-3xl font-bold text-foreground mb-2">{$user?.username ?? 'No username??'}</h1>
                 <p class="text-muted-foreground">{$user?.email ?? 'No email'}</p>

@@ -8,12 +8,14 @@
     import {register, type RegisterRequest} from "$lib/auth";
     import {toastError, toastSuccess} from "$lib/utils";
     import {_, locale} from "svelte-i18n";
+    import {EyeIcon, EyeOff} from "@lucide/svelte";
 
     let email = $state('');
     let username = $state('');
     let password = $state('');
     let confirmPassword = $state('');
     let error = $state('');
+    let showPassword = $state(false)
 
     async function handleRegister(event: SubmitEvent) {
         event.preventDefault();
@@ -84,22 +86,50 @@
 
                 <div>
                     <Label for="password" required>{$_('register.password.label')}</Label>
-                    <Input
-                            id="password"
-                            type="password"
-                            bind:value={password}
-                            placeholder={$_('register.password.placeholder')}
-                    />
+                    <div class="relative">
+                        <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                bind:value={password}
+                                placeholder={$_('register.password.placeholder')}
+                        />
+                        <button
+                                type="button"
+                                onclick={() => showPassword = !showPassword}
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {#if showPassword}
+                                <EyeOff class="cursor-pointer" />
+                            {:else}
+                                <EyeIcon class="cursor-pointer" />
+                            {/if}
+                        </button>
+                    </div>
                 </div>
 
                 <div>
                     <Label for="confirmPassword" required>{$_('register.passwordConfirm.label')}</Label>
-                    <Input
-                            id="confirmPassword"
-                            type="password"
-                            bind:value={confirmPassword}
-                            placeholder={$_('register.passwordConfirm.placeholder')}
-                    />
+                    <div class="relative">
+                        <Input
+                                id="confirmPassword"
+                                type={showPassword ? "text" : "password"}
+                                bind:value={confirmPassword}
+                                placeholder={$_('register.passwordConfirm.placeholder')}
+                        />
+                        <button
+                                type="button"
+                                onclick={() => showPassword = !showPassword}
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {#if showPassword}
+                                <EyeOff class="cursor-pointer" />
+                            {:else}
+                                <EyeIcon class="cursor-pointer" />
+                            {/if}
+                        </button>
+                    </div>
                 </div>
             </div>
 

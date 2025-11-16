@@ -13,10 +13,20 @@ export type UserSettingsForm = {
     password?: string
 }
 
+export type UpdateUserPictureResponse = {
+    id: string
+}
+
 export async function getSelf() {
     return apiFetchJson<User>("/users/me")
 }
 
 export async function updateSelf(user: UserSettingsForm) {
     return apiFetchJson<User>(`/users/me`, 'PUT', user)
+}
+
+export function updateUserPicture(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return apiFetchJson<UpdateUserPictureResponse>('/users/me/picture', 'POST', formData, null, {})
 }

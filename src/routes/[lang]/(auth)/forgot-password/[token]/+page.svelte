@@ -7,10 +7,12 @@
     import {resetPassword} from "$lib/auth";
     import {page} from "$app/state";
     import {toastError, toastSuccess} from "$lib/utils";
+    import {EyeIcon, EyeOff} from "@lucide/svelte";
 
     let password = $state('');
     let confirmPassword = $state('');
     let message = $state('');
+    let showPassword = $state(false)
 
     async function handleSubmit(event: Event) {
         event.preventDefault();
@@ -48,24 +50,52 @@
         <form class="mt-8 space-y-6" onsubmit={handleSubmit}>
             <div>
                 <Label for="password" required>{$_('reset.new.label')}</Label>
-                <Input
-                        id="password"
-                        type="password"
-                        bind:value={password}
-                        required
-                        placeholder={$_('reset.new.placeholder')}
-                />
+                <div class="relative">
+                    <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            bind:value={password}
+                            required
+                            placeholder={$_('reset.new.placeholder')}
+                    />
+                </div>
+                <button
+                        type="button"
+                        onclick={() => showPassword = !showPassword}
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                    {#if showPassword}
+                        <EyeOff class="cursor-pointer" />
+                    {:else}
+                        <EyeIcon class="cursor-pointer" />
+                    {/if}
+                </button>
             </div>
 
             <div>
                 <Label for="confirm-password" required>{$_('reset.confirm.label')}</Label>
-                <Input
-                        id="confirm-password"
-                        type="password"
-                        bind:value={confirmPassword}
-                        required
-                        placeholder={$_('reset.confirm.placeholder')}
-                />
+                <div class="relative">
+                    <Input
+                            id="confirm-password"
+                            type={showPassword ? "text" : "password"}
+                            bind:value={confirmPassword}
+                            required
+                            placeholder={$_('reset.confirm.placeholder')}
+                    />
+                </div>
+                <button
+                        type="button"
+                        onclick={() => showPassword = !showPassword}
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                    {#if showPassword}
+                        <EyeOff class="cursor-pointer" />
+                    {:else}
+                        <EyeIcon class="cursor-pointer" />
+                    {/if}
+                </button>
             </div>
 
             {#if message}

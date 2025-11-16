@@ -7,10 +7,12 @@
     import {accessToken, refreshToken} from "$lib/stores";
     import {toastError, toastSuccess} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
+    import {EyeIcon, EyeOff} from "@lucide/svelte";
 
     let id = $state('');
     let password = $state('');
     let error = $state('');
+    let showPassword = $state(false)
 
     async function handleLogin(event: SubmitEvent) {
         event.preventDefault();
@@ -61,12 +63,26 @@
 
                 <div>
                     <Label for="password" required>{$_('login.password.label')}</Label>
-                    <Input
-                            id="password"
-                            type="password"
-                            bind:value={password}
-                            placeholder={$_('login.password.placeholder')}
-                    />
+                    <div class="relative">
+                        <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                bind:value={password}
+                                placeholder={$_('login.password.placeholder')}
+                        />
+                        <button
+                                type="button"
+                                onclick={() => showPassword = !showPassword}
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {#if showPassword}
+                                <EyeOff class="cursor-pointer" />
+                            {:else}
+                                <EyeIcon class="cursor-pointer" />
+                            {/if}
+                        </button>
+                    </div>
                 </div>
             </div>
 

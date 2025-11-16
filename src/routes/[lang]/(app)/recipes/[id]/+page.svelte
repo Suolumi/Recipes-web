@@ -1,12 +1,11 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {getIngredientName, getRecipe, type Recipe, type RecipePreview, recipeTypeColors} from "$lib/recipes";
+    import {getIngredientName, getRecipe, type Recipe, recipeTypeColors} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
-    import {serverUrl} from "$lib/stores";
+    import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
-    import {toast} from "@zerodevx/svelte-toast";
 
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
@@ -73,7 +72,7 @@
                 {/if}
                 <div class="embla" use:emblaCarouselSvelte onemblaInit={emblaInit}>
                     {#if (recipe.pictures?.length ?? 0) >= 1}
-                        <div class="embla__container">
+                        <div class="embla__container flex">
                             {#each recipe.pictures as picture}
                                 <img
                                         src={`${$serverUrl}/recipe-pictures/${picture}`}
@@ -113,7 +112,7 @@
                     <div class="flex items-center gap-x-2">
                         {#if recipe.author.picture}
                             <img
-                                    src={recipe.author.picture || "/placeholder.svg"}
+                                    src={`${$serverUrl}/pictures/${$user?.picture}`}
                                     alt="{recipe.author.username} profile"
                                     class="w-8 h-8 rounded-full border-2 border-card object-cover"
                             />
