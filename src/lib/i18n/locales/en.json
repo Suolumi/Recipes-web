@@ -199,7 +199,8 @@
       "drink": "Drink",
       "plate": "Snack platter"
     },
-    "min": "min"
+    "min": "min",
+    "h": "h"
   },
   "forgot": {
     "reset": "Reset your password",

@@ -112,7 +112,7 @@
                     <div class="flex items-center gap-x-2">
                         {#if recipe.author.picture}
                             <img
-                                    src={`${$serverUrl}/pictures/${$user?.picture}`}
+                                    src={`${$serverUrl}/pictures/${recipe.author.picture}`}
                                     alt="{recipe.author.username} profile"
                                     class="w-8 h-8 rounded-full border-2 border-card object-cover"
                             />
@@ -127,15 +127,15 @@
                     <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-muted-foreground text-sm sm:text-base">
                         <div class="flex items-center">
                             <Clock size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.prep')}: {recipe.preparation_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.prep')}: {recipe.preparation_time >= 60 ? `${recipe.preparation_time / 60}${$_('recipes.h')} ` : ''}{recipe.preparation_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Flame size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.cook')}: {recipe.cooking_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.cook')}: {recipe.cooking_time >= 60 ? `${recipe.cooking_time / 60}${$_('recipes.h')} ` : ''}{recipe.cooking_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Wind size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.rest')}: {recipe.resting_time}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{$_('recipe.rest')}: {recipe.resting_time >= 60 ? `${recipe.resting_time / 60}${$_('recipes.h')} ` : ''}{recipe.resting_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black dark:text-current" />

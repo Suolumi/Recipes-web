@@ -199,7 +199,8 @@
       "drink": "Juoma",
       "plate": "Tarjotin"
     },
-    "min": "min"
+    "min": "min",
+    "h": "t"
   },
   "forgot": {
     "reset": "Nollaa salasanasi",

@@ -33,6 +33,7 @@
     $effect(() => {
         getRecipes({
             author: $user?.username ?? '',
+            limit: 100
         }).then(res => {
             if (res.data)
                 userRecipes = res.data.items

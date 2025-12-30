@@ -199,7 +199,8 @@
       "drink": "Boisson",
       "plate": "Plateau télé"
     },
-    "min": "min"
+    "min": "min",
+    "h": "h"
   },
   "forgot": {
     "reset": "Réinitialisez votre mot de passe",

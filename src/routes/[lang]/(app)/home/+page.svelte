@@ -13,6 +13,7 @@
             request.kind = selectedType as RecipeType
         if (searchTerm.length > 0)
             request.title = searchTerm
+        request.limit = 100
 
         getRecipes(request).then(res => {
             if (!res.data)
