@@ -182,10 +182,13 @@
   "create": {
     "toasts": {
       "save": "Failed to create recipe",
-      "noAccount": "You need to create an account first"
+      "noAccount": "You need to create an account first",
+      "negativeNumber": "Quantities / times can't be negative"
     },
     "headLabel": "Create",
-    "commentLabel": "Today I will surprise everyone with..."
+    "commentLabel": "Today I will surprise everyone with...",
+    "noIngredient": "No ingredients added yet...",
+    "noStep": "No instructions added yet..."
   },
   "recipes": {
     "types": {

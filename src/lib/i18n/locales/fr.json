@@ -182,10 +182,13 @@
   "create": {
     "toasts": {
       "save": "Échec de la création de la recette",
-      "noAccount": "Vous devez d'abord créer un compte"
+      "noAccount": "Vous devez d'abord créer un compte",
+      "negativeNumber": "Les quantités / durées ne peuvent pas être négatives"
     },
     "headLabel": "Créer",
-    "commentLabel": "Aujourd'hui je vais les surprendre avec..."
+    "commentLabel": "Aujourd'hui je vais les surprendre avec...",
+    "noIngredient": "Aucun ingrédient ajouté pour le moment...",
+    "noStep": "Aucune instruction ajoutée pour le moment..."
   },
   "recipes": {
     "types": {

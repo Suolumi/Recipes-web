@@ -5,10 +5,18 @@
     import Select from './Select.svelte';
     import Label from './Label.svelte';
     import RecipeCard from "./RecipeCard.svelte";
-    import {type Ingredient, type RecipeForm, RecipeTypes, saveRecipeFile, type Step} from "$lib/recipes";
+    import {
+        getIngredientName,
+        type Ingredient,
+        type RecipeForm,
+        RecipeTypes,
+        saveRecipeFile,
+        type Step
+    } from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_} from 'svelte-i18n'
+    import {toastError} from "$lib/utils";
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
@@ -63,6 +71,10 @@
     }
 
     async function saveRecipe() {
+        for (let nb of [...formData.ingredients.map(e => e.quantity), formData.cooking_time, formData.resting_time, formData.preparation_time, formData.quantity]) {
+            if (nb < 0)
+                return toastError($_('create.toasts.negativeNumber'))
+        }
         onSubmit(formData);
     }
 
@@ -316,7 +328,63 @@
         <div class="bg-card rounded-lg border border-border p-6">
             <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.preview')}</h2>
 
-            <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: ''}} translate={false} />
+            <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: ''}} translate={false} disabled />
+
+            <div class="bg-card rounded-lg border border-border p-6 mb-6 mt-6">
+                <h3 class="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    {$_('recipe.ingredients')}
+                </h3>
+
+                {#if formData.ingredients.length > 0 && formData.ingredients.some(i => i.name.trim())}
+                    <ul class="space-y-2">
+                        {#each formData.ingredients as ingredient}
+                            {#if ingredient.name.trim()}
+                                <li class="flex items-start text-sm">
+                                    <div class="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
+                                    <span class="text-foreground">
+                                        {getIngredientName(ingredient)}
+                                    </span>
+                                </li>
+                            {/if}
+                        {/each}
+                    </ul>
+                {:else}
+                    <p class="text-sm text-muted-foreground">{$_('create.noIngredient')}</p>
+                {/if}
+            </div>
+
+            <div class="bg-card rounded-lg border border-border p-6">
+                <h3 class="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33"></path>
+                    </svg>
+                    {$_('recipe.instructions')}
+                </h3>
+
+                {#if formData.steps.length > 0 && formData.steps.some(s => s.title.trim() || s.description.trim())}
+                    <div class="space-y-4">
+                        {#each formData.steps as step}
+                            {#if step.title.trim() || step.description.trim()}
+                                <div class="flex gap-3">
+                                    <div class="text-sm">
+                                        {#if step.title.trim()}
+                                            <h4 class="font-semibold text-foreground mb-1">{step.title}</h4>
+                                        {/if}
+                                        {#if step.description.trim()}
+                                            <p class="text-foreground leading-relaxed">{step.description}</p>
+                                        {/if}
+                                    </div>
+                                </div>
+                            {/if}
+                        {/each}
+                    </div>
+                {:else}
+                    <p class="text-sm text-muted-foreground">{$_('create.noStep')}</p>
+                {/if}
+            </div>
         </div>
     </div>
 </div>

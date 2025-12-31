@@ -7,7 +7,7 @@
     import {serverUrl} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
 
-    let { recipe, translate }: { recipe: RecipePreview, translate: boolean } = $props();
+    let { recipe, translate, disabled }: { recipe: RecipePreview, translate: boolean, disabled: boolean } = $props();
     let emblaApi: any = $state();
 
     function viewRecipe(id: string) {
@@ -42,11 +42,11 @@
 </script>
 
 <div
-        class="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col"
+        class={`bg-card rounded-lg border border-border overflow-hidden ${disabled ? '' : 'hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer'} flex flex-col`}
         role="button"
         tabindex="0"
-        onclick={() => viewRecipe(recipe.id)}
-        onkeydown={(e) => e.key === 'Enter' && viewRecipe(recipe.id)}
+        onclick={() => !disabled && viewRecipe(recipe.id)}
+        onkeydown={(e) => e.key === 'Enter' && !disabled && viewRecipe(recipe.id)}
 >
     <div class="relative">
         {#if (recipe.pictures?.length ?? 0) > 1}

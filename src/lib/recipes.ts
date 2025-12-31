@@ -93,7 +93,7 @@ export type SaveRecipeFileResponse = {
 export function getIngredientName(ingredient: Ingredient): string {
     if (ingredient.quantity && ingredient.quantity > 0) {
         if (ingredient.unit && ingredient.unit !== '') {
-            return `${ingredient.quantity} ${ingredient.unit} ${ingredient.name}`
+            return `${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}`
         }
         return `${ingredient.quantity} ${ingredient.name}`
     }

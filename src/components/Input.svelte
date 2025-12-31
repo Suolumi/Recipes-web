@@ -5,6 +5,7 @@
         placeholder?: string;
         disabled?: boolean;
         required?: boolean;
+        min?: number;
         id?: string;
         class?: string;
         [key: string]: any;
