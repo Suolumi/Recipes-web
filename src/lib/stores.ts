@@ -1,6 +1,7 @@
 import { writable } from "svelte/store"
 import { persisted } from 'svelte-persisted-store';
 import type {User} from "$lib/user";
+import type {RecipeForm} from "$lib/recipes";
 
 const jsonParser = {
     parse: (text: any) => {
@@ -22,6 +23,10 @@ export const refreshToken = persisted('refreshToken', '', {
     syncTabs: true,
     serializer: jsonParser,
 });
+export const recipeCache = persisted<RecipeForm | null>('recipeCache', null, {
+    syncTabs: true,
+    serializer: jsonParser,
+})
 
 export const user = writable<User | null>(null)
 export const darkMode = persisted<boolean>('darkMode', false, {

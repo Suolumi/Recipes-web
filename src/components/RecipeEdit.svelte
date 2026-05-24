@@ -14,7 +14,7 @@
         type Step
     } from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
-    import {serverUrl, user} from "$lib/stores";
+    import {recipeCache, serverUrl, user} from "$lib/stores";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
 
@@ -30,29 +30,41 @@
         onChange = (recipe: RecipeForm) => {},
         onSubmit = (recipe: RecipeForm) => {},
         recipe = undefined,
-        headLabel = 'Create',
-        commentLabel = 'Today I will surprise everyone with...',
+        headLabel = $_('create.headLabel'),
+        commentLabel = $_('create.commentLabel'),
     }: Props = $props()
 
-    let formData = $state<RecipeForm>(recipe ?? {
-        title: '',
-        description: '',
-        quantity: 0,
-        kind: 'dish',
-        preparation_time: 0,
-        cooking_time: 0,
-        resting_time: 0,
-        ingredients: [],
-        steps: [],
-        pictures: []
-    });
+    let formData = $state<RecipeForm>(getRecipe(recipe));
 
     $effect(() => {
         if (recipe)
             formData = recipe
     })
 
-    $effect(() => onChange(formData))
+    $effect(() => {
+        onChange(formData)
+        $recipeCache = formData
+    })
+
+    function getRecipe(recipeProps: RecipeForm | undefined): RecipeForm {
+        let r = <RecipeForm>{
+            title: '',
+            description: '',
+            quantity: 0,
+            kind: 'dish',
+            preparation_time: 0,
+            cooking_time: 0,
+            resting_time: 0,
+            ingredients: [],
+            steps: [],
+            pictures: []
+        }
+
+        if (!recipeProps) {
+            return $recipeCache ?? r
+        }
+        return $recipeCache?.title == recipeProps.title ? $recipeCache : recipeProps
+    }
 
     function addIngredient(ingredient: Ingredient) {
         formData.ingredients = [...formData.ingredients, ingredient];
