@@ -52,6 +52,15 @@
     const typeColorClass = $derived(recipeTypeColors[(recipe ?? {kind: ''}).kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
 </script>
 
+<svelte:head>
+    <title>{recipe?.title}</title>
+
+    <meta property="og:title" content={recipe?.title} />
+    <meta property="og:description" content={recipe?.description} />
+    <meta property="og:image" content={recipe?.pictures && recipe.pictures.length > 0 ? recipe.pictures[0] : ""} />
+    <meta property="og:url" content={`https://recipes.suolumi.fr/${$locale}/recipes/${recipe?.id}`} />
+    <meta property="og:type" content="website">
+</svelte:head>
 {#if recipe}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
