@@ -96,11 +96,11 @@
 
     async function onFileUpload(files: FileList) {
         for (const file of files) {
-            saveRecipeFile(file).then(res => {
-                if (res.data) {
+            saveRecipeFile(file).then(({response, data}) => {
+                if (response.ok && data) {
                     if (!formData.pictures)
                         formData.pictures = []
-                    formData.pictures.push(res.data.id);
+                    formData.pictures.push(data.id);
                 }
             })
         }

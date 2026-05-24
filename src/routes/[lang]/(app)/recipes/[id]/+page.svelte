@@ -6,6 +6,7 @@
     import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
+    import {toastError} from "$lib/utils";
 
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
@@ -13,7 +14,12 @@
     $effect(() => {
         if (!id)
             return
-        getRecipe(id).then(r => recipe = r.data)
+        getRecipe(id).then(({response, data}) => {
+            if (response.ok && data)
+                recipe = data
+            else
+                toastError($_('settings.errors.getRecipes'))
+        })
     })
 
     let emblaApi: any = $state();

@@ -11,9 +11,9 @@
     let recipe: RecipeForm | undefined = $state(undefined);
 
     async function submit(recipe: RecipeForm) {
-        const res = await editRecipe(recipe, id)
-        if (res.data) {
-            goto(`/${$locale}/recipes/${res.data.id}`)
+        const {response, data} = await editRecipe(recipe, id)
+        if (response.ok && data) {
+            goto(`/${$locale}/recipes/${data.id}`)
         } else
             toastError($_('edit.toasts.save'))
     }
@@ -21,9 +21,9 @@
     onMount(() => {
         if (!id)
             return
-        getRecipe(id).then(r => {
-            if (r.data)
-                recipe = r.data as RecipeForm
+        getRecipe(id).then(({response, data}) => {
+            if (response.ok && data)
+                recipe = data as RecipeForm
         })
     })
 </script>

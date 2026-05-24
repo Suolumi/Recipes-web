@@ -8,10 +8,10 @@
     import {locale, _} from "svelte-i18n";
 
     async function submit(recipe: RecipeForm) {
-        const res = await createRecipe(recipe)
-        if (res.data) {
+        const {response, data} = await createRecipe(recipe)
+        if (response.ok && data) {
             $recipeCache = null
-            goto(`/${$locale}/recipes/${res.data.id}`)
+            goto(`/${$locale}/recipes/${data.id}`)
         } else
             toastError($_('create.toasts.save'));
     }

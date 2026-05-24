@@ -15,10 +15,10 @@
             request.title = searchTerm
         request.limit = 100
 
-        getRecipes(request).then(res => {
-            if (!res.data)
+        getRecipes(request).then(({response, data}) => {
+            if (!response.ok || !data)
                 return
-            recipes = [...res.data.items];
+            recipes = [...data.items];
         })
     })
 

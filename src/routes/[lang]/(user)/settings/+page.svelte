@@ -11,7 +11,7 @@
     import {toastError, toastSuccess} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
     import Modal from "../../../../components/Modal.svelte";
-    import {deleteRecipe} from "$lib/recipes.ts";
+    import {deleteRecipe} from "$lib/recipes";
 
     let userForm: UserSettingsForm = $state({
         username: $user?.username ?? '',
@@ -28,9 +28,9 @@
 
     function updateProfile(event: Event) {
         event.preventDefault();
-        updateSelf(userForm).then(res => {
-            if (res.data)
-                user.set(res.data)
+        updateSelf(userForm).then(({response, data}) => {
+            if (response.ok && data)
+                user.set(data)
             else
                 toastError($_('settings.errors.update'));
         })
@@ -52,9 +52,9 @@
         getRecipes({
             author: $user?.username ?? '',
             limit: 100
-        }).then(res => {
-            if (res.data)
-                userRecipes = res.data.items
+        }).then(({response, data}) => {
+            if (response.ok && data)
+                userRecipes = data.items
             else
                 toastError($_('settings.errors.getRecipes'))
         })

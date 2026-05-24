@@ -43,10 +43,10 @@
             password
         };
 
-        const response = await register(newUser);
-        if (response.data) {
-            accessToken.set(response.data.access_token);
-            refreshToken.set(response.data.refresh_token);
+        const {response, data} = await register(newUser);
+        if (response.ok && data) {
+            accessToken.set(data.access_token);
+            refreshToken.set(data.refresh_token);
             toastSuccess($_('register.toasts.success'));
             await goto(`/${$locale}/home`)
         } else {

@@ -27,10 +27,10 @@
             id,
             password
         }
-        const response = await login(request);
-        if (response.data) {
-            accessToken.set(response.data.access_token);
-            refreshToken.set(response.data.refresh_token);
+        const {response, data} = await login(request);
+        if (response.ok && data) {
+            accessToken.set(data.access_token);
+            refreshToken.set(data.refresh_token);
             toastSuccess($_('login.toasts.success'));
             await goto(`/${$locale}/home`)
         } else
