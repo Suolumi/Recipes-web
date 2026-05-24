@@ -85,7 +85,8 @@
   "settings": {
     "errors": {
       "update": "Virhe profiilia päivitettäessä.",
-      "getRecipes": "Palvelinvirhe, reseptejä ei voitu hakea."
+      "getRecipes": "Palvelinvirhe, reseptejä ei voitu hakea.",
+      "delete": "Virhe reseptiä poistettaessa"
     },
     "info": "Profiili",
     "username": {
@@ -103,7 +104,13 @@
     "submit": "Päivitä profiili",
     "recipeCount": "Reseptisi",
     "noRecipes": "Et ole vielä luonut reseptejä.",
-    "createRecipe": "Luo ensimmäinen reseptisi"
+    "createRecipe": "Luo ensimmäinen reseptisi",
+    "delete": {
+      "title": "Poistetaanko tämä resepti?",
+      "cancel": "Peruuta",
+      "confirm": "Vahvista",
+      "success": "Resepti poistettu onnistuneesti"
+    }
   },
   "recipe": {
     "back": "Takaisin resepteihin",

@@ -8,8 +8,10 @@
     import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash, Camera } from '@lucide/svelte';
     import {updateSelf, updateUserPicture, type UserSettingsForm} from "$lib/user";
-    import {toastError} from "$lib/utils";
+    import {toastError, toastSuccess} from "$lib/utils";
     import {locale, _} from "svelte-i18n";
+    import Modal from "../../../../components/Modal.svelte";
+    import {deleteRecipe} from "$lib/recipes.ts";
 
     let userForm: UserSettingsForm = $state({
         username: $user?.username ?? '',
@@ -19,6 +21,10 @@
 
     let userRecipes: RecipePreview[] = $state([])
     let fileInput = $state();
+    let modal = $state({
+        isOpen: false,
+        recipeId: ""
+    });
 
     function updateProfile(event: Event) {
         event.preventDefault();
@@ -27,6 +33,18 @@
                 user.set(res.data)
             else
                 toastError($_('settings.errors.update'));
+        })
+    }
+
+    function deleteR(id: string) {
+        deleteRecipe(id).then(() => {
+            toastSuccess($_('settings.delete.success'))
+        }).catch(err => {
+            console.log(err)
+            toastError($_('settings.errors.delete'));
+        }).finally(() => {
+            userRecipes = userRecipes.filter(e => e.id !== id)
+            modal.isOpen = false
         })
     }
 
@@ -162,7 +180,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {#each userRecipes as recipe}
                     <div class="relative">
-                        <RecipeCard {recipe} translate={false} />
+                        <RecipeCard {recipe} translate={false} disabled={false} />
                         <Button
                                 variant="outline"
                                 size="sm"
@@ -175,9 +193,9 @@
                         <Button
                                 variant="destructive"
                                 size="sm"
-                                onclick={() => alert("Too lazy to make a modal right now, doesn't work")}
+                                onclick={() => modal = {isOpen: true, recipeId: recipe.id}}
                                 class="absolute top-2 right-2 p-2 bg-card/90 hover:bg-card"
-                                aria-label="Edit recipe"
+                                aria-label="Delete recipe"
                         >
                             <Trash size="16" />
                         </Button>
@@ -193,4 +211,24 @@
             </div>
         {/if}
     </div>
+    <Modal open={modal.isOpen} onClose={() => modal.isOpen = false} title={$_('settings.delete.title')}>
+        <div class="flex justify-between">
+            <Button
+                    variant="outline"
+                    size="md"
+                    onclick={() => modal.isOpen = false}
+                    class="bg-red-800"
+            >
+                {$_('settings.delete.cancel')}
+            </Button>
+            <Button
+                    variant="outline"
+                    size="md"
+                    onclick={() => deleteR(modal.recipeId)}
+                    class="bg-primary"
+            >
+                {$_('settings.delete.confirm')}
+            </Button>
+        </div>
+    </Modal>
 </div>

@@ -85,7 +85,8 @@
   "settings": {
     "errors": {
       "update": "Error while updating profile.",
-      "getRecipes": "Server error, couldn't get recipes."
+      "getRecipes": "Server error, couldn't get recipes.",
+      "delete": "Error while deleting recipe"
     },
     "info": "Profile",
     "username": {
@@ -99,6 +100,12 @@
     "password": {
       "label": "Password",
       "placeholder": "Enter your new password"
+    },
+    "delete": {
+      "title": "Delete this recipe?",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "success": "Recipe successfully deleted"
     },
     "submit": "Update profile",
     "recipeCount": "Your Recipes",

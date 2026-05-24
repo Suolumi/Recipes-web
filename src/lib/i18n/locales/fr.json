@@ -85,7 +85,8 @@
   "settings": {
     "errors": {
       "update": "Erreur lors de la mise à jour du profil.",
-      "getRecipes": "Erreur serveur, impossible de récupérer les recettes."
+      "getRecipes": "Erreur serveur, impossible de récupérer les recettes.",
+      "delete": "Erreur lors de la suppression de la recette"
     },
     "info": "Profil",
     "username": {
@@ -103,7 +104,13 @@
     "submit": "Mettre à jour le profil",
     "recipeCount": "Vos recettes",
     "noRecipes": "Vous n'avez pas encore créé de recettes.",
-    "createRecipe": "Créez votre première recette"
+    "createRecipe": "Créez votre première recette",
+    "delete": {
+      "title": "Supprimer cette recette?",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "success": "Recette supprimée avec succès"
+    }
   },
   "recipe": {
     "back": "Retour aux recettes",

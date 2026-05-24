@@ -119,5 +119,9 @@ export function editRecipe(recipe: RecipeForm, id: string) {
 export function saveRecipeFile(file: File) {
     const formData = new FormData()
     formData.append('file', file)
-    return apiFetchJson<SaveRecipeFileResponse>('/recipe-pictures', 'POST', formData, null, {})
+    return apiFetchJson<SaveRecipeFileResponse>('/recipe-pictures', 'POST', formData, null)
+}
+
+export function deleteRecipe(id: string) {
+    return apiFetchJson<Recipe>(`/recipes/${id}`, "DELETE", null)
 }
