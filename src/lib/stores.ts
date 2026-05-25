@@ -2,6 +2,7 @@ import { writable } from "svelte/store"
 import { persisted } from 'svelte-persisted-store';
 import type {User} from "$lib/user";
 import type {RecipeForm} from "$lib/recipes";
+import {PUBLIC_SERVER_URL} from "$env/static/public";
 
 const jsonParser = {
     parse: (text: any) => {
@@ -33,4 +34,4 @@ export const darkMode = persisted<boolean>('darkMode', false, {
     syncTabs: true,
     serializer: jsonParser,
 })
-export const serverUrl = writable<string>('https://recipes-api.suolumi.fr/api/v1')
+export const serverUrl = writable<string>(PUBLIC_SERVER_URL)
