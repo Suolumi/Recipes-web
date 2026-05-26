@@ -45,10 +45,9 @@
 
     <meta property="og:title" content={recipe?.title} />
     <meta property="og:description" content={recipe?.description} />
-    <meta property="og:image" content={recipe?.pictures && recipe.pictures.length > 0 ? `${PUBLIC_SERVER_URL}/recipe-pictures/${recipe.pictures[0]}` : ""} />
-    <meta property="og:url" content={recipe?.id ? `${PUBLIC_SERVER_URL}/${$locale}/recipes/${recipe.id}` : ""} />
+    <meta property="og:image" content={recipe?.pictures && recipe.pictures.length > 0 ? recipe.pictures[0] : ""} />
+    <meta property="og:url" content={`${PUBLIC_SERVER_URL}/recipes/${recipe?.id}`} />
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 {#if recipe}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

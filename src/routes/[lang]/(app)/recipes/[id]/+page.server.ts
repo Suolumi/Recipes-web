@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
 import { getRecipe } from '$lib/recipes';
-export const prerender = false;
 
 export const load: PageServerLoad = async ({ params }) => {
     const id = params.id;
