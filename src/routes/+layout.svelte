@@ -7,14 +7,13 @@
     import {getSelf} from "$lib/user";
     import {SvelteToast} from "@zerodevx/svelte-toast";
     import {locale} from "svelte-i18n";
-    import {PUBLIC_SERVER_URL} from "$env/static/public";
 
 	let { children } = $props();
 
 	onMount(() => {
 		if (window.location.pathname === "/")
 			goto(`/${$locale ?? 'en'}/home`)
-        serverUrl.set(PUBLIC_SERVER_URL)
+        serverUrl.set('https://recipes-api.suolumi.fr/api/v1')
 	})
 
     afterNavigate(async () => {
