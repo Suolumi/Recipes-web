@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-ARG VITE_PUBLIC_SERVER_URL=https://recipes-api.suolumi.fr/api/v1
+ARG VITE_PUBLIC_SERVER_URL=http://localhost:5173
 ENV VITE_PUBLIC_SERVER_URL=${VITE_PUBLIC_SERVER_URL}
 
 # Ensure .env exists with PUBLIC_SERVER_URL for SvelteKit static env import
