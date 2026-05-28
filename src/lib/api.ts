@@ -21,10 +21,10 @@ function buildRequest(url: string, method: string, body: object | null, query: o
     return f(url, config);
 }
 
-export async function refreshAccessToken() {
+export async function refreshAccessToken(f: Function = fetch) {
     const response = await buildRequest(`${get(serverUrl)}/refresh`, 'POST', {
         refresh_token: get(refreshToken),
-    }, null, null)
+    }, null, null, f)
 
     if (response.ok) {
         const {access_token} = await response.json()
@@ -55,7 +55,7 @@ export async function apiFetch<T>(
     let response = await buildRequest(get(serverUrl) + url, method, body, query, get(accessToken), headers, f);
 
     if (response.status === 401) {
-        const newToken = await refreshAccessToken();
+        const newToken = await refreshAccessToken(f);
 
         if (newToken) {
             response = await buildRequest(get(serverUrl) + url, method, body, query, newToken, headers, f);

@@ -34,6 +34,7 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.542.0",
+		"@sveltejs/adapter-node": "^5.5.4",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"embla-carousel-svelte": "^8.6.0",
 		"lodash-es": "^4.17.21",
