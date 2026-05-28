@@ -100,8 +100,8 @@ export function getIngredientName(ingredient: Ingredient): string {
     return ingredient.name
 }
 
-export function getRecipe(id: string, locale?: string) {
-    return apiFetchJson<Recipe>(`/recipes/${id}?locale=${locale ?? ''}`)
+export function getRecipe(id: string, locale?: string, f: Function = fetch) {
+    return apiFetchJson<Recipe>(`/recipes/${id}?locale=${locale ?? ''}`, "GET", undefined, undefined, undefined, f)
 }
 
 export function getRecipes(params: GetRecipesRequest) {

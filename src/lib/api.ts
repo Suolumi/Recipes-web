@@ -1,7 +1,7 @@
 import {accessToken, refreshToken, serverUrl, user} from '$lib/stores';
 import { get } from 'svelte/store';
 
-function buildRequest(url: string, method: string, body: object | null, query: object | null, token: string | null, headers?: object) {
+function buildRequest(url: string, method: string, body: object | null, query: object | null, token: string | null, headers?: object, f: Function = fetch) {
     const config: any = {
         method,
     }
@@ -18,7 +18,7 @@ function buildRequest(url: string, method: string, body: object | null, query: o
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
     }
-    return fetch(url, config);
+    return f(url, config);
 }
 
 export async function refreshAccessToken() {
@@ -46,18 +46,19 @@ export async function apiFetch<T>(
     body: object | null = null,
     query: object | null = null,
     json = false,
-    headers?: object
+    headers?: object,
+    f: Function = fetch
 ): Promise<{
     data?: T
     response: Response
 }> {
-    let response = await buildRequest(get(serverUrl) + url, method, body, query, get(accessToken), headers);
+    let response = await buildRequest(get(serverUrl) + url, method, body, query, get(accessToken), headers, f);
 
     if (response.status === 401) {
         const newToken = await refreshAccessToken();
 
         if (newToken) {
-            response = await buildRequest(get(serverUrl) + url, method, body, query, newToken, headers);
+            response = await buildRequest(get(serverUrl) + url, method, body, query, newToken, headers, f);
 
             if (response.status === 401) {
                 return {response}
@@ -78,7 +79,8 @@ export function apiFetchJson<T>(
     method = "GET",
     body: object | null = null,
     query: object | null = null,
-    headers?: object
+    headers?: object,
+    f: Function = fetch
 ) {
-    return apiFetch<T>(url, method, body, query, true, headers)
+    return apiFetch<T>(url, method, body, query, true, headers, f)
 }

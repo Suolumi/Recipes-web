@@ -9,16 +9,8 @@
     import {toastError} from "$lib/utils";
 
     const id = page.params.id
-    let recipe: Recipe | null | undefined = $state(null)
-
-    if (id) {
-        getRecipe(id).then(({response, data}) => {
-            if (response.ok && data)
-                recipe = data
-            else
-                toastError($_('settings.errors.getRecipes'))
-        })
-    }
+    const { data } = $props()
+    let recipe: Recipe | null | undefined = $state(data.recipe)
 
     $effect(() => {
         if (!id)
