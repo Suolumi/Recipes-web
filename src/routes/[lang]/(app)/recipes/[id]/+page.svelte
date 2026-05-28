@@ -11,6 +11,15 @@
     const id = page.params.id
     let recipe: Recipe | null | undefined = $state(null)
 
+    if (id) {
+        getRecipe(id).then(({response, data}) => {
+            if (response.ok && data)
+                recipe = data
+            else
+                toastError($_('settings.errors.getRecipes'))
+        })
+    }
+
     $effect(() => {
         if (!id)
             return
