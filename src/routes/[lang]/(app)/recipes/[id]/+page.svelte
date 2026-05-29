@@ -58,7 +58,7 @@
 
     <meta property="og:title" content={recipe?.title} />
     <meta property="og:description" content={recipe?.description} />
-    <meta property="og:image" content={recipe?.pictures && recipe.pictures.length > 0 ? recipe.pictures[0] : ""} />
+    <meta property="og:image" content={recipe?.pictures && recipe.pictures.length > 0 ? `${$serverUrl}/recipe-pictures/${recipe.pictures[0]}` : ""} />
     <meta property="og:url" content={`https://recipes.suolumi.fr/${$locale}/recipes/${recipe?.id}`} />
     <meta property="og:type" content="website">
 </svelte:head>
