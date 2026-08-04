@@ -7,9 +7,11 @@ function buildRequest(url: string, method: string, body: object | null, query: o
     }
 
     config.headers = headers ?? {'Content-Type': 'application/json'};
-    if (body) {
-        config.body = body instanceof FormData ? body : JSON.stringify(body);
-    }
+    if (body && body instanceof FormData) {
+        config.body = body;
+        config.headers['Content-Type'] = 'multipart/form-data';
+    } else if (body)
+        config.body = JSON.stringify(body);
     if (query) {
         Object.entries(query).forEach(([key, value], i) => {
             url += `${i === 0 ? '?': '&'}${key}=${value}`
