@@ -1,88 +1,118 @@
-import {accessToken, refreshToken, serverUrl, user} from '$lib/stores';
+import { accessToken, refreshToken, serverUrl, user } from '$lib/stores';
 import { get } from 'svelte/store';
 
-function buildRequest(url: string, method: string, body: object | null, query: object | null, token: string | null, headers?: object, f: Function = fetch) {
-    const config: any = {
-        method,
-    }
+type FetchFn = typeof fetch;
 
-    config.headers = headers ?? {'Content-Type': 'application/json'};
-    if (body && body instanceof FormData) {
-        config.body = body;
-        config.headers['Content-Type'] = 'multipart/form-data';
-    } else if (body)
-        config.body = JSON.stringify(body);
-    if (query) {
-        Object.entries(query).forEach(([key, value], i) => {
-            url += `${i === 0 ? '?': '&'}${key}=${value}`
-        })
-    }
-    if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`
-    }
-    return f(url, config);
-}
-
-export async function refreshAccessToken(f: Function = fetch) {
-    const response = await buildRequest(`${get(serverUrl)}/refresh`, 'POST', {
-        refresh_token: get(refreshToken),
-    }, null, null, f)
-
-    if (response.ok) {
-        const {access_token} = await response.json()
-
-        if (access_token) {
-            accessToken.set(access_token)
-            return access_token
-        } else {
-            console.error("No token in response, please check payload")
-            // toast.push("An unexpected error occurred, please try again later.")
-        }
-    }
-    user.set(null)
-}
-
-export async function apiFetch<T>(
+function buildRequest(
     url: string,
-    method = "GET",
-    body: object | null = null,
-    query: object | null = null,
-    json = false,
-    headers?: object,
-    f: Function = fetch
-): Promise<{
-    data?: T
-    response: Response
-}> {
-    let response = await buildRequest(get(serverUrl) + url, method, body, query, get(accessToken), headers, f);
+    {
+        method,
+        body,
+        query,
+        token,
+        headers,
+    }: {
+        method: string;
+        body?: object | FormData | null;
+        query?: Record<string, unknown> | null;
+        token?: string | null;
+        headers?: HeadersInit;
+    },
+    f: FetchFn = fetch
+) {
+    if (query) {
+        const params = new URLSearchParams(
+            Object.entries(query).map(([k, v]) => [k, String(v)])
+        );
+        url += `?${params}`;
+    }
+
+    const h = new Headers(headers);
+
+    if (!(body instanceof FormData) && !h.has('Content-Type')) {
+        h.set('Content-Type', 'application/json');
+    }
+
+    if (token) {
+        h.set('Authorization', `Bearer ${token}`);
+    }
+
+    return f(url, {
+        method,
+        headers: h,
+        body: body
+            ? body instanceof FormData
+                ? body
+                : JSON.stringify(body)
+            : undefined,
+    });
+}
+
+export async function refreshAccessToken(f: FetchFn = fetch) {
+    const response = await buildRequest(
+        `${get(serverUrl)}/refresh`,
+        {
+            method: 'POST',
+            body: {
+                refresh_token: get(refreshToken),
+            },
+        },
+        f
+    );
+
+    if (!response.ok) {
+        user.set(null);
+        return;
+    }
+
+    const { access_token } = await response.json();
+
+    if (!access_token) {
+        console.error('No token in response');
+        return;
+    }
+
+    accessToken.set(access_token);
+    return access_token;
+}
+
+export async function apiFetch(
+    url: string,
+    method = 'GET',
+    body: object | FormData | null = null,
+    query: Record<string, unknown> | null = null,
+    headers?: HeadersInit,
+    f: FetchFn = fetch
+) {
+    const fullUrl = `${get(serverUrl)}${url}`;
+
+    const send = (token: string | null) =>
+        buildRequest(
+            fullUrl,
+            { method, body, query, token, headers },
+            f
+        );
+
+    let response = await send(get(accessToken));
 
     if (response.status === 401) {
-        const newToken = await refreshAccessToken(f);
+        const token = await refreshAccessToken(f);
 
-        if (newToken) {
-            response = await buildRequest(get(serverUrl) + url, method, body, query, newToken, headers, f);
-
-            if (response.status === 401) {
-                return {response}
-            }
+        if (token) {
+            response = await send(token);
         }
     }
-    if (json) {
-        return {
-            data: await response.json() as T,
-            response
-        }
-    }
-    return {response}
+
+    return response;
 }
 
-export function apiFetchJson<T>(
-    url: string,
-    method = "GET",
-    body: object | null = null,
-    query: object | null = null,
-    headers?: object,
-    f: Function = fetch
-) {
-    return apiFetch<T>(url, method, body, query, true, headers, f)
+export async function apiFetchJson<T>(
+    ...args: Parameters<typeof apiFetch>
+): Promise<{ data: T; response: Response }> {
+    const response = await apiFetch(...args);
+
+    return {
+        response,
+        data: await response.json(),
+    };
 }
