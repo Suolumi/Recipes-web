@@ -128,11 +128,11 @@
     <p class="text-lg text-muted-foreground text-pretty">{commentLabel}</p>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8">
     <div class="bg-card rounded-lg border border-border p-6">
       <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.details')}</h2>
       <div class="space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-5 gap-8">
           <!-- Form column -->
           <div class="lg:col-span-3">
             <!-- Stepper -->
