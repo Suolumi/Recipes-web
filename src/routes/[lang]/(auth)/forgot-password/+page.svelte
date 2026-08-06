@@ -14,7 +14,7 @@
         if (email.length === 0)
             return toastError($_('forgot.empty'))
 
-        const {response} = await forgotPassword({id: email, locale: $locale ?? ''});
+        const response = await forgotPassword({id: email, locale: $locale ?? ''});
         if (response.ok)
             toastSuccess($_('forgot.sent'))
         else

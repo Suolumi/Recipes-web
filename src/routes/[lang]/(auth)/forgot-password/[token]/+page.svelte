@@ -28,7 +28,7 @@
             return;
         }
 
-        const {response} = await resetPassword({password}, page.params.token ?? '')
+        const response = await resetPassword({password}, page.params.token ?? '')
         if (response.ok) {
             toastSuccess($_('reset.success'))
         } else {
