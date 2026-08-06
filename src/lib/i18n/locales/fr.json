@@ -168,7 +168,8 @@
       "unit": {
         "label": "Unité",
         "placeholder": "Unité"
-      }
+      },
+      "remove": "Supprimer l'ingrédient"
     },
     "instructions": {
       "label": "Instructions",
@@ -184,7 +185,32 @@
       "remove": "Supprimer"
     },
     "submit": "Enregistrer",
-    "preview": "Aperçu en direct"
+    "preview": "Aperçu en direct",
+    "wizard": {
+      "stepLabel": "Étape {current} sur {total}",
+      "next": "Suivant",
+      "back": "Retour",
+      "empty": {
+        "ingredients": "Aucun ingrédient pour le moment. Ajoutez le premier ci-dessous.",
+        "instructions": "Aucune étape pour le moment. Ajoutez la première ci-dessous."
+      },
+      "basics": {
+        "name": "Bases",
+        "hint": "Donnez un nom, une courte description et les temps à votre recette."
+      },
+      "ingredients": {
+        "name": "Ingrédients",
+        "hint": "Listez tout le nécessaire, avec quantités et unités."
+      },
+      "instructions": {
+        "name": "Étapes",
+        "hint": "Décomposez la recette en étapes claires et ordonnées."
+      },
+      "photos": {
+        "name": "Photos",
+        "hint": "Ajoutez de belles photos pour donner vie à votre recette."
+      }
+    }
   },
   "create": {
     "toasts": {

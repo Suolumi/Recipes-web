@@ -13,11 +13,17 @@
     }
 </script>
 
-<button class="flex items-center hover:text-primary transition-colors group">
-    <select bind:value={value} onchange={e => switchLocale(e.target.value)} class="bg-transparent border-0 appearance-none pr-0 py-2 text-sm focus:outline-none focus:ring-0 focus:border-0" style="background-image: none">
+<div class="relative flex items-center text-foreground hover:text-primary transition-colors">
+    <select
+        bind:value={value}
+        onchange={e => switchLocale(e.currentTarget.value)}
+        aria-label="Select language"
+        class="bg-transparent border-0 appearance-none pl-2 pr-7 py-2 text-sm rounded-lg cursor-pointer hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+        style="background-image: none"
+    >
         {#each locales as l}
-            <option value={l.code}>{`${l.label}  ${l.flag}`}</option>
+            <option value={l.code}>{`${l.flag}  ${l.label}`}</option>
         {/each}
     </select>
-    <ChevronDown className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" size="20" />
-</button>
+    <ChevronDown class="absolute right-2 h-4 w-4 opacity-60 pointer-events-none" />
+</div>

@@ -168,7 +168,8 @@
       "unit": {
         "label": "Unit",
         "placeholder": "Unit"
-      }
+      },
+      "remove": "Remove ingredient"
     },
     "instructions": {
       "label": "Instructions",
@@ -184,7 +185,32 @@
       "remove": "Remove"
     },
     "submit": "Save Recipe",
-    "preview": "Live Preview"
+    "preview": "Live Preview",
+    "wizard": {
+      "stepLabel": "Step {current} of {total}",
+      "next": "Next",
+      "back": "Back",
+      "empty": {
+        "ingredients": "No ingredients yet. Add your first one below.",
+        "instructions": "No steps yet. Add your first one below."
+      },
+      "basics": {
+        "name": "Basics",
+        "hint": "Give your recipe a name, a short description and its timing."
+      },
+      "ingredients": {
+        "name": "Ingredients",
+        "hint": "List everything needed, with quantities and units."
+      },
+      "instructions": {
+        "name": "Steps",
+        "hint": "Break the recipe down into clear, ordered steps."
+      },
+      "photos": {
+        "name": "Photos",
+        "hint": "Add appetizing photos to bring your recipe to life."
+      }
+    }
   },
   "create": {
     "toasts": {

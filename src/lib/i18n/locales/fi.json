@@ -168,7 +168,8 @@
       "unit": {
         "label": "Yksikkö",
         "placeholder": "Yksikkö"
-      }
+      },
+      "remove": "Poista ainesosa"
     },
     "instructions": {
       "label": "Ohjeet",
@@ -184,7 +185,32 @@
       "remove": "Poista"
     },
     "submit": "Tallenna resepti",
-    "preview": "Esikatselu"
+    "preview": "Esikatselu",
+    "wizard": {
+      "stepLabel": "Vaihe {current} / {total}",
+      "next": "Seuraava",
+      "back": "Takaisin",
+      "empty": {
+        "ingredients": "Ei vielä ainesosia. Lisää ensimmäinen alta.",
+        "instructions": "Ei vielä vaiheita. Lisää ensimmäinen alta."
+      },
+      "basics": {
+        "name": "Perustiedot",
+        "hint": "Anna reseptille nimi, lyhyt kuvaus ja ajat."
+      },
+      "ingredients": {
+        "name": "Ainekset",
+        "hint": "Listaa kaikki tarvittava määrineen ja yksiköineen."
+      },
+      "instructions": {
+        "name": "Vaiheet",
+        "hint": "Jaa resepti selkeisiin, järjestettyihin vaiheisiin."
+      },
+      "photos": {
+        "name": "Kuvat",
+        "hint": "Lisää houkuttelevia kuvia herättämään reseptisi eloon."
+      }
+    }
   },
   "create": {
     "toasts": {
