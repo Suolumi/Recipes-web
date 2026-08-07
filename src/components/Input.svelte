@@ -1,7 +1,7 @@
 <script lang="ts">
     interface Props {
         type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
-        value: string;
+        value: string | number;
         placeholder?: string;
         disabled?: boolean;
         required?: boolean;

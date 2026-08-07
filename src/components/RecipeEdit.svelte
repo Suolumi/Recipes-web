@@ -10,7 +10,6 @@
         type Ingredient,
         type RecipeForm,
         RecipeTypes,
-        saveRecipeFile,
         type Step
     } from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
@@ -21,7 +20,7 @@
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
-        onSubmit?: (recipe: RecipeForm) => void;
+        onSubmit?: (recipe: RecipeForm, newPictures: File[]) => void;
         recipe?: RecipeForm
         headLabel: string
         commentLabel: string
@@ -29,13 +28,14 @@
 
     let {
         onChange = (recipe: RecipeForm) => {},
-        onSubmit = (recipe: RecipeForm) => {},
+        onSubmit = (recipe: RecipeForm, newPictures: File[]) => {},
         recipe = undefined,
         headLabel = $_('create.headLabel'),
         commentLabel = $_('create.commentLabel'),
     }: Props = $props()
 
     let formData = $state<RecipeForm>(getRecipe(recipe));
+    let pendingPictures = $state<{file: File, url: string}[]>([])
 
     const steps = [
         {id: 'basics', icon: 'M4 6h16M4 12h16M4 18h7'},
@@ -100,7 +100,7 @@
             if (nb < 0)
                 return toastError($_('create.toasts.negativeNumber'))
         }
-        onSubmit(formData);
+        onSubmit(formData, pendingPictures.map(picture => picture.file));
     }
 
     function removePicture(index: number) {
@@ -108,18 +108,18 @@
     }
 
     async function onFileUpload(files: FileList) {
-        for (const file of files) {
-            saveRecipeFile(file).then(({response, data}) => {
-                if (response.ok && data) {
-                    if (!formData.pictures)
-                        formData.pictures = []
-                    formData.pictures.push(data.id);
-                }
-            })
-        }
+        for (const file of files)
+            pendingPictures = [...pendingPictures, {file, url: URL.createObjectURL(file)}]
     }
 
-    let hasPictures = $derived(formData.pictures.length > 0 && !formData.pictures[0].includes('placeholder'));
+    function removePendingPicture(index: number) {
+        const picture = pendingPictures[index]
+        if (picture)
+            URL.revokeObjectURL(picture.url)
+        pendingPictures = pendingPictures.filter((_, i) => i !== index)
+    }
+
+    let hasPictures = $derived((formData.pictures.length > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -223,19 +223,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
                         <Label for="servings">{$_('edit.servings.label')}</Label>
-                        <Input id="servings" type="number" bind:value={formData.quantity} min="1" />
+                        <Input id="servings" type="number" bind:value={formData.quantity} min={1} />
                       </div>
                       <div>
                         <Label for="prep-time">{$_('edit.prep.label')} ({$_('recipes.min')})</Label>
-                        <Input id="prep-time" type="number" bind:value={formData.preparation_time} min="0" />
+                        <Input id="prep-time" type="number" bind:value={formData.preparation_time} min={0} />
                       </div>
                       <div>
                         <Label for="cook-time">{$_('edit.cook.label')} ({$_('recipes.min')})</Label>
-                        <Input id="cook-time" type="number" bind:value={formData.cooking_time} min="0" />
+                        <Input id="cook-time" type="number" bind:value={formData.cooking_time} min={0} />
                       </div>
                       <div>
                         <Label for="resting-time">{$_('edit.rest.label')} ({$_('recipes.min')})</Label>
-                        <Input id="resting-time" type="number" bind:value={formData.resting_time} min="0" />
+                        <Input id="resting-time" type="number" bind:value={formData.resting_time} min={0} />
                       </div>
                     </div>
                   </div>
@@ -380,6 +380,22 @@
                             <button
                                 type="button"
                                 onclick={() => removePicture(index)}
+                                class="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        {/each}
+                        {#each pendingPictures as picture, index}
+                          <div class="relative group">
+                            <img
+                                src={picture.url}
+                                alt="New recipe image {index + 1}"
+                                class="w-full h-24 object-cover rounded-lg border border-border"
+                            />
+                            <button
+                                type="button"
+                                onclick={() => removePendingPicture(index)}
                                 class="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               ×

@@ -8,9 +8,9 @@ export type User = {
 }
 
 export type UserSettingsForm = {
-    username?: string
-    email?: string
-    password?: string
+    username: string
+    email: string
+    password: string
 }
 
 export type UpdateUserPictureResponse = {

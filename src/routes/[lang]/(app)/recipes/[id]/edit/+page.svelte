@@ -5,17 +5,18 @@
     import {onMount} from "svelte";
     import {page} from "$app/state";
     import {toastError} from "$lib/utils";
+    import {apiErrorMessage} from "$lib/api";
     import {locale, _} from "svelte-i18n";
 
     const id = page.params.id ?? ''
     let recipe: RecipeForm | undefined = $state(undefined);
 
-    async function submit(recipe: RecipeForm) {
-        const {response, data} = await editRecipe(recipe, id)
+    async function submit(recipe: RecipeForm, newPictures: File[]) {
+        const {response, data} = await editRecipe(recipe, id, newPictures)
         if (response.ok && data) {
             goto(`/${$locale}/recipes/${data.id}`)
         } else
-            toastError($_('edit.toasts.save'))
+            toastError(apiErrorMessage(data, $_('edit.toasts.save')))
     }
 
     onMount(() => {

@@ -20,7 +20,7 @@
     })
 
     let userRecipes: RecipePreview[] = $state([])
-    let fileInput = $state();
+    let fileInput = $state<HTMLInputElement>();
     let modal = $state({
         isOpen: false,
         recipeId: ""
@@ -62,7 +62,11 @@
 
     $effect(() => {
         if ($user)
-            userForm = $user
+            userForm = {
+                username: $user.username ?? '',
+                email: $user.email ?? '',
+                password: ''
+            }
     })
 
     function editRecipe(id: string) {

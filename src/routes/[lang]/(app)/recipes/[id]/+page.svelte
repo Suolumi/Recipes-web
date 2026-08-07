@@ -25,7 +25,7 @@
 
     let emblaApi: any = $state();
 
-    function emblaInit(e) {
+    function emblaInit(e: CustomEvent) {
         emblaApi = e.detail
     }
 

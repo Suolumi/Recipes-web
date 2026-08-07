@@ -1,6 +1,8 @@
 import type {User} from "$lib/user";
 import {apiFetchJson} from "$lib/api";
 
+type FetchFn = typeof fetch;
+
 export type RecipeType = "snack" | "starter" | "dish" | "side-dish" | "sauce" | "dessert" | "drink" | "plate"
 
 export const RecipeTypes: RecipeType[] = ["snack","starter","dish","side-dish","sauce","dessert","drink","plate"]
@@ -79,15 +81,13 @@ export type GetRecipesRequest = {
     total_time?: number
     ingredients?: string[]
     kind?: RecipeType
+    locale?: string
+    search_locale?: string
 }
 
 export type GetRecipesResponse = {
     length: number
     items: RecipePreview[]
-}
-
-export type SaveRecipeFileResponse = {
-    id: string
 }
 
 export function getIngredientName(ingredient: Ingredient): string {
@@ -100,7 +100,7 @@ export function getIngredientName(ingredient: Ingredient): string {
     return ingredient.name
 }
 
-export function getRecipe(id: string, locale?: string, f: Function = fetch) {
+export function getRecipe(id: string, locale?: string, f: FetchFn = fetch) {
     return apiFetchJson<Recipe>(`/recipes/${id}?locale=${locale ?? ''}`, "GET", undefined, undefined, undefined, f)
 }
 
@@ -108,18 +108,32 @@ export function getRecipes(params: GetRecipesRequest) {
     return apiFetchJson<GetRecipesResponse>('/recipes', "GET", null, params)
 }
 
-export function createRecipe(recipe: RecipeForm) {
-    return apiFetchJson<Recipe>('/recipes', "POST", recipe)
+function recipeBody(recipe: RecipeForm, keepPictureIDs?: string[]) {
+    const {pictures, ...fields} = recipe
+    return keepPictureIDs === undefined ? fields : {...fields, keep_picture_ids: keepPictureIDs}
 }
 
-export function editRecipe(recipe: RecipeForm, id: string) {
-    return apiFetchJson<Recipe>(`/recipes/${id}`, "PATCH", recipe)
-}
-
-export function saveRecipeFile(file: File) {
+function multipartRecipeBody(recipe: object, files: File[]) {
     const formData = new FormData()
-    formData.append('file', file)
-    return apiFetchJson<SaveRecipeFileResponse>('/recipe-pictures', 'POST', formData, null)
+    formData.append('recipe', JSON.stringify(recipe))
+    for (const file of files)
+        formData.append('pictures', file)
+    return formData
+}
+
+export function createRecipe(recipe: RecipeForm, newPictures: File[] = [], locale?: string) {
+    const body = recipeBody(recipe) as Record<string, unknown>
+    if (locale) {
+        body.locale = locale
+    }
+    const payload = newPictures.length > 0 ? multipartRecipeBody(body, newPictures) : body
+    return apiFetchJson<Recipe>('/recipes', "POST", payload, null, {'Idempotency-Key': crypto.randomUUID()})
+}
+
+export function editRecipe(recipe: RecipeForm, id: string, newPictures: File[] = []) {
+    const body = recipeBody(recipe, recipe.pictures)
+    const payload = newPictures.length > 0 ? multipartRecipeBody(body, newPictures) : body
+    return apiFetchJson<Recipe>(`/recipes/${id}`, "PATCH", payload, null, {'Idempotency-Key': crypto.randomUUID()})
 }
 
 export function deleteRecipe(id: string) {

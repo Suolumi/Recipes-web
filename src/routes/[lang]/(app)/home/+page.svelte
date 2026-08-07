@@ -1,7 +1,7 @@
 <script lang="ts">
     import RecipeCard from '../../../../components/RecipeCard.svelte';
     import {getRecipes, type GetRecipesRequest, type RecipePreview, type RecipeType, RecipeTypes} from "$lib/recipes";
-    import { _ } from 'svelte-i18n';
+    import { _, locale } from 'svelte-i18n';
 
     let searchTerm = $state('');
     let selectedType = $state('all');
@@ -14,6 +14,7 @@
         if (searchTerm.length > 0)
             request.title = searchTerm
         request.limit = 100
+        request.locale = $locale ?? 'en'
 
         getRecipes(request).then(({response, data}) => {
             if (!response.ok || !data)

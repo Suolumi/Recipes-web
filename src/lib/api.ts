@@ -3,6 +3,18 @@ import { get } from 'svelte/store';
 
 type FetchFn = typeof fetch;
 
+export type ApiError = {
+    error?: string
+    code?: string
+    request_id?: string
+}
+
+export function apiErrorMessage(data: unknown, fallback: string): string {
+    if (data && typeof data === 'object' && 'error' in data && typeof data.error === 'string' && data.error.length > 0)
+        return data.error
+    return fallback
+}
+
 function buildRequest(
     url: string,
     {
@@ -21,9 +33,17 @@ function buildRequest(
     f: FetchFn = fetch
 ) {
     if (query) {
-        const params = new URLSearchParams(
-            Object.entries(query).map(([k, v]) => [k, String(v)])
-        );
+        const params = new URLSearchParams()
+        for (const [key, value] of Object.entries(query)) {
+            if (value === undefined || value === null || value === '')
+                continue
+            if (Array.isArray(value)) {
+                for (const item of value)
+                    params.append(key, String(item))
+            } else {
+                params.set(key, String(value))
+            }
+        }
         url += `?${params}`;
     }
 
@@ -111,8 +131,6 @@ export async function apiFetchJson<T>(
 ): Promise<{ data: T; response: Response }> {
     const response = await apiFetch(...args);
 
-    return {
-        response,
-        data: await response.json(),
-    };
+    const data = await response.json().catch(() => ({} as T | ApiError))
+    return {response, data: data as T}
 }

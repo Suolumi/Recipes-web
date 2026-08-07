@@ -7,14 +7,14 @@
     import {serverUrl} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
 
-    let { recipe, translate, disabled }: { recipe: RecipePreview, translate: boolean, disabled: boolean } = $props();
+    let { recipe, translate, disabled = false }: { recipe: RecipePreview, translate: boolean, disabled?: boolean } = $props();
     let emblaApi: any = $state();
 
     function viewRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}`);
     }
 
-    function emblaInit(e) {
+    function emblaInit(e: CustomEvent) {
         emblaApi = e.detail
     }
 
