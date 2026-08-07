@@ -6,6 +6,7 @@ set -euo pipefail
 
 REGISTRY="ghcr.io"
 IMAGE_NAME="$(git config --get remote.origin.url | sed -E 's#.*github.com[:/]([^/]+/[^/.]+)(\.git)?#\1#' | tr '[:upper:]' '[:lower:]')"
+echo "Building: $REGISTRY/$IMAGE_NAME"
 
 TAGS="${1:-latest}"
 
@@ -14,9 +15,10 @@ FIRST_TAG="$(echo "$TAGS" | cut -d',' -f1)"
 FULL_IMAGE="$REGISTRY/$IMAGE_NAME:$FIRST_TAG"
 
 docker buildx build \
-  --load \
-  -t "$FULL_IMAGE" \
-  .
+    --platform linux/amd64 \
+    --push \
+    -t "$FULL_IMAGE" \
+    .
 
 # Add remaining tags
 IFS=',' read -ra TAG_ARRAY <<< "$TAGS"
