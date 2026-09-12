@@ -166,9 +166,10 @@
         "placeholder": "Quantité"
       },
       "unit": {
-        "label": "Unité",
-        "placeholder": "Unité"
+        "label": "Unité (facultatif)",
+        "placeholder": "g, cl, feuilles…"
       },
+      "preview": "Affiché comme : « {text} »",
       "remove": "Supprimer l'ingrédient"
     },
     "instructions": {

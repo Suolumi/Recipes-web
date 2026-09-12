@@ -166,9 +166,10 @@
         "placeholder": "Määrä"
       },
       "unit": {
-        "label": "Yksikkö",
-        "placeholder": "Yksikkö"
+        "label": "Yksikkö (valinnainen)",
+        "placeholder": "g, dl, lehteä…"
       },
+      "preview": "Näytetään muodossa: \"{text}\"",
       "remove": "Poista ainesosa"
     },
     "instructions": {

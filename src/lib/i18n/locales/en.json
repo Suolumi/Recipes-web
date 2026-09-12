@@ -166,9 +166,10 @@
         "placeholder": "Quantity"
       },
       "unit": {
-        "label": "Unit",
-        "placeholder": "Unit"
+        "label": "Unit (optional)",
+        "placeholder": "g, cl, leaves…"
       },
+      "preview": "Will show as: \"{text}\"",
       "remove": "Remove ingredient"
     },
     "instructions": {

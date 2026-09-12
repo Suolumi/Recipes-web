@@ -51,7 +51,12 @@
 
     $effect(() => {
         if (recipe)
-            formData = recipe
+            formData = {
+                ...recipe,
+                ingredients: recipe.ingredients ?? [],
+                steps: recipe.steps ?? [],
+                pictures: recipe.pictures ?? [],
+            }
     })
 
     $effect(() => {
@@ -119,7 +124,7 @@
         pendingPictures = pendingPictures.filter((_, i) => i !== index)
     }
 
-    let hasPictures = $derived((formData.pictures.length > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
+    let hasPictures = $derived(((formData.pictures?.length ?? 0) > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -251,44 +256,51 @@
                     {/if}
                     <div class="space-y-3">
                       {#each formData.ingredients as ingredient, index}
-                        <div class="grid grid-cols-12 gap-2 items-end">
-                          <div class="col-span-6">
-                            <Label for={`ingredient-name-${index}`} required>{$_('edit.ingredients.name.label')}</Label>
-                            <Input
-                                id={`ingredient-name-${index}`}
-                                type="text"
-                                bind:value={formData.ingredients[index].name}
-                                placeholder={$_('edit.ingredients.name.placeholder')}
-                            />
+                        <div>
+                          <div class="grid grid-cols-12 gap-2 items-end">
+                            <div class="col-span-6">
+                              <Label for={`ingredient-name-${index}`} required>{$_('edit.ingredients.name.label')}</Label>
+                              <Input
+                                  id={`ingredient-name-${index}`}
+                                  type="text"
+                                  bind:value={formData.ingredients[index].name}
+                                  placeholder={$_('edit.ingredients.name.placeholder')}
+                              />
+                            </div>
+                            <div class="col-span-2">
+                              <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.label')}</Label>
+                              <Input
+                                  id={`ingredient-quantity-${index}`}
+                                  type="number"
+                                  bind:value={formData.ingredients[index].quantity}
+                                  placeholder={$_('edit.ingredients.quantity.placeholder')}
+                              />
+                            </div>
+                            <div class="col-span-3">
+                              <Label for={`ingredient-unit-${index}`}>{$_('edit.ingredients.unit.label')}</Label>
+                              <Input
+                                  id={`ingredient-unit-${index}`}
+                                  type="text"
+                                  bind:value={formData.ingredients[index].unit}
+                                  placeholder={$_('edit.ingredients.unit.placeholder')}
+                              />
+                            </div>
+                            <div class="col-span-1 flex justify-center">
+                              <button
+                                  type="button"
+                                  onclick={() => removeIngredient(index)}
+                                  aria-label={$_('edit.ingredients.remove')}
+                                  class="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+                              >
+                                <Trash2 class="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
-                          <div class="col-span-2">
-                            <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.label')}</Label>
-                            <Input
-                                id={`ingredient-quantity-${index}`}
-                                type="number"
-                                bind:value={formData.ingredients[index].quantity}
-                                placeholder={$_('edit.ingredients.quantity.placeholder')}
-                            />
-                          </div>
-                          <div class="col-span-3">
-                            <Label for={`ingredient-unit-${index}`}>{$_('edit.ingredients.unit.label')}</Label>
-                            <Input
-                                id={`ingredient-unit-${index}`}
-                                type="text"
-                                bind:value={formData.ingredients[index].unit}
-                                placeholder={$_('edit.ingredients.unit.placeholder')}
-                            />
-                          </div>
-                          <div class="col-span-1 flex justify-center">
-                            <button
-                                type="button"
-                                onclick={() => removeIngredient(index)}
-                                aria-label={$_('edit.ingredients.remove')}
-                                class="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              <Trash2 class="w-4 h-4" />
-                            </button>
-                          </div>
+                          {#if ingredient.name.trim()}
+                            <p class="text-xs text-muted-foreground mt-1 pl-1">
+                              {$_('edit.ingredients.preview', {values: {text: getIngredientName(ingredient)}})}
+                            </p>
+                          {/if}
                         </div>
                       {/each}
                     </div>
