@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                <p class="text-xl text-muted-foreground mb-6 text-pretty">{recipe.description}</p>
+                <p class="text-xl text-muted-foreground mb-6 text-pretty whitespace-pre-line">{recipe.description}</p>
 
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="flex items-center gap-x-2">
@@ -194,7 +194,7 @@
                                 <div class="font-bold text-sm">
                                     {step.title || `Step ${index + 1}`}
                                 </div>
-                                <p class="text-card-foreground leading-relaxed pl-4">{step.description}</p>
+                                <p class="text-card-foreground leading-relaxed pl-4 whitespace-pre-line">{step.description}</p>
                             </div>
                         {/each}
                     </div>

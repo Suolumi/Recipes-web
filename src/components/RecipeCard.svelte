@@ -94,7 +94,7 @@
       </span>
         </div>
 
-        <p class="text-muted-foreground mb-4 text-pretty">{recipe.description ? recipe.description.length > 200 ? recipe.description.slice(0, 200) + '...' : recipe.description : $_('recipeCard.description')}</p>
+        <p class="text-muted-foreground mb-4 text-pretty whitespace-pre-line">{recipe.description ? recipe.description.length > 200 ? recipe.description.slice(0, 200) + '...' : recipe.description : $_('recipeCard.description')}</p>
 
     </div>
     <div class="px-6 pb-6 flex items-center justify-between text-sm text-muted-foreground">

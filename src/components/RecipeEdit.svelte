@@ -534,7 +534,7 @@
                                 <h4 class="font-semibold text-foreground mb-1">{step.title}</h4>
                               {/if}
                               {#if step.description.trim()}
-                                <p class="text-foreground leading-relaxed">{step.description}</p>
+                                <p class="text-foreground leading-relaxed whitespace-pre-line">{step.description}</p>
                               {/if}
                             </div>
                           </div>
