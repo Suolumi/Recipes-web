@@ -104,6 +104,52 @@
         dragState = null;
     }
 
+    // Handles resize the rect symmetrically about its center, exactly like the zoom
+    // slider (rectWidth = baseRectWidth / zoom) — dragging a handle just sets zoom
+    // via drag distance instead of the slider.
+    const RESIZE_HANDLES = [
+        {id: 'nw', sx: -1, sy: -1},
+        {id: 'n', sx: 0, sy: -1},
+        {id: 'ne', sx: 1, sy: -1},
+        {id: 'e', sx: 1, sy: 0},
+        {id: 'se', sx: 1, sy: 1},
+        {id: 's', sx: 0, sy: 1},
+        {id: 'sw', sx: -1, sy: 1},
+        {id: 'w', sx: -1, sy: 0},
+    ] as const;
+
+    function handleCursor(sx: number, sy: number) {
+        if (sx !== 0 && sy !== 0) return sx === sy ? 'nwse-resize' : 'nesw-resize';
+        return sx !== 0 ? 'ew-resize' : 'ns-resize';
+    }
+
+    let resizeState: {startX: number; startY: number; startRectWidth: number; sx: number; sy: number} | null = null;
+
+    function onHandlePointerDown(e: PointerEvent, sx: number, sy: number) {
+        e.stopPropagation();
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        resizeState = {startX: e.clientX, startY: e.clientY, startRectWidth: rectWidth, sx, sy};
+    }
+
+    function onHandlePointerMove(e: PointerEvent) {
+        if (!resizeState) return;
+        const dx = e.clientX - resizeState.startX;
+        const dy = e.clientY - resizeState.startY;
+        const {sx, sy} = resizeState;
+        let deltaWidth: number;
+        if (sx !== 0 && sy !== 0) deltaWidth = (dx * sx + dy * sy * RECIPE_CARD_ASPECT_RATIO) / 2;
+        else if (sx !== 0) deltaWidth = dx * sx;
+        else deltaWidth = dy * sy * RECIPE_CARD_ASPECT_RATIO;
+
+        const minRectWidth = baseRectWidth / maxZoom;
+        const newRectWidth = clamp(resizeState.startRectWidth + deltaWidth, minRectWidth, baseRectWidth);
+        zoom = clamp(baseRectWidth / newRectWidth, 1, maxZoom);
+    }
+
+    function onHandlePointerUp() {
+        resizeState = null;
+    }
+
     function onRectKeydown(e: KeyboardEvent) {
         const step = 0.02;
         if (e.key === 'ArrowLeft') centerFracX = clamp(centerFracX - step, 0, 1);
@@ -167,7 +213,24 @@
                             aria-valuemin={0}
                             aria-valuemax={100}
                             tabindex="0"
-                    ></div>
+                    >
+                        {#each RESIZE_HANDLES as handle (handle.id)}
+                            <div
+                                    class="absolute w-3.5 h-3.5 rounded-sm bg-white border border-black/40 shadow touch-none"
+                                    style="
+                                        left:{handle.sx === -1 ? '0%' : handle.sx === 1 ? '100%' : '50%'};
+                                        top:{handle.sy === -1 ? '0%' : handle.sy === 1 ? '100%' : '50%'};
+                                        transform: translate(-50%, -50%);
+                                        cursor: {handleCursor(handle.sx, handle.sy)};
+                                    "
+                                    onpointerdown={(e) => onHandlePointerDown(e, handle.sx, handle.sy)}
+                                    onpointermove={onHandlePointerMove}
+                                    onpointerup={onHandlePointerUp}
+                                    onpointercancel={onHandlePointerUp}
+                                    aria-hidden="true"
+                            ></div>
+                        {/each}
+                    </div>
                 {/if}
             </div>
         {/if}

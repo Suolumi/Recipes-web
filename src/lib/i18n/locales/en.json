@@ -3,6 +3,7 @@
     "appName": "Recipes",
     "allRecipes": "All Recipes",
     "createRecipe": "Create Recipe",
+    "connectAI": "Connect to AI",
     "login": "Login",
     "register": "Register",
     "settings": "Settings",
@@ -231,6 +232,43 @@
     "commentLabel": "Today I will surprise everyone with...",
     "noIngredient": "No ingredients added yet...",
     "noStep": "No instructions added yet..."
+  },
+  "connectAi": {
+    "headLabel": "Connect to AI",
+    "commentLabel": "Let an AI assistant help you with your recipes",
+    "toasts": {
+      "noAccount": "You need to create an account first",
+      "generateError": "Couldn't generate your connection code",
+      "disconnectError": "Couldn't disconnect AI access",
+      "disconnectSuccess": "AI access disconnected"
+    },
+    "intro": {
+      "title": "What is this?",
+      "body": "This connects an AI assistant (like Claude) to your recipes, so you can ask it to look up, add, or edit them for you. You'll need an AI app that supports \"MCP\" connections."
+    },
+    "generate": {
+      "button": "Generate my connection code",
+      "loading": "Generating…",
+      "urlLabel": "Address",
+      "tokenLabel": "Connection code",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "regenerate": "Generate a new code",
+      "steps": {
+        "title": "How to use it",
+        "one": "Open your AI app's settings and look for a section about connecting tools or servers (sometimes called \"MCP\", \"connectors\", or \"integrations\").",
+        "two": "Paste the address below where it asks for a server address or URL.",
+        "three": "Paste the connection code below where it asks for a token, key, or password.",
+        "four": "Save, and start asking your assistant about your recipes!"
+      }
+    },
+    "disconnect": {
+      "button": "Disconnect AI access",
+      "confirmTitle": "Disconnect AI access?",
+      "confirmBody": "Any AI assistant you've connected will stop working immediately. You can always reconnect later.",
+      "cancel": "Cancel",
+      "confirm": "Yes, disconnect"
+    }
   },
   "recipes": {
     "types": {

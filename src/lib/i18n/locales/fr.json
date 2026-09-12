@@ -3,6 +3,7 @@
     "appName": "Recettes",
     "allRecipes": "Toutes les recettes",
     "createRecipe": "Créer une recette",
+    "connectAI": "Connecter une IA",
     "login": "Connexion",
     "register": "Inscription",
     "settings": "Paramètres",
@@ -231,6 +232,43 @@
     "commentLabel": "Aujourd'hui je vais les surprendre avec...",
     "noIngredient": "Aucun ingrédient ajouté pour le moment...",
     "noStep": "Aucune instruction ajoutée pour le moment..."
+  },
+  "connectAi": {
+    "headLabel": "Connecter une IA",
+    "commentLabel": "Laissez un assistant IA vous aider avec vos recettes",
+    "toasts": {
+      "noAccount": "Vous devez d'abord créer un compte",
+      "generateError": "Impossible de générer votre code de connexion",
+      "disconnectError": "Impossible de désactiver l'accès IA",
+      "disconnectSuccess": "Accès IA désactivé"
+    },
+    "intro": {
+      "title": "De quoi s'agit-il ?",
+      "body": "Ceci connecte un assistant IA (comme Claude) à vos recettes, pour lui demander de les consulter, d'en ajouter ou d'en modifier à votre place. Il vous faut une application IA compatible avec les connexions « MCP »."
+    },
+    "generate": {
+      "button": "Générer mon code de connexion",
+      "loading": "Génération…",
+      "urlLabel": "Adresse",
+      "tokenLabel": "Code de connexion",
+      "copy": "Copier",
+      "copied": "Copié !",
+      "regenerate": "Générer un nouveau code",
+      "steps": {
+        "title": "Comment l'utiliser",
+        "one": "Ouvrez les paramètres de votre application IA et cherchez une section sur les outils ou serveurs connectés (parfois appelée « MCP », « connecteurs » ou « intégrations »).",
+        "two": "Collez l'adresse ci-dessous là où l'on vous demande une adresse ou une URL de serveur.",
+        "three": "Collez le code de connexion ci-dessous là où l'on vous demande un jeton, une clé ou un mot de passe.",
+        "four": "Enregistrez, et posez vos questions sur vos recettes à votre assistant !"
+      }
+    },
+    "disconnect": {
+      "button": "Désactiver l'accès IA",
+      "confirmTitle": "Désactiver l'accès IA ?",
+      "confirmBody": "Tout assistant IA connecté cessera de fonctionner immédiatement. Vous pourrez toujours vous reconnecter plus tard.",
+      "cancel": "Annuler",
+      "confirm": "Oui, désactiver"
+    }
   },
   "recipes": {
     "types": {

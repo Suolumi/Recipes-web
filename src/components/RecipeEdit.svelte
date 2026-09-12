@@ -53,15 +53,8 @@
     }
 
     $effect(() => {
-        if (recipe) {
-            const base = getRecipe(recipe)
-            formData = {
-                ...base,
-                ingredients: base.ingredients ?? [],
-                steps: base.steps ?? [],
-                pictures: base.pictures ?? [],
-            }
-        }
+        if (recipe)
+            formData = getRecipe(recipe)
     })
 
     $effect(() => {
@@ -71,6 +64,25 @@
         else
             $createRecipeCache = formData
     })
+
+    function normalizeRecipe(data: RecipeForm): RecipeForm {
+        return {
+            ...data,
+            ingredients: data.ingredients ?? [],
+            steps: data.steps ?? [],
+            pictures: data.pictures ?? [],
+        }
+    }
+
+    // A cache entry that has no content is indistinguishable from the blank
+    // bootstrap value written before the real recipe has loaded; treat it as
+    // "no draft" so it never shadows freshly-fetched data.
+    function isBlank(data: RecipeForm): boolean {
+        return !data.title && !data.description &&
+            (data.ingredients?.length ?? 0) === 0 &&
+            (data.steps?.length ?? 0) === 0 &&
+            (data.pictures?.length ?? 0) === 0
+    }
 
     function getRecipe(recipeProps: RecipeForm | undefined): RecipeForm {
         let r = <RecipeForm>{
@@ -86,10 +98,12 @@
             pictures: []
         }
 
-        if (recipeId !== undefined)
-            return $editRecipeCache?.id === recipeId ? $editRecipeCache.data : (recipeProps ?? r)
+        if (recipeId !== undefined) {
+            const cached = $editRecipeCache?.id === recipeId ? $editRecipeCache.data : undefined
+            return normalizeRecipe(cached && !isBlank(cached) ? cached : (recipeProps ?? r))
+        }
 
-        return recipeProps ?? ($createRecipeCache ?? r)
+        return normalizeRecipe($createRecipeCache && !isBlank($createRecipeCache) ? $createRecipeCache : (recipeProps ?? r))
     }
 
     function addIngredient(ingredient: Ingredient) {

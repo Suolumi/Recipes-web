@@ -27,6 +27,12 @@ export async function cropImageToFile(
         const scale = MAX_CROP_OUTPUT_WIDTH / outputWidth
         outputWidth = MAX_CROP_OUTPUT_WIDTH
         outputHeight = Math.round(outputHeight * scale)
+    } else if (outputWidth < MIN_CROP_OUTPUT_WIDTH) {
+        // Source image (or the selected crop of it) is smaller than the minimum a
+        // RecipeCard wants; upscale rather than deliver an under-sized image.
+        const scale = MIN_CROP_OUTPUT_WIDTH / outputWidth
+        outputWidth = MIN_CROP_OUTPUT_WIDTH
+        outputHeight = Math.round(outputHeight * scale)
     }
 
     const canvas = document.createElement('canvas')

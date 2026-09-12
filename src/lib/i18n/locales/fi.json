@@ -3,6 +3,7 @@
     "appName": "Reseptit",
     "allRecipes": "Kaikki reseptit",
     "createRecipe": "Luo resepti",
+    "connectAI": "Yhdistä tekoäly",
     "login": "Kirjaudu sisään",
     "register": "Rekisteröidy",
     "settings": "Asetukset",
@@ -231,6 +232,43 @@
     "commentLabel": "Tänään yllätän kaikki...",
     "noIngredient": "Ainesosia ei ole vielä lisätty...",
     "noStep": "Ohjeita ei ole vielä lisätty..."
+  },
+  "connectAi": {
+    "headLabel": "Yhdistä tekoäly",
+    "commentLabel": "Anna tekoälyavustajan auttaa reseptiesi kanssa",
+    "toasts": {
+      "noAccount": "Sinun täytyy ensin luoda tili",
+      "generateError": "Yhteyskoodin luominen epäonnistui",
+      "disconnectError": "Tekoälyn yhteyden katkaiseminen epäonnistui",
+      "disconnectSuccess": "Tekoälyn yhteys katkaistu"
+    },
+    "intro": {
+      "title": "Mistä tässä on kyse?",
+      "body": "Tämä yhdistää tekoälyavustajan (kuten Claude) reseptiisi, jotta voit pyytää sitä katsomaan, lisäämään tai muokkaamaan niitä puolestasi. Tarvitset tekoälysovelluksen, joka tukee \"MCP\"-yhteyksiä."
+    },
+    "generate": {
+      "button": "Luo yhteyskoodini",
+      "loading": "Luodaan…",
+      "urlLabel": "Osoite",
+      "tokenLabel": "Yhteyskoodi",
+      "copy": "Kopioi",
+      "copied": "Kopioitu!",
+      "regenerate": "Luo uusi koodi",
+      "steps": {
+        "title": "Näin käytät sitä",
+        "one": "Avaa tekoälysovelluksesi asetukset ja etsi osio työkalujen tai palvelinten yhdistämisestä (kutsutaan joskus nimellä \"MCP\", \"liittimet\" tai \"integraatiot\").",
+        "two": "Liitä alla oleva osoite kohtaan, jossa kysytään palvelimen osoitetta tai URL-osoitetta.",
+        "three": "Liitä alla oleva yhteyskoodi kohtaan, jossa kysytään tunnusta, avainta tai salasanaa.",
+        "four": "Tallenna, ja ala kysellä avustajaltasi resepteistäsi!"
+      }
+    },
+    "disconnect": {
+      "button": "Katkaise tekoälyn yhteys",
+      "confirmTitle": "Katkaistaanko tekoälyn yhteys?",
+      "confirmBody": "Kaikki yhdistetyt tekoälyavustajat lakkaavat toimimasta välittömästi. Voit yhdistää uudelleen milloin tahansa.",
+      "cancel": "Peruuta",
+      "confirm": "Kyllä, katkaise"
+    }
   },
   "recipes": {
     "types": {

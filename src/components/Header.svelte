@@ -79,6 +79,13 @@
                     >
                         {$_('header.createRecipe')}
                     </button>
+                    <button
+                            onclick={() => goto(`/${$locale}/connect-ai`)}
+                            class="text-ai-accent hover:text-ai-accent/80 transition-colors text-sm font-medium hover:cursor-pointer"
+                            aria-label="Connect to AI"
+                    >
+                        {$_('header.connectAI')}
+                    </button>
                 </div>
             </div>
 
@@ -189,6 +196,12 @@
                                                     class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
                                             >
                                                 {$_('header.createRecipe')}
+                                            </button>
+                                            <button
+                                                    onclick={() => {drawerOpen = false; goto(`/${$locale}/connect-ai`)}}
+                                                    class="block w-full text-left px-6 py-2 text-ai-accent hover:bg-muted transition-colors text-sm font-medium"
+                                            >
+                                                {$_('header.connectAI')}
                                             </button>
                                             {#if !$user}
                                                 <div class="border-t border-border mt-4 pt-4 px-6 space-y-2">
