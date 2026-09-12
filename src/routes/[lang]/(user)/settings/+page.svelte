@@ -51,7 +51,8 @@
     $effect(() => {
         getRecipes({
             author: $user?.username ?? '',
-            limit: 100
+            limit: 100,
+            locale: $locale ?? 'en'
         }).then(({response, data}) => {
             if (response.ok && data)
                 userRecipes = data.items
