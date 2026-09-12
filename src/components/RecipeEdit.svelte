@@ -13,7 +13,8 @@
         type Step
     } from "$lib/recipes";
     import FileUpload from "./FileUpload.svelte";
-    import {recipeCache, serverUrl, user} from "$lib/stores";
+    import ImageCropModal from "./ImageCropModal.svelte";
+    import {createRecipeCache, editRecipeCache, serverUrl, user} from "$lib/stores";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
     import {Trash2} from "@lucide/svelte";
@@ -22,6 +23,7 @@
         onChange?: (recipe: RecipeForm) => void;
         onSubmit?: (recipe: RecipeForm, newPictures: File[]) => void;
         recipe?: RecipeForm
+        recipeId?: string
         headLabel: string
         commentLabel: string
     }
@@ -30,6 +32,7 @@
         onChange = (recipe: RecipeForm) => {},
         onSubmit = (recipe: RecipeForm, newPictures: File[]) => {},
         recipe = undefined,
+        recipeId = undefined,
         headLabel = $_('create.headLabel'),
         commentLabel = $_('create.commentLabel'),
     }: Props = $props()
@@ -50,18 +53,23 @@
     }
 
     $effect(() => {
-        if (recipe)
+        if (recipe) {
+            const base = getRecipe(recipe)
             formData = {
-                ...recipe,
-                ingredients: recipe.ingredients ?? [],
-                steps: recipe.steps ?? [],
-                pictures: recipe.pictures ?? [],
+                ...base,
+                ingredients: base.ingredients ?? [],
+                steps: base.steps ?? [],
+                pictures: base.pictures ?? [],
             }
+        }
     })
 
     $effect(() => {
         onChange(formData)
-        $recipeCache = formData
+        if (recipeId !== undefined)
+            $editRecipeCache = {id: recipeId, data: formData}
+        else
+            $createRecipeCache = formData
     })
 
     function getRecipe(recipeProps: RecipeForm | undefined): RecipeForm {
@@ -78,10 +86,10 @@
             pictures: []
         }
 
-        if (!recipeProps) {
-            return $recipeCache ?? r
-        }
-        return $recipeCache?.title == recipeProps.title ? $recipeCache : recipeProps
+        if (recipeId !== undefined)
+            return $editRecipeCache?.id === recipeId ? $editRecipeCache.data : (recipeProps ?? r)
+
+        return recipeProps ?? ($createRecipeCache ?? r)
     }
 
     function addIngredient(ingredient: Ingredient) {
@@ -112,9 +120,28 @@
         formData.pictures = formData.pictures.filter((_, i) => i !== index);
     }
 
+    let cropQueue = $state<File[]>([])
+    let currentCropFile = $state<File | null>(null)
+
+    function advanceCropQueue() {
+        const [next, ...rest] = cropQueue
+        currentCropFile = next ?? null
+        cropQueue = rest
+    }
+
     async function onFileUpload(files: FileList) {
-        for (const file of files)
-            pendingPictures = [...pendingPictures, {file, url: URL.createObjectURL(file)}]
+        cropQueue = [...cropQueue, ...Array.from(files)]
+        if (!currentCropFile)
+            advanceCropQueue()
+    }
+
+    function onCropConfirm(croppedFile: File) {
+        pendingPictures = [...pendingPictures, {file: croppedFile, url: URL.createObjectURL(croppedFile)}]
+        advanceCropQueue()
+    }
+
+    function onCropCancel() {
+        advanceCropQueue()
     }
 
     function removePendingPicture(index: number) {
@@ -387,7 +414,7 @@
                             <img
                                 src={`${$serverUrl}/recipe-pictures/${image}`}
                                 alt="Recipe image {index + 1}"
-                                class="w-full h-24 object-cover rounded-lg border border-border"
+                                class="w-full aspect-video object-cover rounded-lg border border-border"
                             />
                             <button
                                 type="button"
@@ -403,7 +430,7 @@
                             <img
                                 src={picture.url}
                                 alt="New recipe image {index + 1}"
-                                class="w-full h-24 object-cover rounded-lg border border-border"
+                                class="w-full aspect-video object-cover rounded-lg border border-border"
                             />
                             <button
                                 type="button"
@@ -512,3 +539,5 @@
     </div>
   </div>
 </div>
+
+<ImageCropModal file={currentCropFile} onConfirm={onCropConfirm} onCancel={onCropCancel} />

@@ -23,7 +23,11 @@ export const refreshToken = persisted('refreshToken', '', {
     syncTabs: true,
     serializer: jsonParser,
 });
-export const recipeCache = persisted<RecipeForm | null>('recipeCache', null, {
+export const createRecipeCache = persisted<RecipeForm | null>('createRecipeCache', null, {
+    syncTabs: true,
+    serializer: jsonParser,
+})
+export const editRecipeCache = persisted<{ id: string, data: RecipeForm } | null>('editRecipeCache', null, {
     syncTabs: true,
     serializer: jsonParser,
 })

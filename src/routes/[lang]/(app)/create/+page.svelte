@@ -3,7 +3,7 @@
     import {goto} from "$app/navigation";
     import RecipeEdit from "../../../../components/RecipeEdit.svelte";
     import {onMount} from "svelte";
-    import {accessToken, recipeCache} from "$lib/stores";
+    import {accessToken, createRecipeCache} from "$lib/stores";
     import {toastError} from "$lib/utils";
     import {apiErrorMessage} from "$lib/api";
     import {locale, _} from "svelte-i18n";
@@ -11,7 +11,7 @@
     async function submit(recipe: RecipeForm, newPictures: File[]) {
         const {response, data} = await createRecipe(recipe, newPictures, $locale ?? undefined)
         if (response.ok && data) {
-            $recipeCache = null
+            $createRecipeCache = null
             goto(`/${$locale}/recipes/${data.id}`)
         } else
             toastError(apiErrorMessage(data, $_('create.toasts.save')));

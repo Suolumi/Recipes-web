@@ -14,6 +14,14 @@
     "drag": "ou glissez et déposez",
     "multiple": "Plusieurs images possible"
   },
+  "imageCrop": {
+    "title": "Ajuster la photo",
+    "description": "Faites glisser le cadre pour le repositionner, utilisez le curseur pour zoomer.",
+    "zoom": "Zoom",
+    "dragHint": "Glissez pour repositionner la zone de recadrage",
+    "cancel": "Annuler",
+    "confirm": "Utiliser la photo"
+  },
   "recipeCard": {
     "by": "Par",
     "noPicture": "Pas d'images pour l'instant.",

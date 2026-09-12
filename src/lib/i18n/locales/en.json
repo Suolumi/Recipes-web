@@ -14,6 +14,14 @@
     "drag": "or drag and drop",
     "multiple": "Multiple images supported"
   },
+  "imageCrop": {
+    "title": "Adjust photo",
+    "description": "Drag the frame to reposition it, use the slider to zoom.",
+    "zoom": "Zoom",
+    "dragHint": "Drag to reposition the crop area",
+    "cancel": "Cancel",
+    "confirm": "Use photo"
+  },
   "recipeCard": {
     "by": "By",
     "noPicture": "No pictures added yet.",

@@ -1,0 +1,193 @@
+<script lang="ts">
+    import Modal from './Modal.svelte';
+    import Button from './Button.svelte';
+    import {_} from 'svelte-i18n';
+    import {cropImageToFile, MIN_CROP_OUTPUT_WIDTH, RECIPE_CARD_ASPECT_RATIO, type CropRect} from '$lib/imageCrop';
+
+    interface Props {
+        file: File | null;
+        onConfirm: (file: File) => void;
+        onCancel: () => void;
+    }
+
+    let {file, onConfirm, onCancel}: Props = $props();
+
+    const MAX_DISPLAY_HEIGHT = 420;
+    const MAX_ZOOM = 4;
+
+    let imgEl: HTMLImageElement | undefined = $state();
+    let imageUrl = $state<string | null>(null);
+    let naturalWidth = $state(0);
+    let naturalHeight = $state(0);
+    let measureWidth = $state(0);
+    let zoom = $state(1);
+    let centerFracX = $state(0.5);
+    let centerFracY = $state(0.5);
+
+    function clamp(value: number, min: number, max: number) {
+        return Math.min(max, Math.max(min, value));
+    }
+
+    $effect(() => {
+        const currentFile = file;
+        zoom = 1;
+        centerFracX = 0.5;
+        centerFracY = 0.5;
+        naturalWidth = 0;
+        naturalHeight = 0;
+
+        if (!currentFile) {
+            imageUrl = null;
+            return;
+        }
+
+        const url = URL.createObjectURL(currentFile);
+        imageUrl = url;
+        return () => URL.revokeObjectURL(url);
+    });
+
+    function handleImageLoad() {
+        if (!imgEl) return;
+        naturalWidth = imgEl.naturalWidth;
+        naturalHeight = imgEl.naturalHeight;
+    }
+
+    let displayScale = $derived(
+        naturalWidth && naturalHeight && measureWidth
+            ? Math.min(measureWidth / naturalWidth, MAX_DISPLAY_HEIGHT / naturalHeight)
+            : 0
+    );
+    let displayWidth = $derived(naturalWidth * displayScale);
+    let displayHeight = $derived(naturalHeight * displayScale);
+
+    let baseRectWidth = $derived(
+        displayHeight > 0 && displayWidth / displayHeight > RECIPE_CARD_ASPECT_RATIO
+            ? displayHeight * RECIPE_CARD_ASPECT_RATIO
+            : displayWidth
+    );
+    let baseRectHeight = $derived(baseRectWidth / RECIPE_CARD_ASPECT_RATIO);
+
+    let maxZoom = $derived.by(() => {
+        if (!displayScale || !baseRectWidth) return 1;
+        const minRectDisplayWidth = MIN_CROP_OUTPUT_WIDTH * displayScale;
+        if (minRectDisplayWidth <= 0) return 1;
+        return clamp(baseRectWidth / minRectDisplayWidth, 1, MAX_ZOOM);
+    });
+
+    $effect(() => {
+        if (zoom > maxZoom) zoom = maxZoom;
+    });
+
+    let rectWidth = $derived(baseRectWidth / zoom);
+    let rectHeight = $derived(baseRectHeight / zoom);
+    let travelX = $derived(Math.max(0, displayWidth - rectWidth));
+    let travelY = $derived(Math.max(0, displayHeight - rectHeight));
+    let rectX = $derived(centerFracX * travelX);
+    let rectY = $derived(centerFracY * travelY);
+
+    let dragState: {startX: number; startY: number; startFracX: number; startFracY: number} | null = null;
+
+    function onRectPointerDown(e: PointerEvent) {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        dragState = {startX: e.clientX, startY: e.clientY, startFracX: centerFracX, startFracY: centerFracY};
+    }
+
+    function onRectPointerMove(e: PointerEvent) {
+        if (!dragState) return;
+        const dx = e.clientX - dragState.startX;
+        const dy = e.clientY - dragState.startY;
+        centerFracX = clamp(dragState.startFracX + (travelX > 0 ? dx / travelX : 0), 0, 1);
+        centerFracY = clamp(dragState.startFracY + (travelY > 0 ? dy / travelY : 0), 0, 1);
+    }
+
+    function onRectPointerUp() {
+        dragState = null;
+    }
+
+    function onRectKeydown(e: KeyboardEvent) {
+        const step = 0.02;
+        if (e.key === 'ArrowLeft') centerFracX = clamp(centerFracX - step, 0, 1);
+        else if (e.key === 'ArrowRight') centerFracX = clamp(centerFracX + step, 0, 1);
+        else if (e.key === 'ArrowUp') centerFracY = clamp(centerFracY - step, 0, 1);
+        else if (e.key === 'ArrowDown') centerFracY = clamp(centerFracY + step, 0, 1);
+        else return;
+        e.preventDefault();
+    }
+
+    async function handleConfirm() {
+        if (!file || !imgEl || !naturalWidth || !displayWidth) return;
+        const scale = naturalWidth / displayWidth;
+        const crop: CropRect = {
+            x: rectX * scale,
+            y: rectY * scale,
+            width: rectWidth * scale,
+            height: rectHeight * scale,
+        };
+        const cropped = await cropImageToFile(imgEl, crop, file.name, file.type || 'image/jpeg');
+        onConfirm(cropped);
+    }
+</script>
+
+<Modal
+        open={!!file}
+        title={$_('imageCrop.title')}
+        description={$_('imageCrop.description')}
+        closeOnBackdrop={false}
+        onClose={onCancel}
+        class="max-w-2xl"
+>
+    <div class="w-full" bind:clientWidth={measureWidth}>
+        {#if imageUrl}
+            <div
+                    class="relative mx-auto overflow-hidden bg-black touch-none select-none"
+                    style="width:{displayWidth}px; height:{displayHeight}px"
+            >
+                <img
+                        bind:this={imgEl}
+                        src={imageUrl}
+                        onload={handleImageLoad}
+                        alt=""
+                        draggable="false"
+                        class="absolute top-0 left-0 pointer-events-none select-none"
+                        style="width:{displayWidth}px; height:{displayHeight}px"
+                />
+                {#if naturalWidth}
+                    <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+                    <div
+                            class="absolute border-2 border-white/90 cursor-move"
+                            style="left:{rectX}px; top:{rectY}px; width:{rectWidth}px; height:{rectHeight}px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.55);"
+                            onpointerdown={onRectPointerDown}
+                            onpointermove={onRectPointerMove}
+                            onpointerup={onRectPointerUp}
+                            onpointercancel={onRectPointerUp}
+                            onkeydown={onRectKeydown}
+                            role="slider"
+                            aria-label={$_('imageCrop.dragHint')}
+                            aria-valuenow={Math.round(centerFracX * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            tabindex="0"
+                    ></div>
+                {/if}
+            </div>
+        {/if}
+    </div>
+
+    <div class="mt-4 flex items-center gap-3">
+        <span class="text-sm text-muted-foreground whitespace-nowrap">{$_('imageCrop.zoom')}</span>
+        <input
+                type="range"
+                min="1"
+                max={maxZoom}
+                step="0.01"
+                bind:value={zoom}
+                disabled={maxZoom <= 1.001}
+                class="flex-1"
+        />
+    </div>
+
+    {#snippet footer()}
+        <Button variant="outline" onclick={onCancel}>{$_('imageCrop.cancel')}</Button>
+        <Button onclick={handleConfirm}>{$_('imageCrop.confirm')}</Button>
+    {/snippet}
+</Modal>

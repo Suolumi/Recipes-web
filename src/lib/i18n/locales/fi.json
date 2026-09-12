@@ -14,6 +14,14 @@
     "drag": "tai vedä ja pudota",
     "multiple": "Useita kuvia tuettu"
   },
+  "imageCrop": {
+    "title": "Muokkaa kuvaa",
+    "description": "Siirrä kehystä vetämällä, tarkenna liukusäätimellä.",
+    "zoom": "Zoomaus",
+    "dragHint": "Vedä siirtääksesi rajausaluetta",
+    "cancel": "Peruuta",
+    "confirm": "Käytä kuvaa"
+  },
   "recipeCard": {
     "by": "Tekijä",
     "noPicture": "Ei kuvia lisätty vielä.",
