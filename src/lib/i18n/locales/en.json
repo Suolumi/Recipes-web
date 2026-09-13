@@ -51,7 +51,7 @@
     "welcome": "Welcome back! Please sign in to your account",
     "id": {
       "label": "Email / Username",
-      "placeholder": "Enter your email / username"
+      "placeholder": "e.g. jane@example.com or jane_doe"
     },
     "password": {
       "label": "Password",
@@ -76,11 +76,11 @@
     "create": "Create your account to start sharing recipes",
     "email": {
       "label": "Email address",
-      "placeholder": "Enter your email"
+      "placeholder": "e.g. jane@example.com"
     },
     "username": {
       "label": "Username",
-      "placeholder": "Choose an username"
+      "placeholder": "e.g. jane_doe"
     },
     "password": {
       "label": "Password",
@@ -103,11 +103,11 @@
     "info": "Profile",
     "username": {
       "label": "Username",
-      "placeholder": "Enter your new username"
+      "placeholder": "e.g. jane_doe"
     },
     "email": {
       "label": "Email",
-      "placeholder": "Enter your new email"
+      "placeholder": "e.g. jane@example.com"
     },
     "password": {
       "label": "Password",
@@ -144,14 +144,14 @@
     "details": "Recipe Details",
     "title": {
       "label": "Recipe Title",
-      "placeholder": "Enter recipe title"
+      "placeholder": "e.g. Grandma's Apple Pie"
     },
     "type": {
       "label": "Type"
     },
     "description": {
       "label": "Description",
-      "placeholder": "Describe your recipe"
+      "placeholder": "e.g. A comforting apple pie with a flaky crust, perfect for Sunday dinners"
     },
     "servings": {
       "label": "Servings"
@@ -171,15 +171,15 @@
       "add": "Add Ingredient",
       "name": {
         "label": "Name",
-        "placeholder": "Ingredient name"
+        "placeholder": "e.g. Flour, Sugar, Butter"
       },
       "quantity": {
         "label": "Quantity",
-        "placeholder": "Quantity"
+        "placeholder": "e.g. 200, 1.5, ½"
       },
       "unit": {
         "label": "Unit (optional)",
-        "placeholder": "g, cl, leaves…"
+        "placeholder": "e.g. g, cl, leaves…"
       },
       "preview": "Will show as: \"{text}\"",
       "remove": "Remove ingredient"
@@ -189,11 +189,11 @@
       "add": "Add step",
       "title": {
         "label": "Step Title",
-        "placeholder": "Step Title"
+        "placeholder": "e.g. Preheat the oven"
       },
       "description": {
         "label": "Description",
-        "placeholder": "Description"
+        "placeholder": "e.g. Preheat the oven to 180°C (350°F) and grease the baking pan"
       },
       "remove": "Remove"
     },
@@ -318,7 +318,7 @@
     "resetDesc": "Enter your email address or username and we'll send you instructions to reset your password if your account exists",
     "id": {
       "label": "Email address / Username",
-      "placeholder": "Enter your email address / username"
+      "placeholder": "e.g. jane@example.com or jane_doe"
     },
     "submit": "Send email",
     "remember": "Remember your password?",

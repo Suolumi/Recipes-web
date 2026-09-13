@@ -51,7 +51,7 @@
     "welcome": "Tervetuloa takaisin! Kirjaudu tilillesi",
     "id": {
       "label": "Sähköposti / Käyttäjänimi",
-      "placeholder": "Syötä sähköpostisi / käyttäjänimesi"
+      "placeholder": "esim. jane@esimerkki.com tai jane_meikalainen"
     },
     "password": {
       "label": "Salasana",
@@ -76,11 +76,11 @@
     "create": "Luo tili ja ala jakaa reseptejä",
     "email": {
       "label": "Sähköpostiosoite",
-      "placeholder": "Syötä sähköpostisi"
+      "placeholder": "esim. jane@esimerkki.com"
     },
     "username": {
       "label": "Käyttäjänimi",
-      "placeholder": "Valitse käyttäjänimi"
+      "placeholder": "esim. jane_meikalainen"
     },
     "password": {
       "label": "Salasana",
@@ -103,11 +103,11 @@
     "info": "Profiili",
     "username": {
       "label": "Käyttäjänimi",
-      "placeholder": "Syötä uusi käyttäjänimi"
+      "placeholder": "esim. jane_meikalainen"
     },
     "email": {
       "label": "Sähköposti",
-      "placeholder": "Syötä uusi sähköposti"
+      "placeholder": "esim. jane@esimerkki.com"
     },
     "password": {
       "label": "Salasana",
@@ -144,14 +144,14 @@
     "details": "Reseptin tiedot",
     "title": {
       "label": "Reseptin otsikko",
-      "placeholder": "Syötä reseptin otsikko"
+      "placeholder": "esim. Mummon omenapiirakka"
     },
     "type": {
       "label": "Tyyppi"
     },
     "description": {
       "label": "Kuvaus",
-      "placeholder": "Kuvaile reseptiäsi"
+      "placeholder": "esim. Lohduttava omenapiirakka rapealla taikinalla, täydellinen sunnuntaipäivälliseksi"
     },
     "servings": {
       "label": "Annoskoko"
@@ -171,15 +171,15 @@
       "add": "Lisää ainesosa",
       "name": {
         "label": "Nimi",
-        "placeholder": "Ainesosan nimi"
+        "placeholder": "esim. Jauhot, Sokeri, Voi"
       },
       "quantity": {
         "label": "Määrä",
-        "placeholder": "Määrä"
+        "placeholder": "esim. 200, 1,5, ½"
       },
       "unit": {
         "label": "Yksikkö (valinnainen)",
-        "placeholder": "g, dl, lehteä…"
+        "placeholder": "esim. g, dl, lehteä…"
       },
       "preview": "Näytetään muodossa: \"{text}\"",
       "remove": "Poista ainesosa"
@@ -189,11 +189,11 @@
       "add": "Lisää vaihe",
       "title": {
         "label": "Vaiheen otsikko",
-        "placeholder": "Vaiheen otsikko"
+        "placeholder": "esim. Esilämmitä uuni"
       },
       "description": {
         "label": "Kuvaus",
-        "placeholder": "Kuvaus"
+        "placeholder": "esim. Esilämmitä uuni 180°C:seen ja voitele vuoka"
       },
       "remove": "Poista"
     },
@@ -318,7 +318,7 @@
     "resetDesc": "Syötä sähköpostisi tai käyttäjänimesi, niin lähetämme ohjeet salasanan palauttamiseksi, jos tilisi löytyy",
     "id": {
       "label": "Sähköpostiosoite / Käyttäjänimi",
-      "placeholder": "Syötä sähköpostisi / käyttäjänimesi"
+      "placeholder": "esim. jane@esimerkki.com tai jane_meikalainen"
     },
     "submit": "Lähetä sähköposti",
     "remember": "Muistatko salasanasi?",

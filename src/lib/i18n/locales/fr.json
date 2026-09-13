@@ -51,7 +51,7 @@
     "welcome": "Bon retour ! Veuillez vous connecter à votre compte",
     "id": {
       "label": "Email / Nom d'utilisateur",
-      "placeholder": "Entrez votre email / nom d'utilisateur"
+      "placeholder": "ex. jane@exemple.com ou jane_dupont"
     },
     "password": {
       "label": "Mot de passe",
@@ -76,11 +76,11 @@
     "create": "Créez votre compte pour commencer à partager des recettes",
     "email": {
       "label": "Adresse email",
-      "placeholder": "Entrez votre email"
+      "placeholder": "ex. jane@exemple.com"
     },
     "username": {
       "label": "Nom d'utilisateur",
-      "placeholder": "Choisissez un nom d'utilisateur"
+      "placeholder": "ex. jane_dupont"
     },
     "password": {
       "label": "Mot de passe",
@@ -103,11 +103,11 @@
     "info": "Profil",
     "username": {
       "label": "Nom d'utilisateur",
-      "placeholder": "Entrez votre nouveau nom d'utilisateur"
+      "placeholder": "ex. jane_dupont"
     },
     "email": {
       "label": "Email",
-      "placeholder": "Entrez votre nouvel email"
+      "placeholder": "ex. jane@exemple.com"
     },
     "password": {
       "label": "Mot de passe",
@@ -144,14 +144,14 @@
     "details": "Détails de la recette",
     "title": {
       "label": "Titre de la recette",
-      "placeholder": "Entrez le titre de la recette"
+      "placeholder": "ex. Tarte aux pommes de mamie"
     },
     "type": {
       "label": "Type"
     },
     "description": {
       "label": "Description",
-      "placeholder": "Décrivez votre recette"
+      "placeholder": "ex. Une tarte réconfortante à la pâte croustillante, parfaite pour les dimanches en famille"
     },
     "servings": {
       "label": "Portions"
@@ -171,15 +171,15 @@
       "add": "Ajouter un ingrédient",
       "name": {
         "label": "Nom",
-        "placeholder": "Nom de l'ingrédient"
+        "placeholder": "ex. Farine, Sucre, Beurre"
       },
       "quantity": {
         "label": "Quantité",
-        "placeholder": "Quantité"
+        "placeholder": "ex. 200, 1,5, ½"
       },
       "unit": {
         "label": "Unité (facultatif)",
-        "placeholder": "g, cl, feuilles…"
+        "placeholder": "ex. g, cl, feuilles…"
       },
       "preview": "Affiché comme : « {text} »",
       "remove": "Supprimer l'ingrédient"
@@ -189,11 +189,11 @@
       "add": "Ajouter une étape",
       "title": {
         "label": "Titre",
-        "placeholder": "Titre"
+        "placeholder": "ex. Préchauffer le four"
       },
       "description": {
         "label": "Description",
-        "placeholder": "Description"
+        "placeholder": "ex. Préchauffer le four à 180°C et graisser le moule"
       },
       "remove": "Supprimer"
     },
@@ -318,7 +318,7 @@
     "resetDesc": "Entrez votre adresse mail ou nom d'utilisateur et nous vous enverrons un mail pour réinitialiser votre mot de passe, si votre compte existe",
     "id": {
       "label": "Adresse mail / Nom d'utilisateur",
-      "placeholder": "Entrez votre adresse mail / nom d'utilisateur"
+      "placeholder": "ex. jane@exemple.com ou jane_dupont"
     },
     "submit": "Envoyer le mail",
     "remember": "Vous avez retrouvé votre mot de passe?",
