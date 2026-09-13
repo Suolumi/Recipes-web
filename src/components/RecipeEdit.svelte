@@ -15,6 +15,7 @@
     import FileUpload from "./FileUpload.svelte";
     import ImageCropModal from "./ImageCropModal.svelte";
     import {createRecipeCache, editRecipeCache, serverUrl, user} from "$lib/stores";
+    import {untrack} from "svelte";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
     import {Trash2} from "@lucide/svelte";
@@ -54,7 +55,7 @@
 
     $effect(() => {
         if (recipe)
-            formData = getRecipe(recipe)
+            untrack(() => formData = getRecipe(recipe))
     })
 
     $effect(() => {
