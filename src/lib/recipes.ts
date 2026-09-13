@@ -133,12 +133,50 @@ export function groupIngredients(ingredients: Ingredient[]): IngredientGroup[] {
     return result
 }
 
-export function getIngredientName(ingredient: Ingredient): string {
-    if (ingredient.quantity && ingredient.quantity > 0) {
-        if (ingredient.unit && ingredient.unit !== '') {
-            return `${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}`
+// Friendly fractions to snap a scaled quantity's fractional part to, so
+// scaled amounts read like a normal recipe (e.g. "1 + 1/2 cups") instead of
+// a raw decimal (e.g. "1.5 cups").
+const FRIENDLY_FRACTIONS: [numerator: number, denominator: number][] = [
+    [1, 8], [1, 4], [1, 3], [3, 8], [1, 2], [5, 8], [2, 3], [3, 4], [7, 8],
+]
+const FRACTION_ROUND_EPSILON = 1 / 32
+
+export function formatScaledQuantity(quantity: number): string {
+    const whole = Math.floor(quantity)
+    const frac = quantity - whole
+
+    if (frac < FRACTION_ROUND_EPSILON)
+        return String(whole)
+    if (1 - frac < FRACTION_ROUND_EPSILON)
+        return String(whole + 1)
+
+    let [bestNumerator, bestDenominator] = FRIENDLY_FRACTIONS[0]
+    let bestDiff = Math.abs(frac - bestNumerator / bestDenominator)
+    for (const [numerator, denominator] of FRIENDLY_FRACTIONS.slice(1)) {
+        const diff = Math.abs(frac - numerator / denominator)
+        if (diff < bestDiff) {
+            bestDiff = diff
+            bestNumerator = numerator
+            bestDenominator = denominator
         }
-        return `${ingredient.quantity} ${ingredient.name}`
+    }
+
+    const fractionText = `${bestNumerator}/${bestDenominator}`
+    return whole > 0 ? `${whole} + ${fractionText}` : fractionText
+}
+
+// `ratio` scales the ingredient's stored quantity (e.g. selected servings /
+// recipe's default servings). At ratio 1 (the default), formatting is
+// unchanged from the recipe's authored quantity; away from 1, the quantity
+// is scaled and rounded to a friendly fraction. Ingredients with no
+// quantity (quantity <= 0, e.g. "salt to taste") are never scaled.
+export function getIngredientName(ingredient: Ingredient, ratio: number = 1): string {
+    if (ingredient.quantity && ingredient.quantity > 0) {
+        const quantity = ratio === 1 ? ingredient.quantity : formatScaledQuantity(ingredient.quantity * ratio)
+        if (ingredient.unit && ingredient.unit !== '') {
+            return `${quantity} ${ingredient.unit} - ${ingredient.name}`
+        }
+        return `${quantity} ${ingredient.name}`
     }
     return ingredient.name
 }

@@ -1,6 +1,6 @@
 {
   "header": {
-    "appName": "Recettes",
+    "appName": "Sauté",
     "allRecipes": "Toutes les recettes",
     "createRecipe": "Créer une recette",
     "connectAI": "Connecter une IA",
@@ -64,7 +64,7 @@
       "success": "Connexion réussie.",
       "error": "Échec de la connexion."
     },
-    "signIn": "Se connecter à Recettes",
+    "signIn": "Se connecter à Sauté",
     "welcome": "Bon retour ! Veuillez vous connecter à votre compte",
     "id": {
       "label": "Email / Nom d'utilisateur",
@@ -89,7 +89,7 @@
       "success": "Inscription réussie !",
       "error": "Échec de l'inscription."
     },
-    "join": "Rejoindre Recettes",
+    "join": "Rejoindre Sauté",
     "create": "Créez votre compte pour commencer à partager des recettes",
     "email": {
       "label": "Adresse email",
@@ -147,6 +147,8 @@
     "cook": "Cuisson",
     "rest": "Repos",
     "servings": "Portions",
+    "decreaseServings": "Réduire le nombre de portions",
+    "increaseServings": "Augmenter le nombre de portions",
     "ingredients": "Ingrédients",
     "instructions": "Instructions",
     "notFound": "Recette non trouvée",

@@ -59,7 +59,7 @@
                 <button
                         onclick={() => goto(`/${$locale}/home`)}
                         class="text-2xl font-bold text-primary hover:text-primary/80 transition-colors hover:cursor-pointer"
-                        aria-label="Recipes"
+                        aria-label="Sauté"
                 >
                     {$_('header.appName')}
                 </button>

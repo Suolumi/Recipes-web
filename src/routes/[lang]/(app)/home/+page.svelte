@@ -24,6 +24,17 @@
     let ingredients: string[] = $state([]);
     let timeBasis: 'prep' | 'total' = $state('total');
     let timeTarget: TimePreset = $state('any');
+    let typeScrollEl: HTMLDivElement | undefined = $state();
+    let typeCanScrollLeft = $state(false);
+    let typeCanScrollRight = $state(false);
+
+    function updateTypeScrollShadows() {
+        if (!typeScrollEl)
+            return
+        typeCanScrollLeft = typeScrollEl.scrollLeft > 4
+        typeCanScrollRight = typeScrollEl.scrollLeft + typeScrollEl.clientWidth < typeScrollEl.scrollWidth - 4
+    }
+
     let recipes: RecipePreview[] = $state([])
     let totalCount: number | undefined = $state(undefined);
     // Offset into the non-favorited remainder only (see recipes.ts / the API's
@@ -194,6 +205,19 @@
         return () => observer.disconnect()
     })
 
+    $effect(() => {
+        if (!typeScrollEl)
+            return
+        updateTypeScrollShadows()
+        const observer = new ResizeObserver(updateTypeScrollShadows)
+        observer.observe(typeScrollEl)
+        typeScrollEl.addEventListener('scroll', updateTypeScrollShadows)
+        return () => {
+            observer.disconnect()
+            typeScrollEl?.removeEventListener('scroll', updateTypeScrollShadows)
+        }
+    })
+
     const recipeTypes = $derived([{
         value: 'all',
         label: $_('recipes.types.all'),
@@ -230,19 +254,26 @@
             </button>
         </div>
 
-        <div class="flex gap-2 overflow-x-auto mt-4 pb-1">
-            {#each recipeTypes as type}
-                <button
-                        type="button"
-                        onclick={() => selectedType = type.value}
-                        class="flex-none px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border-2 transition-colors
-                            {type.value === 'all'
-                                ? (selectedType === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-foreground border-border')
-                                : (recipeTypeColors[type.value] + (selectedType === type.value ? ' border-current' : ' border-transparent'))}"
-                >
-                    {type.label}
-                </button>
-            {/each}
+        <div class="relative mt-4">
+            <div
+                    bind:this={typeScrollEl}
+                    class="flex gap-2 overflow-x-auto pb-1"
+            >
+                {#each recipeTypes as type}
+                    <button
+                            type="button"
+                            onclick={() => selectedType = type.value}
+                            class="flex-none px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border-2 transition-colors
+                                {type.value === 'all'
+                                    ? (selectedType === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-foreground border-border')
+                                    : (recipeTypeColors[type.value] + (selectedType === type.value ? ' border-current' : ' border-transparent'))}"
+                    >
+                        {type.label}
+                    </button>
+                {/each}
+            </div>
+            <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent transition-opacity {typeCanScrollLeft ? 'opacity-100' : 'opacity-0'}"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-card to-transparent transition-opacity {typeCanScrollRight ? 'opacity-100' : 'opacity-0'}"></div>
         </div>
 
         {#if filtersOpen}
@@ -275,7 +306,7 @@
                                 class="w-full pl-10 pr-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                         />
                         {#if showAuthorSuggestions && authorSuggestions.length > 0}
-                            <div class="absolute left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg py-1 z-50 overflow-hidden">
+                            <div class="relative mt-2 bg-card border border-border rounded-lg shadow-lg py-1 z-50 overflow-hidden">
                                 {#each authorSuggestions as suggestion (suggestion.id)}
                                     <button
                                             type="button"
@@ -316,7 +347,7 @@
                             {#each ingredients as ingredient}
                                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-input border border-border text-sm text-foreground">
                                     {ingredient}
-                                    <button type="button" onclick={() => removeIngredient(ingredient)} class="text-muted-foreground hover:text-foreground">
+                                    <button type="button" onclick={() => removeIngredient(ingredient)} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
                                         <X class="w-3.5 h-3.5" />
                                     </button>
                                 </span>
@@ -376,7 +407,7 @@
             {#if selectedType !== 'all'}
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
                     {$_('recipes.types.' + selectedType)}
-                    <button type="button" onclick={() => selectedType = 'all'} class="text-muted-foreground hover:text-foreground">
+                    <button type="button" onclick={() => selectedType = 'all'} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
                         <X class="w-3.5 h-3.5" />
                     </button>
                 </span>
@@ -386,7 +417,7 @@
                     {$_('home.activeAuthor')}
                     <User class="w-3.5 h-3.5" />
                     {author}
-                    <button type="button" onclick={clearAuthor} class="text-muted-foreground hover:text-foreground">
+                    <button type="button" onclick={clearAuthor} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
                         <X class="w-3.5 h-3.5" />
                     </button>
                 </span>
@@ -394,7 +425,7 @@
             {#each ingredients as ingredient}
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
                     {ingredient}
-                    <button type="button" onclick={() => removeIngredient(ingredient)} class="text-muted-foreground hover:text-foreground">
+                    <button type="button" onclick={() => removeIngredient(ingredient)} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
                         <X class="w-3.5 h-3.5" />
                     </button>
                 </span>
@@ -402,7 +433,7 @@
             {#if timeTarget !== 'any'}
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
                     {$_(timeBasis === 'prep' ? 'home.activeTimePrep' : 'home.activeTimeTotal', {values: {time: timeLabel(timeTarget)}})}
-                    <button type="button" onclick={() => timeTarget = 'any'} class="text-muted-foreground hover:text-foreground">
+                    <button type="button" onclick={() => timeTarget = 'any'} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
                         <X class="w-3.5 h-3.5" />
                     </button>
                 </span>

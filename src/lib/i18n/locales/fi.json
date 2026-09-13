@@ -1,6 +1,6 @@
 {
   "header": {
-    "appName": "Reseptit",
+    "appName": "Sauté",
     "allRecipes": "Kaikki reseptit",
     "createRecipe": "Luo resepti",
     "connectAI": "Yhdistä tekoäly",
@@ -64,7 +64,7 @@
       "success": "Kirjautuminen onnistui.",
       "error": "Kirjautuminen epäonnistui."
     },
-    "signIn": "Kirjaudu sisään Reseptit-sovellukseen",
+    "signIn": "Kirjaudu sisään Sauté-sovellukseen",
     "welcome": "Tervetuloa takaisin! Kirjaudu tilillesi",
     "id": {
       "label": "Sähköposti / Käyttäjänimi",
@@ -89,7 +89,7 @@
       "success": "Rekisteröinti onnistui!",
       "error": "Rekisteröinti epäonnistui."
     },
-    "join": "Liity Reseptit-sovellukseen",
+    "join": "Liity Sauté-sovellukseen",
     "create": "Luo tili ja ala jakaa reseptejä",
     "email": {
       "label": "Sähköpostiosoite",
@@ -147,6 +147,8 @@
     "cook": "Kypsennys",
     "rest": "Lepo",
     "servings": "Annoskoko",
+    "decreaseServings": "Vähennä annoksia",
+    "increaseServings": "Lisää annoksia",
     "ingredients": "Ainekset",
     "instructions": "Ohjeet",
     "notFound": "Reseptiä ei löytynyt",

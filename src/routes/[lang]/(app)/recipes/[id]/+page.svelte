@@ -3,7 +3,7 @@
     import {page} from "$app/state";
     import {favoriteRecipe, getIngredientName, getRecipe, groupIngredients, type Recipe, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Languages} from "@lucide/svelte";
+    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Languages, Minus, Plus} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
     import {toastError} from "$lib/utils";
@@ -12,19 +12,31 @@
     const id = page.params.id
     const { data } = $props()
     let recipe: Recipe | null | undefined = $state(data.recipe)
+    let selectedServings = $state(data.recipe?.quantity ?? 1)
 
     $effect(() => {
         if (!id)
             return
         getRecipe(id, $locale ?? undefined).then(({response, data}) => {
-            if (response.ok && data)
+            if (response.ok && data) {
                 recipe = data
-            else
+                selectedServings = data.quantity
+            } else
                 toastError($_('settings.errors.getRecipes'))
         })
     })
 
     let ingredientGroups = $derived(groupIngredients(recipe?.ingredients ?? []));
+    let servingsRatio = $derived(recipe && recipe.quantity > 0 ? selectedServings / recipe.quantity : 1);
+
+    function decreaseServings() {
+        if (selectedServings > 1)
+            selectedServings -= 1;
+    }
+
+    function increaseServings() {
+        selectedServings += 1;
+    }
 
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
@@ -71,6 +83,7 @@
         const {data, response} = await getRecipe(recipe.id, $locale ?? '')
         if (response.ok) {
             recipe = data;
+            selectedServings = data.quantity;
         }
     }
 
@@ -225,7 +238,27 @@
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.servings')}: {recipe.quantity}</span>
+                            <span class="whitespace-nowrap mr-2">{$_('recipe.servings')}:</span>
+                            <div class="flex items-center gap-2">
+                                <button
+                                        type="button"
+                                        onclick={decreaseServings}
+                                        disabled={selectedServings <= 1}
+                                        aria-label={$_('recipe.decreaseServings')}
+                                        class="w-6 h-6 flex items-center justify-center rounded-full border border-border hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed hover:cursor-pointer transition-colors"
+                                >
+                                    <Minus size="14" />
+                                </button>
+                                <span class="w-4 text-center font-medium text-card-foreground">{selectedServings}</span>
+                                <button
+                                        type="button"
+                                        onclick={increaseServings}
+                                        aria-label={$_('recipe.increaseServings')}
+                                        class="w-6 h-6 flex items-center justify-center rounded-full border border-border hover:bg-accent hover:cursor-pointer transition-colors"
+                                >
+                                    <Plus size="14" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,7 +283,7 @@
                                     {#each group.items as ingredient}
                                         <li class="flex items-start">
                                             <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                            <span class="text-card-foreground">{getIngredientName(ingredient)}</span>
+                                            <span class="text-card-foreground">{getIngredientName(ingredient, servingsRatio)}</span>
                                         </li>
                                     {/each}
                                 </ul>
