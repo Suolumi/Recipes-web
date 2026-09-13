@@ -190,6 +190,7 @@
       "addCategory": "Add category",
       "categoryNamePlaceholder": "Category name",
       "deleteCategory": "Delete category",
+      "renameCategory": "Rename category",
       "moveTo": "Move to",
       "uncategorized": "No category",
       "dragHint": "Drag the handle to reorder, or use an ingredient's menu to move it into another category.",

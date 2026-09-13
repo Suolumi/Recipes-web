@@ -190,6 +190,7 @@
       "addCategory": "Lisää kategoria",
       "categoryNamePlaceholder": "Kategorian nimi",
       "deleteCategory": "Poista kategoria",
+      "renameCategory": "Nimeä kategoria uudelleen",
       "moveTo": "Siirrä",
       "uncategorized": "Ei kategoriaa",
       "dragHint": "Vedä kahvasta järjestääksesi, tai siirrä ainesosa toiseen kategoriaan sen valikon kautta.",

@@ -19,7 +19,7 @@
     import {untrack} from "svelte";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
-    import {Trash2, GripVertical, EllipsisVertical, Plus} from "@lucide/svelte";
+    import {Trash2, GripVertical, EllipsisVertical, Plus, Pencil} from "@lucide/svelte";
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
@@ -639,13 +639,15 @@
                                     class="max-w-[240px] py-1.5 px-2 text-sm font-semibold"
                                 />
                               {:else}
+                                <span class="font-semibold text-sm text-foreground px-1 py-1">{section.name}</span>
                                 <button
                                     type="button"
-                                    ondblclick={() => startRename(section)}
-                                    class="font-semibold text-sm text-foreground px-1 py-1 rounded hover:underline decoration-dotted underline-offset-4 text-left"
-                                    title="Double-click to rename"
+                                    onclick={() => startRename(section)}
+                                    class="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                    aria-label={$_('edit.ingredients.renameCategory')}
+                                    title={$_('edit.ingredients.renameCategory')}
                                 >
-                                  {section.name}
+                                  <Pencil class="w-3.5 h-3.5" />
                                 </button>
                               {/if}
 
