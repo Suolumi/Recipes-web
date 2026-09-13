@@ -14,9 +14,11 @@
     let generating = $state(false);
     let disconnecting = $state(false);
     let confirmDisconnect = $state(false);
-    let copiedField: 'url' | 'token' | null = $state(null);
+    let copiedField: 'url' | 'token' | 'claudeCli' | 'chatgptCli' | null = $state(null);
 
     let mcpUrl = $derived($serverUrl.replace(/\/api\/v1\/?$/, '') + '/mcp');
+    let claudeCliCommand = $derived(`claude mcp add --transport http recipes ${mcpUrl} --header "Authorization: Bearer ${token}"`);
+    let chatgptCliConfig = $derived(`[mcp_servers.recipes]\nurl = "${mcpUrl}"\nbearer_token = "${token}"`);
 
     onMount(() => {
         if (!$accessToken || $accessToken === "") {
@@ -47,7 +49,7 @@
             toastError(apiErrorMessage(data, $_('connectAi.toasts.disconnectError')))
     }
 
-    async function copy(text: string, field: 'url' | 'token') {
+    async function copy(text: string, field: 'url' | 'token' | 'claudeCli' | 'chatgptCli') {
         await navigator.clipboard.writeText(text)
         copiedField = field
         setTimeout(() => {
@@ -70,6 +72,7 @@
         <div class="bg-card rounded-lg border border-border p-6">
             <h2 class="text-xl font-semibold text-card-foreground mb-2">{$_('connectAi.intro.title')}</h2>
             <p class="text-foreground leading-relaxed">{$_('connectAi.intro.body')}</p>
+            <p class="text-muted-foreground leading-relaxed mt-3 text-sm">{$_('connectAi.intro.tokenPurpose')}</p>
         </div>
 
         <div class="bg-card rounded-lg border border-border p-6">
@@ -114,6 +117,57 @@
                             <li>{$_('connectAi.generate.steps.three')}</li>
                             <li>{$_('connectAi.generate.steps.four')}</li>
                         </ol>
+                    </div>
+
+                    <div class="pt-2">
+                        <h3 class="text-lg font-semibold text-card-foreground mb-3">{$_('connectAi.generate.examples.title')}</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-muted rounded-lg p-4">
+                                <p class="font-medium text-foreground mb-2">{$_('connectAi.generate.examples.claude.title')}</p>
+                                <ol class="space-y-1 list-decimal list-inside text-sm text-foreground">
+                                    <li>{$_('connectAi.generate.examples.claude.one')}</li>
+                                    <li>{$_('connectAi.generate.examples.claude.two')}</li>
+                                    <li>{$_('connectAi.generate.examples.claude.three')}</li>
+                                </ol>
+                            </div>
+                            <div class="bg-muted rounded-lg p-4">
+                                <p class="font-medium text-foreground mb-2">{$_('connectAi.generate.examples.chatgpt.title')}</p>
+                                <ol class="space-y-1 list-decimal list-inside text-sm text-foreground">
+                                    <li>{$_('connectAi.generate.examples.chatgpt.one')}</li>
+                                    <li>{$_('connectAi.generate.examples.chatgpt.two')}</li>
+                                    <li>{$_('connectAi.generate.examples.chatgpt.three')}</li>
+                                </ol>
+                            </div>
+                            <div class="bg-muted rounded-lg p-4">
+                                <p class="font-medium text-foreground mb-2">{$_('connectAi.generate.examples.claudeCli.title')}</p>
+                                <p class="text-sm text-foreground mb-2">{$_('connectAi.generate.examples.claudeCli.intro')}</p>
+                                <div class="flex items-start gap-2">
+                                    <pre class="flex-1 min-w-0 overflow-x-auto bg-background rounded-lg px-3 py-2 text-xs text-foreground"><code>{claudeCliCommand}</code></pre>
+                                    <Button variant="outline" size="sm" onclick={() => copy(claudeCliCommand, 'claudeCli')} aria-label="Copy command">
+                                        {#if copiedField === 'claudeCli'}
+                                            <Check class="w-4 h-4" />
+                                        {:else}
+                                            <Copy class="w-4 h-4" />
+                                        {/if}
+                                    </Button>
+                                </div>
+                            </div>
+                            <div class="bg-muted rounded-lg p-4">
+                                <p class="font-medium text-foreground mb-2">{$_('connectAi.generate.examples.chatgptCli.title')}</p>
+                                <p class="text-sm text-foreground mb-2">{$_('connectAi.generate.examples.chatgptCli.intro')}</p>
+                                <div class="flex items-start gap-2">
+                                    <pre class="flex-1 min-w-0 overflow-x-auto bg-background rounded-lg px-3 py-2 text-xs text-foreground"><code>{chatgptCliConfig}</code></pre>
+                                    <Button variant="outline" size="sm" onclick={() => copy(chatgptCliConfig, 'chatgptCli')} aria-label="Copy config">
+                                        {#if copiedField === 'chatgptCli'}
+                                            <Check class="w-4 h-4" />
+                                        {:else}
+                                            <Copy class="w-4 h-4" />
+                                        {/if}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-3">{$_('connectAi.generate.examples.note')}</p>
                     </div>
 
                     <Button variant="outline" size="sm" onclick={generate} disabled={generating}>

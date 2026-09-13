@@ -247,7 +247,8 @@
     },
     "intro": {
       "title": "What is this?",
-      "body": "This connects an AI assistant (like Claude) to your recipes, so you can ask it to look up, add, or edit them for you. You'll need an AI app that supports \"MCP\" connections."
+      "body": "This connects an AI assistant to your recipes, so you can ask it to look up, add, or edit them for you. You'll need an AI app that supports \"MCP\" connections.",
+      "tokenPurpose": "The address and connection code below are what your AI app uses to sign in as you. The connection code works like a password: anyone who has it can read and edit your recipes, so only paste it into an AI app you trust, and never share it. If you ever think it's been exposed, disconnect below to cancel it, then generate a fresh one."
     },
     "generate": {
       "button": "Generate my connection code",
@@ -263,6 +264,30 @@
         "two": "Paste the address below where it asks for a server address or URL.",
         "three": "Paste the connection code below where it asks for a token, key, or password.",
         "four": "Save, and start asking your assistant about your recipes!"
+      },
+      "examples": {
+        "title": "Examples",
+        "claude": {
+          "title": "Claude (web or desktop)",
+          "one": "Go to Settings → Connectors, then \"Add custom connector\".",
+          "two": "Paste the address into the URL field.",
+          "three": "If it asks for an access token or API key, paste the connection code there."
+        },
+        "chatgpt": {
+          "title": "ChatGPT (web or app)",
+          "one": "Go to Settings → Connectors → Advanced settings, and turn on developer mode if it's not already on.",
+          "two": "Create a new connector and paste the address into the server URL field.",
+          "three": "Set authentication to \"Access token\" (or similar) and paste the connection code."
+        },
+        "claudeCli": {
+          "title": "Claude Code (CLI)",
+          "intro": "Run this in your terminal:"
+        },
+        "chatgptCli": {
+          "title": "ChatGPT (Codex CLI)",
+          "intro": "Add this to your Codex config (usually ~/.codex/config.toml):"
+        },
+        "note": "Menu, flag, and config names change from time to time as these apps update — look for anything about connectors, tools, or MCP servers if these don't match exactly, or check the app's own docs/--help."
       }
     },
     "disconnect": {

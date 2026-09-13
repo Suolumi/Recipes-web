@@ -13,6 +13,7 @@
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
+    let heartBump = $state(false);
 
     function viewRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}`);
@@ -55,6 +56,7 @@
             goto(`/${$locale}/login`);
             return;
         }
+        heartBump = true;
         const wasFavorite = recipe.favorite;
         recipe = {...recipe, favorite: !wasFavorite, favorite_count: recipe.favorite_count + (wasFavorite ? -1 : 1)};
         try {
@@ -129,7 +131,12 @@
                     aria-label={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
                     title={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
             >
-                <Heart size="20" fill={recipe.favorite ? 'currentColor' : 'none'} />
+                <span
+                        class="inline-flex {heartBump ? 'heart-bump' : ''}"
+                        onanimationend={() => heartBump = false}
+                >
+                    <Heart size="20" fill={recipe.favorite ? 'currentColor' : 'none'} class={recipe.favorite ? 'text-red-500' : ''} />
+                </span>
                 {#if recipe.favorite_count > 0}
                     <span class="text-xs font-medium">{recipe.favorite_count}</span>
                 {/if}
@@ -187,3 +194,15 @@
         alt={recipe.title || 'Recipe Title'}
         onClose={() => lightboxOpen = false}
 />
+
+<style>
+    @keyframes heart-bump {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.4); }
+        60% { transform: scale(0.85); }
+        100% { transform: scale(1); }
+    }
+    .heart-bump {
+        animation: heart-bump 0.35s ease-in-out;
+    }
+</style>

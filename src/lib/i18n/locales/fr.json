@@ -247,7 +247,8 @@
     },
     "intro": {
       "title": "De quoi s'agit-il ?",
-      "body": "Ceci connecte un assistant IA (comme Claude) à vos recettes, pour lui demander de les consulter, d'en ajouter ou d'en modifier à votre place. Il vous faut une application IA compatible avec les connexions « MCP »."
+      "body": "Ceci connecte un assistant IA à vos recettes, pour lui demander de les consulter, d'en ajouter ou d'en modifier à votre place. Il vous faut une application IA compatible avec les connexions « MCP ».",
+      "tokenPurpose": "L'adresse et le code de connexion ci-dessous sont ce que votre application IA utilise pour se connecter à votre place. Le code de connexion fonctionne comme un mot de passe : quiconque le possède peut consulter et modifier vos recettes, alors ne le collez que dans une application IA de confiance, et ne le partagez jamais. Si vous pensez qu'il a été exposé, désactivez l'accès ci-dessous pour l'annuler, puis générez-en un nouveau."
     },
     "generate": {
       "button": "Générer mon code de connexion",
@@ -263,6 +264,30 @@
         "two": "Collez l'adresse ci-dessous là où l'on vous demande une adresse ou une URL de serveur.",
         "three": "Collez le code de connexion ci-dessous là où l'on vous demande un jeton, une clé ou un mot de passe.",
         "four": "Enregistrez, et posez vos questions sur vos recettes à votre assistant !"
+      },
+      "examples": {
+        "title": "Exemples",
+        "claude": {
+          "title": "Claude (web ou bureau)",
+          "one": "Allez dans Paramètres → Connecteurs, puis « Ajouter un connecteur personnalisé ».",
+          "two": "Collez l'adresse dans le champ URL.",
+          "three": "S'il demande un jeton d'accès ou une clé API, collez-y le code de connexion."
+        },
+        "chatgpt": {
+          "title": "ChatGPT (web ou application)",
+          "one": "Allez dans Paramètres → Connecteurs → Paramètres avancés, et activez le mode développeur s'il ne l'est pas déjà.",
+          "two": "Créez un nouveau connecteur et collez l'adresse dans le champ d'URL du serveur.",
+          "three": "Réglez l'authentification sur « Jeton d'accès » (ou équivalent) et collez le code de connexion."
+        },
+        "claudeCli": {
+          "title": "Claude Code (CLI)",
+          "intro": "Exécutez ceci dans votre terminal :"
+        },
+        "chatgptCli": {
+          "title": "ChatGPT (Codex CLI)",
+          "intro": "Ajoutez ceci à votre configuration Codex (généralement ~/.codex/config.toml) :"
+        },
+        "note": "Les noms de menus, options et fichiers de configuration changent parfois avec les mises à jour de ces applications — cherchez tout ce qui concerne les connecteurs, les outils ou les serveurs MCP si cela ne correspond pas exactement, ou consultez la documentation/--help de l'application."
       }
     },
     "disconnect": {

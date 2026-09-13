@@ -247,7 +247,8 @@
     },
     "intro": {
       "title": "Mistä tässä on kyse?",
-      "body": "Tämä yhdistää tekoälyavustajan (kuten Claude) reseptiisi, jotta voit pyytää sitä katsomaan, lisäämään tai muokkaamaan niitä puolestasi. Tarvitset tekoälysovelluksen, joka tukee \"MCP\"-yhteyksiä."
+      "body": "Tämä yhdistää tekoälyavustajan reseptiisi, jotta voit pyytää sitä katsomaan, lisäämään tai muokkaamaan niitä puolestasi. Tarvitset tekoälysovelluksen, joka tukee \"MCP\"-yhteyksiä.",
+      "tokenPurpose": "Alla oleva osoite ja yhteyskoodi ovat se, millä tekoälysovelluksesi kirjautuu sisään puolestasi. Yhteyskoodi toimii kuin salasana: kuka tahansa sen saa, voi lukea ja muokata reseptejäsi, joten liitä se vain luotettuun tekoälysovellukseen äläkä koskaan jaa sitä. Jos epäilet sen paljastuneen, katkaise yhteys alta mitätöidäksesi sen ja luo sitten uusi."
     },
     "generate": {
       "button": "Luo yhteyskoodini",
@@ -263,6 +264,30 @@
         "two": "Liitä alla oleva osoite kohtaan, jossa kysytään palvelimen osoitetta tai URL-osoitetta.",
         "three": "Liitä alla oleva yhteyskoodi kohtaan, jossa kysytään tunnusta, avainta tai salasanaa.",
         "four": "Tallenna, ja ala kysellä avustajaltasi resepteistäsi!"
+      },
+      "examples": {
+        "title": "Esimerkkejä",
+        "claude": {
+          "title": "Claude (verkossa tai työpöytäsovelluksena)",
+          "one": "Siirry kohtaan Asetukset → Liittimet ja valitse \"Lisää mukautettu liitin\".",
+          "two": "Liitä osoite URL-kenttään.",
+          "three": "Jos sovellus kysyy käyttöoikeustunnusta tai API-avainta, liitä yhteyskoodi siihen."
+        },
+        "chatgpt": {
+          "title": "ChatGPT (verkossa tai sovelluksena)",
+          "one": "Siirry kohtaan Asetukset → Liittimet → Lisäasetukset ja ota kehittäjätila käyttöön, jos se ei ole jo päällä.",
+          "two": "Luo uusi liitin ja liitä osoite palvelimen URL-kenttään.",
+          "three": "Aseta todennukseksi \"Käyttöoikeustunnus\" (tai vastaava) ja liitä yhteyskoodi."
+        },
+        "claudeCli": {
+          "title": "Claude Code (CLI)",
+          "intro": "Aja tämä komento päätteessäsi:"
+        },
+        "chatgptCli": {
+          "title": "ChatGPT (Codex CLI)",
+          "intro": "Lisää tämä Codex-asetuksiisi (yleensä ~/.codex/config.toml):"
+        },
+        "note": "Valikkojen, valintojen ja asetustiedostojen nimet muuttuvat toisinaan sovellusten päivittyessä — etsi mitä tahansa liittimiin, työkaluihin tai MCP-palvelimiin liittyvää, jos nämä eivät täsmää täysin, tai tarkista sovelluksen omat ohjeet/--help."
       }
     },
     "disconnect": {
