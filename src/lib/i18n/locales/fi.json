@@ -51,7 +51,7 @@
     "timeAny": "Mikä tahansa aika",
     "timeMinutes": "~{minutes} min",
     "timeHour": "~1 tunti",
-    "activeAuthor": "tekijältä {author}",
+    "activeAuthor": "tekijältä",
     "activeTimePrep": "{time} (valmistelu)",
     "activeTimeTotal": "{time} (yhteensä)",
     "resultCount": "{count} reseptiä löytyi"
@@ -184,7 +184,7 @@
     },
     "images": "Reseptin kuvat",
     "ingredients": {
-      "label": "Ainekset",
+      "title": "Ainekset",
       "add": "Lisää ainesosa",
       "name": {
         "label": "Nimi",
@@ -197,6 +197,10 @@
       "unit": {
         "label": "Yksikkö (valinnainen)",
         "placeholder": "esim. g, dl, lehteä…"
+      },
+      "label": {
+        "label": "Osio (valinnainen)",
+        "placeholder": "esim. Taikinaan"
       },
       "preview": "Näytetään muodossa: \"{text}\"",
       "remove": "Poista ainesosa"

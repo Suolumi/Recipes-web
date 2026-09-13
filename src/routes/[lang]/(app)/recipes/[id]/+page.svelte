@@ -1,7 +1,7 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {favoriteRecipe, getIngredientName, getRecipe, type Recipe, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
+    import {favoriteRecipe, getIngredientName, getRecipe, groupIngredients, type Recipe, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Languages} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
@@ -24,13 +24,25 @@
         })
     })
 
+    let ingredientGroups = $derived(groupIngredients(recipe?.ingredients ?? []));
+
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
     let heartBump = $state(false);
+    let canScrollPrev = $state(false);
+    let canScrollNext = $state(false);
+
+    function updateScrollState() {
+        canScrollPrev = emblaApi ? emblaApi.canScrollPrev() : false;
+        canScrollNext = emblaApi ? emblaApi.canScrollNext() : false;
+    }
 
     function emblaInit(e: CustomEvent) {
         emblaApi = e.detail
+        updateScrollState();
+        emblaApi.on('select', updateScrollState);
+        emblaApi.on('reInit', updateScrollState);
     }
 
     function next(e: MouseEvent) {
@@ -106,11 +118,13 @@
 
         <div class="bg-card rounded-lg border border-border overflow-hidden mb-8">
             <div class="relative">
-                {#if (recipe.pictures?.length ?? 0) > 1}
+                {#if canScrollPrev}
                     <button class="absolute h-full flex flex-col justify-center left-0 z-20 hover:cursor-pointer"
                             onclick={prev}>
                         <ArrowLeft class="text-white" />
                     </button>
+                {/if}
+                {#if canScrollNext}
                     <button class="absolute h-full flex flex-col justify-center right-0 z-20 hover:cursor-pointer"
                             onclick={next}>
                         <ArrowRight class="text-white" />
@@ -226,14 +240,23 @@
                         {$_('recipe.ingredients')}
                     </h2>
 
-                    <ul class="space-y-3">
-                        {#each recipe.ingredients as ingredient}
-                            <li class="flex items-start">
-                                <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                <span class="text-card-foreground">{getIngredientName(ingredient)}</span>
-                            </li>
+                    <div class="space-y-4">
+                        {#each ingredientGroups as group}
+                            <div>
+                                {#if group.label}
+                                    <h3 class="font-semibold text-card-foreground text-sm mb-2">{group.label}</h3>
+                                {/if}
+                                <ul class="space-y-3">
+                                    {#each group.items as ingredient}
+                                        <li class="flex items-start">
+                                            <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                            <span class="text-card-foreground">{getIngredientName(ingredient)}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
                         {/each}
-                    </ul>
+                    </div>
                 </div>
             </div>
 

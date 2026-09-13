@@ -51,7 +51,7 @@
     "timeAny": "N'importe quand",
     "timeMinutes": "~{minutes} min",
     "timeHour": "~1 heure",
-    "activeAuthor": "de {author}",
+    "activeAuthor": "de",
     "activeTimePrep": "{time} (préparation)",
     "activeTimeTotal": "{time} (total)",
     "resultCount": "{count} recettes trouvées"
@@ -184,7 +184,7 @@
     },
     "images": "Images",
     "ingredients": {
-      "label": "Ingrédients",
+      "title": "Ingrédients",
       "add": "Ajouter un ingrédient",
       "name": {
         "label": "Nom",
@@ -197,6 +197,10 @@
       "unit": {
         "label": "Unité (facultatif)",
         "placeholder": "ex. g, cl, feuilles…"
+      },
+      "label": {
+        "label": "Section (facultatif)",
+        "placeholder": "ex. Pour la pâte"
       },
       "preview": "Affiché comme : « {text} »",
       "remove": "Supprimer l'ingrédient"

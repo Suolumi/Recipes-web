@@ -51,7 +51,7 @@
     "timeAny": "Any time",
     "timeMinutes": "~{minutes} min",
     "timeHour": "~1 hour",
-    "activeAuthor": "by {author}",
+    "activeAuthor": "by",
     "activeTimePrep": "{time} (prep)",
     "activeTimeTotal": "{time} (total)",
     "resultCount": "{count} recipes found"
@@ -184,7 +184,7 @@
     },
     "images": "Recipe Images",
     "ingredients": {
-      "label": "Ingredients",
+      "title": "Ingredients",
       "add": "Add Ingredient",
       "name": {
         "label": "Name",
@@ -197,6 +197,10 @@
       "unit": {
         "label": "Unit (optional)",
         "placeholder": "e.g. g, cl, leaves…"
+      },
+      "label": {
+        "label": "Section (optional)",
+        "placeholder": "e.g. For the dough"
       },
       "preview": "Will show as: \"{text}\"",
       "remove": "Remove ingredient"

@@ -14,13 +14,23 @@
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
     let heartBump = $state(false);
+    let canScrollPrev = $state(false);
+    let canScrollNext = $state(false);
 
     function viewRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}`);
     }
 
+    function updateScrollState() {
+        canScrollPrev = emblaApi ? emblaApi.canScrollPrev() : false;
+        canScrollNext = emblaApi ? emblaApi.canScrollNext() : false;
+    }
+
     function emblaInit(e: CustomEvent) {
         emblaApi = e.detail
+        updateScrollState();
+        emblaApi.on('select', updateScrollState);
+        emblaApi.on('reInit', updateScrollState);
     }
 
     function next(e: MouseEvent) {
@@ -77,11 +87,13 @@
         onkeydown={(e) => e.key === 'Enter' && !disabled && viewRecipe(recipe.id)}
 >
     <div class="relative">
-        {#if (recipe.pictures?.length ?? 0) > 1}
+        {#if canScrollPrev}
             <button class="absolute h-full flex flex-col justify-center z-1 left-0 hover:cursor-pointer"
                     onclick={prev}>
                 <ArrowLeft class="text-white" />
             </button>
+        {/if}
+        {#if canScrollNext}
             <button class="absolute h-full flex flex-col justify-center z-1 right-0 hover:cursor-pointer"
                     onclick={next}>
                 <ArrowRight class="text-white" />

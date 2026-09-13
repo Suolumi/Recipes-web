@@ -15,6 +15,7 @@
     let selectedType = $state('all');
     let filtersOpen = $state(false);
     let author = $state('');
+    let selectedAuthorUser: AuthorUser | undefined = $state(undefined);
     let authorSuggestions: AuthorUser[] = $state([]);
     let showAuthorSuggestions = $state(false);
     let authorFieldRef: HTMLDivElement | undefined = $state();
@@ -63,18 +64,25 @@
         ingredients = ingredients.filter(i => i !== ingredient)
     }
 
-    function selectAuthor(username: string) {
-        author = username
+    function selectAuthor(user: AuthorUser) {
+        author = user.username
+        selectedAuthorUser = user
         showAuthorSuggestions = false
     }
 
     function onAuthorInput() {
+        selectedAuthorUser = undefined
         showAuthorSuggestions = true
+    }
+
+    function clearAuthor() {
+        author = ''
+        selectedAuthorUser = undefined
     }
 
     function clearAllFilters() {
         selectedType = 'all'
-        author = ''
+        clearAuthor()
         ingredients = []
         ingredientInput = ''
         timeTarget = 'any'
@@ -242,7 +250,21 @@
                 <div class="flex flex-col gap-2 min-w-[220px] flex-1">
                     <label class="text-sm font-medium text-foreground" for="author-filter">{$_('home.author')}</label>
                     <div class="relative" bind:this={authorFieldRef}>
-                        <User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                        {#if selectedAuthorUser}
+                            {#if selectedAuthorUser.picture}
+                                <img
+                                        src={`${$serverUrl}/pictures/${selectedAuthorUser.picture}`}
+                                        alt="{selectedAuthorUser.username} profile"
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full object-cover pointer-events-none"
+                                />
+                            {:else}
+                                <div class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-medium pointer-events-none">
+                                    {selectedAuthorUser.username.charAt(0) || "?"}
+                                </div>
+                            {/if}
+                        {:else}
+                            <User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                        {/if}
                         <input
                                 id="author-filter"
                                 type="text"
@@ -257,7 +279,7 @@
                                 {#each authorSuggestions as suggestion (suggestion.id)}
                                     <button
                                             type="button"
-                                            onclick={() => selectAuthor(suggestion.username)}
+                                            onclick={() => selectAuthor(suggestion)}
                                             class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:hover:bg-gray-800"
                                     >
                                         {#if suggestion.picture}
@@ -361,8 +383,10 @@
             {/if}
             {#if author.length > 0}
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
-                    {$_('home.activeAuthor', {values: {author}})}
-                    <button type="button" onclick={() => author = ''} class="text-muted-foreground hover:text-foreground">
+                    {$_('home.activeAuthor')}
+                    <User class="w-3.5 h-3.5" />
+                    {author}
+                    <button type="button" onclick={clearAuthor} class="text-muted-foreground hover:text-foreground">
                         <X class="w-3.5 h-3.5" />
                     </button>
                 </span>

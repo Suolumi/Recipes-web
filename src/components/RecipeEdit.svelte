@@ -7,6 +7,7 @@
     import RecipeCard from "./RecipeCard.svelte";
     import {
         getIngredientName,
+        groupIngredients,
         type Ingredient,
         type RecipeForm,
         RecipeTypes,
@@ -69,7 +70,7 @@
     function normalizeRecipe(data: RecipeForm): RecipeForm {
         return {
             ...data,
-            ingredients: data.ingredients ?? [],
+            ingredients: (data.ingredients ?? []).map(ingredient => ({...ingredient, label: ingredient.label ?? ''})),
             steps: data.steps ?? [],
             pictures: data.pictures ?? [],
         }
@@ -167,6 +168,22 @@
     }
 
     let hasPictures = $derived(((formData.pictures?.length ?? 0) > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
+
+    let ingredientLabelSuggestions = $derived.by(() => {
+        const seen = new Set<string>()
+        const suggestions: string[] = []
+        for (const ingredient of formData.ingredients) {
+            const label = ingredient.label.trim()
+            const key = label.toLowerCase()
+            if (label && !seen.has(key)) {
+                seen.add(key)
+                suggestions.push(label)
+            }
+        }
+        return suggestions
+    });
+
+    let previewIngredientGroups = $derived(groupIngredients(formData.ingredients.filter(i => i.name.trim())));
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -296,11 +313,16 @@
                         <p class="text-sm text-muted-foreground">{$_('edit.wizard.empty.ingredients')}</p>
                       </div>
                     {/if}
+                    <datalist id="ingredient-label-suggestions">
+                      {#each ingredientLabelSuggestions as suggestion}
+                        <option value={suggestion}></option>
+                      {/each}
+                    </datalist>
                     <div class="space-y-3">
                       {#each formData.ingredients as ingredient, index}
                         <div>
                           <div class="grid grid-cols-12 gap-2 items-end">
-                            <div class="col-span-6">
+                            <div class="col-span-5">
                               <Label for={`ingredient-name-${index}`} required>{$_('edit.ingredients.name.label')}</Label>
                               <Input
                                   id={`ingredient-name-${index}`}
@@ -318,13 +340,23 @@
                                   placeholder={$_('edit.ingredients.quantity.placeholder')}
                               />
                             </div>
-                            <div class="col-span-3">
+                            <div class="col-span-2">
                               <Label for={`ingredient-unit-${index}`}>{$_('edit.ingredients.unit.label')}</Label>
                               <Input
                                   id={`ingredient-unit-${index}`}
                                   type="text"
                                   bind:value={formData.ingredients[index].unit}
                                   placeholder={$_('edit.ingredients.unit.placeholder')}
+                              />
+                            </div>
+                            <div class="col-span-2">
+                              <Label for={`ingredient-label-${index}`}>{$_('edit.ingredients.label.label')}</Label>
+                              <Input
+                                  id={`ingredient-label-${index}`}
+                                  type="text"
+                                  list="ingredient-label-suggestions"
+                                  bind:value={formData.ingredients[index].label}
+                                  placeholder={$_('edit.ingredients.label.placeholder')}
                               />
                             </div>
                             <div class="col-span-1 flex justify-center">
@@ -351,7 +383,7 @@
                           variant="outline"
                           class="w-full"
                           size="md"
-                          onclick={() => addIngredient({name: '', quantity: 0, unit: ''})}
+                          onclick={() => addIngredient({name: '', quantity: 0, unit: '', label: ''})}
                       >
                         {$_('edit.ingredients.add')}
                       </Button>
@@ -487,7 +519,7 @@
             <!-- Live preview column -->
             <div class="lg:col-span-2">
               <div class="lg:sticky lg:top-8 space-y-6">
-                <h2 class="text-2xl font-semibold text-card-foreground">{$_('edit.preview')}</h2>
+                <h2 class="text-2xl font-semibold text-card-foreground mt-4">{$_('edit.preview')}</h2>
 
                 <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: '', favorite: false, favorite_count: 0}} translate={false} disabled />
 
@@ -499,19 +531,26 @@
                     {$_('recipe.ingredients')}
                   </h3>
 
-                  {#if formData.ingredients.length > 0 && formData.ingredients.some(i => i.name.trim())}
-                    <ul class="space-y-2">
-                      {#each formData.ingredients as ingredient}
-                        {#if ingredient.name.trim()}
-                          <li class="flex items-start text-sm">
-                            <div class="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
-                            <span class="text-foreground">
-                                            {getIngredientName(ingredient)}
-                                        </span>
-                          </li>
-                        {/if}
+                  {#if previewIngredientGroups.length > 0}
+                    <div class="space-y-4">
+                      {#each previewIngredientGroups as group}
+                        <div>
+                          {#if group.label}
+                            <h4 class="font-semibold text-foreground text-sm mb-2">{group.label}</h4>
+                          {/if}
+                          <ul class="space-y-2">
+                            {#each group.items as ingredient}
+                              <li class="flex items-start text-sm">
+                                <div class="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
+                                <span class="text-foreground">
+                                                {getIngredientName(ingredient)}
+                                            </span>
+                              </li>
+                            {/each}
+                          </ul>
+                        </div>
                       {/each}
-                    </ul>
+                    </div>
                   {:else}
                     <p class="text-sm text-muted-foreground">{$_('create.noIngredient')}</p>
                   {/if}

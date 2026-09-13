@@ -29,6 +29,7 @@ export type Ingredient = {
     name: string
     quantity: number
     unit: string
+    label: string
 }
 
 export type Recipe = {
@@ -93,6 +94,43 @@ export type GetRecipesRequest = {
 export type GetRecipesResponse = {
     length: number
     items: RecipePreview[]
+}
+
+export type IngredientGroup = {
+    label: string | null
+    items: Ingredient[]
+}
+
+// Groups ingredients by their (trimmed, case-insensitive) label. Unlabeled
+// ingredients are pooled into one header-less group shown first; labeled
+// groups follow in order of each label's first appearance.
+export function groupIngredients(ingredients: Ingredient[]): IngredientGroup[] {
+    const unlabeled: Ingredient[] = []
+    const order: string[] = []
+    const groups = new Map<string, IngredientGroup>()
+
+    for (const ingredient of ingredients) {
+        const label = ingredient.label.trim()
+        if (!label) {
+            unlabeled.push(ingredient)
+            continue
+        }
+        const key = label.toLowerCase()
+        let group = groups.get(key)
+        if (!group) {
+            group = {label, items: []}
+            groups.set(key, group)
+            order.push(key)
+        }
+        group.items.push(ingredient)
+    }
+
+    const result: IngredientGroup[] = []
+    if (unlabeled.length > 0)
+        result.push({label: null, items: unlabeled})
+    for (const key of order)
+        result.push(groups.get(key)!)
+    return result
 }
 
 export function getIngredientName(ingredient: Ingredient): string {
