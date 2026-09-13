@@ -187,6 +187,12 @@
       "title": "Ingredients",
       "add": "Add Ingredient",
       "addToSection": "Add ingredient to {section}",
+      "addCategory": "Add category",
+      "categoryNamePlaceholder": "Category name",
+      "deleteCategory": "Delete category",
+      "moveTo": "Move to",
+      "uncategorized": "No category",
+      "dragHint": "Drag the handle to reorder, or use an ingredient's menu to move it into another category.",
       "name": {
         "label": "Name",
         "placeholder": "e.g. Flour, Sugar, Butter"
@@ -198,10 +204,6 @@
       "unit": {
         "label": "Unit (optional)",
         "placeholder": "e.g. g, cl, leaves…"
-      },
-      "label": {
-        "label": "Section (optional)",
-        "placeholder": "e.g. For the dough"
       },
       "preview": "Will show as: \"{text}\"",
       "remove": "Remove ingredient"

@@ -187,6 +187,12 @@
       "title": "Ainekset",
       "add": "Lisää ainesosa",
       "addToSection": "Lisää ainesosa osioon {section}",
+      "addCategory": "Lisää kategoria",
+      "categoryNamePlaceholder": "Kategorian nimi",
+      "deleteCategory": "Poista kategoria",
+      "moveTo": "Siirrä",
+      "uncategorized": "Ei kategoriaa",
+      "dragHint": "Vedä kahvasta järjestääksesi, tai siirrä ainesosa toiseen kategoriaan sen valikon kautta.",
       "name": {
         "label": "Nimi",
         "placeholder": "esim. Jauhot, Sokeri, Voi"
@@ -198,10 +204,6 @@
       "unit": {
         "label": "Yksikkö (valinnainen)",
         "placeholder": "esim. g, dl, lehteä…"
-      },
-      "label": {
-        "label": "Osio (valinnainen)",
-        "placeholder": "esim. Taikinaan"
       },
       "preview": "Näytetään muodossa: \"{text}\"",
       "remove": "Poista ainesosa"

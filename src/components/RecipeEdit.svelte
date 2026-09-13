@@ -19,7 +19,7 @@
     import {untrack} from "svelte";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
-    import {Trash2} from "@lucide/svelte";
+    import {Trash2, GripVertical, EllipsisVertical, Plus} from "@lucide/svelte";
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
@@ -56,7 +56,10 @@
 
     $effect(() => {
         if (recipe)
-            untrack(() => formData = getRecipe(recipe))
+            untrack(() => {
+                formData = getRecipe(recipe)
+                sections = buildSections(formData.ingredients)
+            })
     })
 
     $effect(() => {
@@ -106,14 +109,6 @@
         }
 
         return normalizeRecipe($createRecipeCache && !isBlank($createRecipeCache) ? $createRecipeCache : (recipeProps ?? r))
-    }
-
-    function addIngredient(ingredient: Ingredient) {
-        formData.ingredients = [...formData.ingredients, ingredient];
-    }
-
-    function removeIngredient(index: number) {
-        formData.ingredients = formData.ingredients.filter((_, i) => i !== index);
     }
 
     function addStep(step: Step) {
@@ -169,53 +164,309 @@
 
     let hasPictures = $derived(((formData.pictures?.length ?? 0) > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
 
-    let ingredientLabelSuggestions = $derived.by(() => {
-        const seen = new Set<string>()
-        const suggestions: string[] = []
-        for (const ingredient of formData.ingredients) {
-            const label = ingredient.label.trim()
-            const key = label.toLowerCase()
-            if (label && !seen.has(key)) {
-                seen.add(key)
-                suggestions.push(label)
-            }
-        }
-        return suggestions
-    });
-
     let previewIngredientGroups = $derived(groupIngredients(formData.ingredients.filter(i => i.name.trim())));
 
-    type EditableIngredientGroup = { label: string | null, items: { ingredient: Ingredient, index: number }[] };
+    // --- Ingredient categories -------------------------------------------------
+    // The backend only stores a free-text `label` per ingredient; a "category" is
+    // just the set of ingredients sharing one. The block below turns that into an
+    // editable structure (add/rename/delete/drag-reorder categories, drag ingredients
+    // between them) and syncs the result straight back into formData.ingredients -
+    // so `label` stays the single source of truth on save, nothing new is added to
+    // the recipe schema.
 
-    // Same grouping rule as groupIngredients, but keeps each item's index into
-    // formData.ingredients so rows stay bindable/removable after grouping.
-    let editableIngredientGroups = $derived.by((): EditableIngredientGroup[] => {
-        const unlabeled: { ingredient: Ingredient, index: number }[] = []
-        const order: string[] = []
-        const groups = new Map<string, EditableIngredientGroup>()
+    type EditSection = { id: string, name: string | null, ingredients: Ingredient[] };
 
-        formData.ingredients.forEach((ingredient, index) => {
-            const label = ingredient.label.trim()
-            if (!label) {
-                unlabeled.push({ingredient, index})
-                return
+    let sectionUid = 0;
+
+    function nextSectionId(): string {
+        sectionUid += 1;
+        return `sec-${sectionUid}`;
+    }
+
+    // The unlabeled group (id 'uncategorized', name null) is always present, even
+    // empty, so there's always a default drop target and an "Add ingredient" button.
+    function buildSections(ingredients: Ingredient[]): EditSection[] {
+        const groups = groupIngredients(ingredients);
+        const withUncategorized = groups[0]?.label === null ? groups : [{label: null, items: []}, ...groups];
+        return withUncategorized.map(group => ({
+            id: group.label === null ? 'uncategorized' : nextSectionId(),
+            name: group.label,
+            ingredients: group.items
+        }));
+    }
+
+    function flattenSections(list: EditSection[]): Ingredient[] {
+        return list.flatMap(section => section.ingredients.map(ingredient => ({...ingredient, label: section.name ?? ''})));
+    }
+
+    let sections = $state<EditSection[]>(untrack(() => buildSections(formData.ingredients)));
+
+    $effect(() => {
+        formData.ingredients = flattenSections(sections);
+    });
+
+    let editingSectionId = $state<string | null>(null);
+    let editingSectionName = $state('');
+    let openMenuFor = $state<Ingredient | null>(null);
+
+    function addCategory() {
+        const id = nextSectionId();
+        sections = [...sections, {id, name: '', ingredients: []}];
+        editingSectionId = id;
+        editingSectionName = '';
+    }
+
+    function startRename(section: EditSection) {
+        if (section.id === 'uncategorized') return;
+        editingSectionId = section.id;
+        editingSectionName = section.name ?? '';
+    }
+
+    // An empty, never-named category (created via "Add category" then abandoned)
+    // has nothing to persist - drop it instead of leaving a stray empty header.
+    function cancelSectionEdit() {
+        if (!editingSectionId) return;
+        const section = sections.find(s => s.id === editingSectionId);
+        if (section && section.ingredients.length === 0 && !section.name)
+            sections = sections.filter(s => s.id !== editingSectionId);
+        editingSectionId = null;
+        editingSectionName = '';
+    }
+
+    function confirmSectionName() {
+        if (!editingSectionId) return;
+        const id = editingSectionId;
+        const trimmed = editingSectionName.trim();
+        const section = sections.find(s => s.id === id);
+        if (!section) {
+            editingSectionId = null;
+            editingSectionName = '';
+            return;
+        }
+
+        if (!trimmed) {
+            if (section.ingredients.length === 0)
+                sections = sections.filter(s => s.id !== id);
+            editingSectionId = null;
+            editingSectionName = '';
+            return;
+        }
+
+        // Renaming to match another category's name merges the two, same as
+        // giving two ingredients the same label used to.
+        const match = sections.find(s => s.id !== id && s.name !== null && s.name.toLowerCase() === trimmed.toLowerCase());
+        sections = match
+            ? sections
+                .map(s => s.id === match.id ? {...s, ingredients: [...s.ingredients, ...section.ingredients]} : s)
+                .filter(s => s.id !== id)
+            : sections.map(s => s.id === id ? {...s, name: trimmed} : s);
+        editingSectionId = null;
+        editingSectionName = '';
+    }
+
+    function deleteSection(id: string) {
+        const section = sections.find(s => s.id === id);
+        if (!section) return;
+        sections = sections
+            .map(s => s.id === 'uncategorized' ? {...s, ingredients: [...s.ingredients, ...section.ingredients]} : s)
+            .filter(s => s.id !== id);
+        if (editingSectionId === id) {
+            editingSectionId = null;
+            editingSectionName = '';
+        }
+    }
+
+    function addIngredientToSection(sectionId: string) {
+        sections = sections.map(s => s.id === sectionId
+            ? {...s, ingredients: [...s.ingredients, {name: '', quantity: 0, unit: '', label: s.name ?? ''}]}
+            : s);
+    }
+
+    function removeIngredientFromSection(sectionId: string, ingredient: Ingredient) {
+        sections = sections.map(s => s.id === sectionId
+            ? {...s, ingredients: s.ingredients.filter(it => it !== ingredient)}
+            : s);
+    }
+
+    function moveIngredientToSection(ingredient: Ingredient, fromSectionId: string, toSectionId: string) {
+        openMenuFor = null;
+        if (fromSectionId === toSectionId) return;
+        sections = sections.map(s => {
+            if (s.id === fromSectionId) return {...s, ingredients: s.ingredients.filter(it => it !== ingredient)};
+            if (s.id === toSectionId) return {...s, ingredients: [...s.ingredients, ingredient]};
+            return s;
+        });
+    }
+
+    // --- Drag & drop -------------------------------------------------------
+    // Pointer capture on the grip handle keeps move/up events targeted at it even
+    // once the cursor leaves the row, so no window-level listeners are needed.
+
+    type Dragging =
+        | { type: 'ingredient', sectionId: string, ingredient: Ingredient }
+        | { type: 'section', sectionId: string };
+
+    type DropIndicator =
+        | { kind: 'ingredient', sectionId: string, beforeItem: Ingredient | null, before: boolean }
+        | { kind: 'section', beforeSectionId: string, before: boolean };
+
+    let dragging = $state<Dragging | null>(null);
+    let dropIndicator = $state<DropIndicator | null>(null);
+    let dragPos = $state<{ x: number, y: number } | null>(null);
+
+    function isSectionDragged(section: EditSection): boolean {
+        return dragging !== null && dragging.type === 'section' && dragging.sectionId === section.id;
+    }
+
+    function isSectionDropAbove(section: EditSection): boolean {
+        return dropIndicator !== null && dropIndicator.kind === 'section' && dropIndicator.beforeSectionId === section.id && dropIndicator.before;
+    }
+
+    function isSectionDropBelow(section: EditSection): boolean {
+        return dropIndicator !== null && dropIndicator.kind === 'section' && dropIndicator.beforeSectionId === section.id && !dropIndicator.before;
+    }
+
+    function isSectionEmptyDropTarget(section: EditSection): boolean {
+        return dropIndicator !== null && dropIndicator.kind === 'ingredient' && dropIndicator.sectionId === section.id && section.ingredients.length === 0;
+    }
+
+    function isRowDragged(ingredient: Ingredient): boolean {
+        return dragging !== null && dragging.type === 'ingredient' && dragging.ingredient === ingredient;
+    }
+
+    function isRowDropAbove(section: EditSection, ingredient: Ingredient): boolean {
+        return dropIndicator !== null && dropIndicator.kind === 'ingredient' && dropIndicator.sectionId === section.id && dropIndicator.beforeItem === ingredient && dropIndicator.before;
+    }
+
+    function isRowDropBelow(section: EditSection, ingredient: Ingredient): boolean {
+        return dropIndicator !== null && dropIndicator.kind === 'ingredient' && dropIndicator.sectionId === section.id && dropIndicator.beforeItem === ingredient && !dropIndicator.before;
+    }
+
+    function startIngredientDrag(e: PointerEvent, sectionId: string, ingredient: Ingredient) {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        dragging = {type: 'ingredient', sectionId, ingredient};
+        dragPos = {x: e.clientX + 14, y: e.clientY + 14};
+        dropIndicator = null;
+    }
+
+    function startSectionDrag(e: PointerEvent, sectionId: string) {
+        if (sectionId === 'uncategorized') return;
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        dragging = {type: 'section', sectionId};
+        dragPos = {x: e.clientX + 14, y: e.clientY + 14};
+        dropIndicator = null;
+    }
+
+    function handleDragPointerMove(e: PointerEvent) {
+        if (!dragging) return;
+        dragPos = {x: e.clientX + 14, y: e.clientY + 14};
+
+        if (dragging.type === 'ingredient') {
+            const dragged = dragging.ingredient;
+            let best: { sectionId: string, item: Ingredient, mid: number } | null = null;
+            let bestDist = Infinity;
+            for (const row of document.querySelectorAll<HTMLElement>('[data-row]')) {
+                const sectionId = row.dataset.section!;
+                const rowIndex = Number(row.dataset.rowIndex);
+                const item = sections.find(s => s.id === sectionId)?.ingredients[rowIndex];
+                if (!item || item === dragged) continue;
+                const rect = row.getBoundingClientRect();
+                const mid = rect.top + rect.height / 2;
+                const dist = Math.abs(e.clientY - mid);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = {sectionId, item, mid};
+                }
             }
-            const key = label.toLowerCase()
-            let group = groups.get(key)
-            if (!group) {
-                group = {label, items: []}
-                groups.set(key, group)
-                order.push(key)
+            if (best) {
+                dropIndicator = {kind: 'ingredient', sectionId: best.sectionId, beforeItem: best.item, before: e.clientY < best.mid};
+                return;
             }
-            group.items.push({ingredient, index})
-        })
+            let zone: HTMLElement | undefined;
+            for (const z of document.querySelectorAll<HTMLElement>('[data-section-dropzone]')) {
+                const rect = z.getBoundingClientRect();
+                if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                    zone = z;
+                    break;
+                }
+            }
+            dropIndicator = zone ? {kind: 'ingredient', sectionId: zone.dataset.section!, beforeItem: null, before: true} : null;
+        } else {
+            let best: { sectionId: string, mid: number } | null = null;
+            let bestDist = Infinity;
+            for (const block of document.querySelectorAll<HTMLElement>('[data-section-block]')) {
+                const sectionId = block.dataset.section!;
+                if (sectionId === 'uncategorized' || sectionId === dragging.sectionId) continue;
+                const rect = block.getBoundingClientRect();
+                const mid = rect.top + rect.height / 2;
+                const dist = Math.abs(e.clientY - mid);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = {sectionId, mid};
+                }
+            }
+            dropIndicator = best ? {kind: 'section', beforeSectionId: best.sectionId, before: e.clientY < best.mid} : null;
+        }
+    }
 
-        const result: EditableIngredientGroup[] = []
-        if (unlabeled.length > 0)
-            result.push({label: null, items: unlabeled})
-        for (const key of order)
-            result.push(groups.get(key)!)
-        return result
+    function handleDragPointerUp() {
+        if (!dragging) return;
+        const drag = dragging;
+        const drop = dropIndicator;
+
+        if (drag.type === 'ingredient' && drop?.kind === 'ingredient') {
+            const item = drag.ingredient;
+            let working = sections.map(s => s.id === drag.sectionId
+                ? {...s, ingredients: s.ingredients.filter(it => it !== item)}
+                : s);
+            const toIdx = working.findIndex(s => s.id === drop.sectionId);
+            if (toIdx !== -1) {
+                const list = working[toIdx].ingredients.slice();
+                let insertAt = list.length;
+                if (drop.beforeItem) {
+                    const pos = list.indexOf(drop.beforeItem);
+                    if (pos !== -1) insertAt = drop.before ? pos : pos + 1;
+                }
+                list.splice(insertAt, 0, item);
+                working[toIdx] = {...working[toIdx], ingredients: list};
+            }
+            sections = working;
+        } else if (drag.type === 'section' && drop?.kind === 'section') {
+            const fromIdx = sections.findIndex(s => s.id === drag.sectionId);
+            if (fromIdx !== -1) {
+                const moving = sections[fromIdx];
+                let working = sections.filter(s => s.id !== drag.sectionId);
+                let insertAt = working.length;
+                const pos = working.findIndex(s => s.id === drop.beforeSectionId);
+                if (pos !== -1) insertAt = drop.before ? pos : pos + 1;
+                if (insertAt < 1) insertAt = 1; // uncategorized always stays first
+                working.splice(insertAt, 0, moving);
+                sections = working;
+            }
+        }
+
+        dragging = null;
+        dropIndicator = null;
+        dragPos = null;
+    }
+
+    let dragGhostLabel = $derived.by(() => {
+        const drag = dragging;
+        if (!drag) return '';
+        if (drag.type === 'ingredient') return drag.ingredient.name || $_('edit.ingredients.name.placeholder');
+        return sections.find(s => s.id === drag.sectionId)?.name ?? '';
+    });
+
+    $effect(() => {
+        function onDocPointerDown(e: PointerEvent) {
+            if (openMenuFor && !(e.target instanceof Element && e.target.closest('[data-keep-menu]')))
+                openMenuFor = null;
+        }
+
+        document.addEventListener('pointerdown', onDocPointerDown, true);
+        return () => document.removeEventListener('pointerdown', onDocPointerDown, true);
     });
 </script>
 
@@ -346,102 +597,206 @@
                         <p class="text-sm text-muted-foreground">{$_('edit.wizard.empty.ingredients')}</p>
                       </div>
                     {/if}
-                    <datalist id="ingredient-label-suggestions">
-                      {#each ingredientLabelSuggestions as suggestion}
-                        <option value={suggestion}></option>
-                      {/each}
-                    </datalist>
-                    <div class="space-y-6">
-                      {#each editableIngredientGroups as group}
-                        <div>
-                          {#if group.label}
-                            <h4 class="font-semibold text-foreground text-sm mb-2">{group.label}</h4>
+
+                    <p class="text-sm text-muted-foreground mb-4">{$_('edit.ingredients.dragHint')}</p>
+
+                    <div class="space-y-5">
+                      {#each sections as section (section.id)}
+                        <div
+                            data-section-block
+                            data-section={section.id}
+                            class="transition-opacity"
+                            style={isSectionDragged(section) ? 'opacity:0.4' : ''}
+                        >
+                          {#if isSectionDropAbove(section)}
+                            <div class="h-0.5 bg-primary rounded mb-2"></div>
                           {/if}
-                          <div class="space-y-3">
-                            {#each group.items as {ingredient, index}}
+
+                          {#if section.name !== null}
+                            <div class="flex items-center gap-1 mb-2">
+                              <button
+                                  type="button"
+                                  onpointerdown={(e) => startSectionDrag(e, section.id)}
+                                  onpointermove={handleDragPointerMove}
+                                  onpointerup={handleDragPointerUp}
+                                  onpointercancel={handleDragPointerUp}
+                                  class="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent cursor-grab touch-none transition-colors"
+                                  aria-label="Reorder category"
+                              >
+                                <GripVertical class="w-4 h-4" />
+                              </button>
+
+                              {#if editingSectionId === section.id}
+                                <Input
+                                    value={editingSectionName}
+                                    oninput={(e: Event) => editingSectionName = (e.target as HTMLInputElement).value}
+                                    onblur={confirmSectionName}
+                                    onkeydown={(e: KeyboardEvent) => {
+                                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                                        if (e.key === 'Escape') cancelSectionEdit();
+                                    }}
+                                    placeholder={$_('edit.ingredients.categoryNamePlaceholder')}
+                                    class="max-w-[240px] py-1.5 px-2 text-sm font-semibold"
+                                />
+                              {:else}
+                                <button
+                                    type="button"
+                                    ondblclick={() => startRename(section)}
+                                    class="font-semibold text-sm text-foreground px-1 py-1 rounded hover:underline decoration-dotted underline-offset-4 text-left"
+                                    title="Double-click to rename"
+                                >
+                                  {section.name}
+                                </button>
+                              {/if}
+
+                              <div class="flex-1"></div>
+
+                              <button
+                                  type="button"
+                                  onclick={() => deleteSection(section.id)}
+                                  class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                  aria-label={$_('edit.ingredients.deleteCategory')}
+                                  title={$_('edit.ingredients.deleteCategory')}
+                              >
+                                <Trash2 class="w-4 h-4" />
+                              </button>
+                            </div>
+                          {/if}
+
+                          <div
+                              data-section-dropzone
+                              data-section={section.id}
+                              class="flex flex-col gap-3 min-h-[2.5rem] rounded-lg border-2 border-dashed transition-colors {isSectionEmptyDropTarget(section) ? 'bg-primary/5 border-primary' : 'border-transparent'}"
+                          >
+                            {#each section.ingredients as ingredient, rowIndex (ingredient)}
                               <div>
-                                <div class="grid grid-cols-12 gap-2 items-end">
+                                {#if isRowDropAbove(section, ingredient)}
+                                  <div class="h-0.5 bg-primary rounded mb-1.5"></div>
+                                {/if}
+
+                                <div
+                                    data-row
+                                    data-section={section.id}
+                                    data-row-index={rowIndex}
+                                    class="grid grid-cols-12 gap-2 items-center p-2 rounded-lg border border-border bg-card transition-opacity touch-none {isRowDragged(ingredient) ? 'opacity-35' : ''}"
+                                >
+                                  <button
+                                      type="button"
+                                      onpointerdown={(e) => startIngredientDrag(e, section.id, ingredient)}
+                                      onpointermove={handleDragPointerMove}
+                                      onpointerup={handleDragPointerUp}
+                                      onpointercancel={handleDragPointerUp}
+                                      class="col-span-1 flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent cursor-grab touch-none transition-colors"
+                                      aria-label="Reorder ingredient"
+                                  >
+                                    <GripVertical class="w-4 h-4" />
+                                  </button>
+
                                   <div class="col-span-5">
-                                    <Label for={`ingredient-name-${index}`} required>{$_('edit.ingredients.name.label')}</Label>
                                     <Input
-                                        id={`ingredient-name-${index}`}
                                         type="text"
-                                        bind:value={formData.ingredients[index].name}
+                                        bind:value={ingredient.name}
                                         placeholder={$_('edit.ingredients.name.placeholder')}
+                                        required
+                                        aria-label={$_('edit.ingredients.name.label')}
                                     />
                                   </div>
                                   <div class="col-span-2">
-                                    <Label for={`ingredient-quantity-${index}`}>{$_('edit.ingredients.quantity.label')}</Label>
                                     <Input
-                                        id={`ingredient-quantity-${index}`}
                                         type="number"
-                                        bind:value={formData.ingredients[index].quantity}
+                                        bind:value={ingredient.quantity}
                                         placeholder={$_('edit.ingredients.quantity.placeholder')}
+                                        aria-label={$_('edit.ingredients.quantity.label')}
                                     />
                                   </div>
                                   <div class="col-span-2">
-                                    <Label for={`ingredient-unit-${index}`}>{$_('edit.ingredients.unit.label')}</Label>
                                     <Input
-                                        id={`ingredient-unit-${index}`}
                                         type="text"
-                                        bind:value={formData.ingredients[index].unit}
+                                        bind:value={ingredient.unit}
                                         placeholder={$_('edit.ingredients.unit.placeholder')}
+                                        aria-label={$_('edit.ingredients.unit.label')}
                                     />
                                   </div>
-                                  <div class="col-span-2">
-                                    <Label for={`ingredient-label-${index}`}>{$_('edit.ingredients.label.label')}</Label>
-                                    <Input
-                                        id={`ingredient-label-${index}`}
-                                        type="text"
-                                        list="ingredient-label-suggestions"
-                                        bind:value={formData.ingredients[index].label}
-                                        placeholder={$_('edit.ingredients.label.placeholder')}
-                                    />
+
+                                  <div class="col-span-1 flex justify-center relative" data-keep-menu>
+                                    <button
+                                        type="button"
+                                        onclick={(e) => { e.stopPropagation(); openMenuFor = openMenuFor === ingredient ? null : ingredient; }}
+                                        class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                        aria-label={$_('edit.ingredients.moveTo')}
+                                    >
+                                      <EllipsisVertical class="w-4 h-4" />
+                                    </button>
+                                    {#if openMenuFor === ingredient}
+                                      <div data-keep-menu class="absolute right-0 top-9 z-30 min-w-[180px] bg-card border border-border rounded-lg shadow-lg p-1.5 flex flex-col gap-0.5">
+                                        <div class="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-2 pt-1 pb-0.5">
+                                          {$_('edit.ingredients.moveTo')}
+                                        </div>
+                                        {#each sections.filter(s => s.id !== section.id) as target (target.id)}
+                                          <button
+                                              type="button"
+                                              onclick={() => moveIngredientToSection(ingredient, section.id, target.id)}
+                                              class="text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-foreground"
+                                          >
+                                            {target.name ?? $_('edit.ingredients.uncategorized')}
+                                          </button>
+                                        {/each}
+                                      </div>
+                                    {/if}
                                   </div>
+
                                   <div class="col-span-1 flex justify-center">
                                     <button
                                         type="button"
-                                        onclick={() => removeIngredient(index)}
+                                        onclick={() => removeIngredientFromSection(section.id, ingredient)}
                                         aria-label={$_('edit.ingredients.remove')}
-                                        class="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+                                        class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                                     >
                                       <Trash2 class="w-4 h-4" />
                                     </button>
                                   </div>
                                 </div>
+
                                 {#if ingredient.name.trim()}
                                   <p class="text-xs text-muted-foreground mt-1 pl-1">
                                     {$_('edit.ingredients.preview', {values: {text: getIngredientName(ingredient)}})}
                                   </p>
                                 {/if}
+
+                                {#if isRowDropBelow(section, ingredient)}
+                                  <div class="h-0.5 bg-primary rounded mt-1.5"></div>
+                                {/if}
                               </div>
                             {/each}
                           </div>
+
                           <div class="mt-3">
                             <Button
                                 variant="outline"
                                 class="w-full"
                                 size="sm"
-                                onclick={() => addIngredient({name: '', quantity: 0, unit: '', label: group.label ?? ''})}
+                                onclick={() => addIngredientToSection(section.id)}
                             >
-                              {group.label ? $_('edit.ingredients.addToSection', {values: {section: group.label}}) : $_('edit.ingredients.add')}
+                              {section.name ? $_('edit.ingredients.addToSection', {values: {section: section.name}}) : $_('edit.ingredients.add')}
                             </Button>
                           </div>
+
+                          {#if isSectionDropBelow(section)}
+                            <div class="h-0.5 bg-primary rounded mt-2"></div>
+                          {/if}
                         </div>
                       {/each}
                     </div>
-                    {#if !editableIngredientGroups.some(group => group.label === null)}
-                      <div class="mt-4">
-                        <Button
-                            variant="outline"
-                            class="w-full"
-                            size="md"
-                            onclick={() => addIngredient({name: '', quantity: 0, unit: '', label: ''})}
-                        >
-                          {$_('edit.ingredients.add')}
-                        </Button>
-                      </div>
-                    {/if}
+
+                    <Button
+                        variant="outline"
+                        class="w-full mt-4 border-dashed"
+                        size="md"
+                        onclick={addCategory}
+                    >
+                      <Plus class="w-4 h-4 mr-1" />
+                      {$_('edit.ingredients.addCategory')}
+                    </Button>
                   </div>
                 {/if}
 
@@ -649,3 +1004,12 @@
 </div>
 
 <ImageCropModal file={currentCropFile} onConfirm={onCropConfirm} onCancel={onCropCancel} />
+
+{#if dragging && dragPos}
+  <div
+      class="fixed z-50 pointer-events-none bg-card border border-primary rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg"
+      style="left:{dragPos.x}px; top:{dragPos.y}px; transform:rotate(-1.5deg);"
+  >
+    {dragGhostLabel}
+  </div>
+{/if}

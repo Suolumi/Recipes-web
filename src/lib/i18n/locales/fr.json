@@ -187,6 +187,12 @@
       "title": "Ingrédients",
       "add": "Ajouter un ingrédient",
       "addToSection": "Ajouter un ingrédient à {section}",
+      "addCategory": "Ajouter une catégorie",
+      "categoryNamePlaceholder": "Nom de la catégorie",
+      "deleteCategory": "Supprimer la catégorie",
+      "moveTo": "Déplacer vers",
+      "uncategorized": "Sans catégorie",
+      "dragHint": "Faites glisser la poignée pour réorganiser, ou utilisez le menu d'un ingrédient pour le déplacer vers une autre catégorie.",
       "name": {
         "label": "Nom",
         "placeholder": "ex. Farine, Sucre, Beurre"
@@ -198,10 +204,6 @@
       "unit": {
         "label": "Unité (facultatif)",
         "placeholder": "ex. g, cl, feuilles…"
-      },
-      "label": {
-        "label": "Section (facultatif)",
-        "placeholder": "ex. Pour la pâte"
       },
       "preview": "Affiché comme : « {text} »",
       "remove": "Supprimer l'ingrédient"
