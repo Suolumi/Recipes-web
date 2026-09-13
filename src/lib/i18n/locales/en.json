@@ -27,7 +27,10 @@
     "by": "By",
     "noPicture": "No pictures added yet.",
     "title": "Recipe Title",
-    "description": "Recipe description will appear here..."
+    "description": "Recipe description will appear here...",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "favoriteError": "Couldn't update favorite"
   },
   "home": {
     "mainText": "What's on the menu today?",

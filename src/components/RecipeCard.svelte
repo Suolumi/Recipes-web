@@ -1,14 +1,18 @@
 <script lang="ts">
-    import {getRecipe, recipeTypeColors} from '$lib/recipes';
+    import {favoriteRecipe, getRecipe, recipeTypeColors, unfavoriteRecipe} from '$lib/recipes';
     import {goto} from "$app/navigation";
     import type {RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {ArrowLeft, ArrowRight, Languages} from "@lucide/svelte";
-    import {serverUrl} from "$lib/stores";
+    import {ArrowLeft, ArrowRight, Heart, Languages} from "@lucide/svelte";
+    import {serverUrl, user} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
+    import {toastError} from "$lib/utils";
+    import Lightbox from "./Lightbox.svelte";
 
     let { recipe, translate, disabled = false }: { recipe: RecipePreview, translate: boolean, disabled?: boolean } = $props();
     let emblaApi: any = $state();
+    let lightboxOpen = $state(false);
+    let lightboxIndex = $state(0);
 
     function viewRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}`);
@@ -30,10 +34,36 @@
             emblaApi.scrollPrev()
     }
 
+    function openLightbox(e: MouseEvent) {
+        e.stopPropagation();
+        if (!recipe.pictures || recipe.pictures.length === 0)
+            return;
+        lightboxIndex = emblaApi ? emblaApi.selectedScrollSnap() : 0;
+        lightboxOpen = true;
+    }
+
     async function translateRecipe() {
         const {data, response} = await getRecipe(recipe.id, $locale ?? '')
         if (response.ok) {
             recipe = data as RecipePreview;
+        }
+    }
+
+    async function toggleFavorite(e: MouseEvent) {
+        e.stopPropagation();
+        if (!$user) {
+            goto(`/${$locale}/login`);
+            return;
+        }
+        const wasFavorite = recipe.favorite;
+        recipe = {...recipe, favorite: !wasFavorite, favorite_count: recipe.favorite_count + (wasFavorite ? -1 : 1)};
+        try {
+            const {response} = wasFavorite ? await unfavoriteRecipe(recipe.id) : await favoriteRecipe(recipe.id);
+            if (!response.ok)
+                throw new Error('favorite request failed');
+        } catch {
+            recipe = {...recipe, favorite: wasFavorite, favorite_count: recipe.favorite_count + (wasFavorite ? 1 : -1)};
+            toastError($_('recipeCard.favoriteError'));
         }
     }
 
@@ -59,14 +89,22 @@
                 <ArrowRight class="text-white" />
             </button>
         {/if}
-        <div class="embla" use:emblaCarouselSvelte onemblaInit={emblaInit}>
+        <div
+                class="embla"
+                use:emblaCarouselSvelte
+                onemblaInit={emblaInit}
+                onclick={openLightbox}
+                onkeydown={(e) => e.key === 'Enter' && openLightbox(e as unknown as MouseEvent)}
+                role="button"
+                tabindex="0"
+        >
             {#if (recipe.pictures?.length ?? 0) >= 1}
                 <div class="embla__container">
                     {#each recipe.pictures as picture}
                         <img
                                 src={`${$serverUrl}/recipe-pictures/${picture}`}
                                 alt={recipe.title || 'Recipe Title'}
-                                class="embla__slide__img aspect-video object-cover hover:scale-105 transition-transform duration-300"
+                                class="embla__slide__img aspect-video object-cover cursor-zoom-in hover:scale-105 transition-transform duration-300"
                         />
                     {/each}
                 </div>
@@ -82,6 +120,19 @@
                     title="Translate recipe"
             >
                 <Languages size="20" />
+            </button>
+        {/if}
+        {#if !disabled}
+            <button
+                    onclick={toggleFavorite}
+                    class="absolute top-2 z-2 left-2 bg-black/50 hover:bg-black/70 text-white rounded-lg p-1.5 transition-all duration-200 flex items-center gap-1"
+                    aria-label={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
+                    title={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
+            >
+                <Heart size="20" fill={recipe.favorite ? 'currentColor' : 'none'} />
+                {#if recipe.favorite_count > 0}
+                    <span class="text-xs font-medium">{recipe.favorite_count}</span>
+                {/if}
             </button>
         {/if}
     </div>
@@ -128,3 +179,11 @@
         </div>
     </div>
 </div>
+
+<Lightbox
+        open={lightboxOpen}
+        pictures={recipe.pictures ?? []}
+        startIndex={lightboxIndex}
+        alt={recipe.title || 'Recipe Title'}
+        onClose={() => lightboxOpen = false}
+/>

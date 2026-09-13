@@ -44,6 +44,8 @@ export type Recipe = {
     ingredients: Ingredient[]
     steps: Step[]
     pictures: string[]
+    favorite: boolean
+    favorite_count: number
 }
 
 export type RecipePreview = {
@@ -57,6 +59,8 @@ export type RecipePreview = {
     resting_time: number
     kind: RecipeType
     pictures: string[]
+    favorite: boolean
+    favorite_count: number
 }
 
 export type RecipeForm = {
@@ -83,6 +87,7 @@ export type GetRecipesRequest = {
     kind?: RecipeType
     locale?: string
     search_locale?: string
+    favorite?: boolean
 }
 
 export type GetRecipesResponse = {
@@ -138,4 +143,12 @@ export function editRecipe(recipe: RecipeForm, id: string, newPictures: File[] =
 
 export function deleteRecipe(id: string) {
     return apiFetchJson<Recipe>(`/recipes/${id}`, "DELETE", null)
+}
+
+export function favoriteRecipe(id: string) {
+    return apiFetchJson<{ message: string }>(`/recipes/${id}/favorite`, "POST", null)
+}
+
+export function unfavoriteRecipe(id: string) {
+    return apiFetchJson<{ message: string }>(`/recipes/${id}/favorite`, "DELETE", null)
 }

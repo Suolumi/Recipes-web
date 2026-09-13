@@ -27,7 +27,10 @@
     "by": "Tekijä",
     "noPicture": "Ei kuvia lisätty vielä.",
     "title": "Reseptin otsikko",
-    "description": "Reseptin kuvaus näkyy tässä..."
+    "description": "Reseptin kuvaus näkyy tässä...",
+    "favorite": "Lisää suosikkeihin",
+    "unfavorite": "Poista suosikeista",
+    "favoriteError": "Suosikin päivitys epäonnistui"
   },
   "home": {
     "mainText": "Mitä on tänään ruokalistalla?",

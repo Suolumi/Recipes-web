@@ -3,7 +3,7 @@
 	import Header from "../components/Header.svelte";
     import {afterNavigate, goto} from "$app/navigation";
 	import {onMount} from "svelte";
-    import {accessToken, refreshToken, serverUrl, user} from "$lib/stores";
+    import {accessToken, refreshToken, user} from "$lib/stores";
     import {getSelf} from "$lib/user";
     import {SvelteToast} from "@zerodevx/svelte-toast";
     import {locale} from "svelte-i18n";
@@ -13,7 +13,6 @@
 	onMount(() => {
 		if (window.location.pathname === "/")
 			goto(`/${$locale ?? 'en'}/home`)
-        serverUrl.set('https://recipes-api.suolumi.fr/api/v1')
 	})
 
     afterNavigate(async () => {

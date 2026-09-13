@@ -27,7 +27,10 @@
     "by": "Par",
     "noPicture": "Pas d'images pour l'instant.",
     "title": "Titre de la recette",
-    "description": "La description apparaît ici..."
+    "description": "La description apparaît ici...",
+    "favorite": "Ajouter aux favoris",
+    "unfavorite": "Retirer des favoris",
+    "favoriteError": "Impossible de mettre à jour le favori"
   },
   "home": {
     "mainText": "Qu'y a-t-il au menu aujourd'hui ?",
