@@ -186,6 +186,7 @@
     "ingredients": {
       "title": "Ainekset",
       "add": "Lisää ainesosa",
+      "addToSection": "Lisää ainesosa osioon {section}",
       "name": {
         "label": "Nimi",
         "placeholder": "esim. Jauhot, Sokeri, Voi"

@@ -186,6 +186,7 @@
     "ingredients": {
       "title": "Ingrédients",
       "add": "Ajouter un ingrédient",
+      "addToSection": "Ajouter un ingrédient à {section}",
       "name": {
         "label": "Nom",
         "placeholder": "ex. Farine, Sucre, Beurre"

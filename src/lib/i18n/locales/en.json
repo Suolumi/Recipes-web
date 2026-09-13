@@ -186,6 +186,7 @@
     "ingredients": {
       "title": "Ingredients",
       "add": "Add Ingredient",
+      "addToSection": "Add ingredient to {section}",
       "name": {
         "label": "Name",
         "placeholder": "e.g. Flour, Sugar, Butter"

@@ -1,7 +1,7 @@
 <script lang="ts">
     import {serverUrl} from "$lib/stores";
     import {ArrowLeft, ArrowRight, X} from "@lucide/svelte";
-    import {fade, scale} from "svelte/transition";
+    import {fade, scale, fly} from "svelte/transition";
 
     let { open = false, pictures = [], startIndex = 0, alt = '', onClose = () => {} }: {
         open?: boolean;
@@ -12,10 +12,22 @@
     } = $props();
 
     let index = $state(startIndex);
+    let direction = $state(1);
+    let justOpened = $state(true);
+
+    function pictureIn(node: Element, params: { first: boolean; dir: number }) {
+        return params.first ? scale(node, { duration: 200, start: 0.9 }) : fly(node, { x: params.dir * 400, duration: 250 });
+    }
+
+    function pictureOut(node: Element, params: { dir: number }) {
+        return fly(node, { x: -params.dir * 400, duration: 250 });
+    }
 
     $effect(() => {
-        if (open)
+        if (open) {
             index = startIndex;
+            justOpened = true;
+        }
     });
 
     $effect(() => {
@@ -34,14 +46,20 @@
 
     function prev(e?: Event) {
         e?.stopPropagation();
-        if (canPrev)
+        if (canPrev) {
+            direction = -1;
+            justOpened = false;
             index -= 1;
+        }
     }
 
     function next(e?: Event) {
         e?.stopPropagation();
-        if (canNext)
+        if (canNext) {
+            direction = 1;
+            justOpened = false;
             index += 1;
+        }
     }
 
     function handleKeydown(e: KeyboardEvent) {
@@ -121,12 +139,17 @@
         {/if}
 
         {#if pictures[index]}
-            <img
-                    src={`${$serverUrl}/recipe-pictures/${pictures[index]}`}
-                    {alt}
-                    class="max-h-[90vh] max-w-full object-contain select-none"
-                    transition:scale={{ duration: 200, start: 0.9 }}
-            />
+            <div class="relative w-full h-[90vh] max-w-full overflow-hidden">
+                {#key index}
+                    <img
+                            src={`${$serverUrl}/recipe-pictures/${pictures[index]}`}
+                            {alt}
+                            class="absolute inset-0 m-auto max-h-[90vh] max-w-full object-contain select-none"
+                            in:pictureIn={{ first: justOpened, dir: direction }}
+                            out:pictureOut={{ dir: direction }}
+                    />
+                {/key}
+            </div>
         {/if}
 
         {#if hasMultiple}
