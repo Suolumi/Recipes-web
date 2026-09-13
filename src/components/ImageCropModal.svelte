@@ -109,18 +109,13 @@
     // via drag distance instead of the slider.
     const RESIZE_HANDLES = [
         {id: 'nw', sx: -1, sy: -1},
-        {id: 'n', sx: 0, sy: -1},
         {id: 'ne', sx: 1, sy: -1},
-        {id: 'e', sx: 1, sy: 0},
         {id: 'se', sx: 1, sy: 1},
-        {id: 's', sx: 0, sy: 1},
         {id: 'sw', sx: -1, sy: 1},
-        {id: 'w', sx: -1, sy: 0},
     ] as const;
 
     function handleCursor(sx: number, sy: number) {
-        if (sx !== 0 && sy !== 0) return sx === sy ? 'nwse-resize' : 'nesw-resize';
-        return sx !== 0 ? 'ew-resize' : 'ns-resize';
+        return sx === sy ? 'nwse-resize' : 'nesw-resize';
     }
 
     let resizeState: {startX: number; startY: number; startRectWidth: number; sx: number; sy: number} | null = null;
@@ -136,10 +131,7 @@
         const dx = e.clientX - resizeState.startX;
         const dy = e.clientY - resizeState.startY;
         const {sx, sy} = resizeState;
-        let deltaWidth: number;
-        if (sx !== 0 && sy !== 0) deltaWidth = (dx * sx + dy * sy * RECIPE_CARD_ASPECT_RATIO) / 2;
-        else if (sx !== 0) deltaWidth = dx * sx;
-        else deltaWidth = dy * sy * RECIPE_CARD_ASPECT_RATIO;
+        const deltaWidth = (dx * sx + dy * sy * RECIPE_CARD_ASPECT_RATIO) / 2;
 
         const minRectWidth = baseRectWidth / maxZoom;
         const newRectWidth = clamp(resizeState.startRectWidth + deltaWidth, minRectWidth, baseRectWidth);

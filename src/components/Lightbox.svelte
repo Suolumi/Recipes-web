@@ -1,6 +1,7 @@
 <script lang="ts">
     import {serverUrl} from "$lib/stores";
     import {ArrowLeft, ArrowRight, X} from "@lucide/svelte";
+    import {fade, scale} from "svelte/transition";
 
     let { open = false, pictures = [], startIndex = 0, alt = '', onClose = () => {} }: {
         open?: boolean;
@@ -87,6 +88,7 @@
             ontouchstart={handleTouchStart}
             ontouchend={handleTouchEnd}
             role="presentation"
+            transition:fade={{ duration: 200 }}
     >
         <button
                 type="button"
@@ -123,6 +125,7 @@
                     src={`${$serverUrl}/recipe-pictures/${pictures[index]}`}
                     {alt}
                     class="max-h-[90vh] max-w-full object-contain select-none"
+                    transition:scale={{ duration: 200, start: 0.9 }}
             />
         {/if}
 
