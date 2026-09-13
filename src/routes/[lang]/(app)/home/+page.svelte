@@ -2,6 +2,8 @@
     import { untrack } from 'svelte';
     import RecipeCard from '../../../../components/RecipeCard.svelte';
     import {getRecipes, recipeTypeColors, type GetRecipesRequest, type RecipePreview, type RecipeType, RecipeTypes} from "$lib/recipes";
+    import {searchUsers, type User as AuthorUser} from "$lib/user";
+    import {serverUrl} from "$lib/stores";
     import { _, locale } from 'svelte-i18n';
     import { Search, SlidersHorizontal, ChevronDown, User, X } from '@lucide/svelte';
 
@@ -13,6 +15,10 @@
     let selectedType = $state('all');
     let filtersOpen = $state(false);
     let author = $state('');
+    let authorSuggestions: AuthorUser[] = $state([]);
+    let showAuthorSuggestions = $state(false);
+    let authorFieldRef: HTMLDivElement | undefined = $state();
+    let authorSearchId = 0;
     let ingredientInput = $state('');
     let ingredients: string[] = $state([]);
     let timeBasis: 'prep' | 'total' = $state('total');
@@ -55,6 +61,15 @@
 
     function removeIngredient(ingredient: string) {
         ingredients = ingredients.filter(i => i !== ingredient)
+    }
+
+    function selectAuthor(username: string) {
+        author = username
+        showAuthorSuggestions = false
+    }
+
+    function onAuthorInput() {
+        showAuthorSuggestions = true
     }
 
     function clearAllFilters() {
@@ -131,6 +146,36 @@
     })
 
     $effect(() => {
+        const query = author.trim()
+        const id = ++authorSearchId
+        if (!query) {
+            authorSuggestions = []
+            return
+        }
+        const timeout = setTimeout(() => {
+            searchUsers(query, 5).then(({response, data}) => {
+                if (id !== authorSearchId)
+                    return
+                if (!response.ok || !data)
+                    return
+                authorSuggestions = data.items.slice(0, 5)
+            })
+        }, 250)
+        return () => clearTimeout(timeout)
+    })
+
+    $effect(() => {
+        if (!authorFieldRef)
+            return
+        function onClickOutside(e: MouseEvent) {
+            if (authorFieldRef && !authorFieldRef.contains(e.target as Node))
+                showAuthorSuggestions = false
+        }
+        document.addEventListener('click', onClickOutside)
+        return () => document.removeEventListener('click', onClickOutside)
+    })
+
+    $effect(() => {
         if (!sentinel)
             return
         const observer = new IntersectionObserver((entries) => {
@@ -196,15 +241,41 @@
             <div class="mt-4 pt-4 border-t border-border flex flex-wrap gap-6">
                 <div class="flex flex-col gap-2 min-w-[220px] flex-1">
                     <label class="text-sm font-medium text-foreground" for="author-filter">{$_('home.author')}</label>
-                    <div class="relative">
+                    <div class="relative" bind:this={authorFieldRef}>
                         <User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                         <input
                                 id="author-filter"
                                 type="text"
+                                autocomplete="off"
                                 placeholder={$_('home.authorPlaceholder')}
                                 bind:value={author}
+                                oninput={onAuthorInput}
                                 class="w-full pl-10 pr-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                         />
+                        {#if showAuthorSuggestions && authorSuggestions.length > 0}
+                            <div class="absolute left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg py-1 z-50 overflow-hidden">
+                                {#each authorSuggestions as suggestion (suggestion.id)}
+                                    <button
+                                            type="button"
+                                            onclick={() => selectAuthor(suggestion.username)}
+                                            class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:hover:bg-gray-800"
+                                    >
+                                        {#if suggestion.picture}
+                                            <img
+                                                    src={`${$serverUrl}/pictures/${suggestion.picture}`}
+                                                    alt="{suggestion.username} profile"
+                                                    class="w-6 h-6 rounded-full object-cover flex-none"
+                                            />
+                                        {:else}
+                                            <div class="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium flex-none">
+                                                {suggestion.username.charAt(0) || "?"}
+                                            </div>
+                                        {/if}
+                                        <span class="truncate">{suggestion.username}</span>
+                                    </button>
+                                {/each}
+                            </div>
+                        {/if}
                     </div>
                 </div>
 

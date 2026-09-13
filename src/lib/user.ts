@@ -17,8 +17,17 @@ export type UpdateUserPictureResponse = {
     id: string
 }
 
+export type GetUsersResponse = {
+    length: number
+    items: User[]
+}
+
 export async function getSelf() {
     return apiFetchJson<User>("/users/me")
+}
+
+export async function searchUsers(username: string, limit = 5) {
+    return apiFetchJson<GetUsersResponse>("/users", "GET", null, {username, limit})
 }
 
 export async function updateSelf(user: UserSettingsForm) {

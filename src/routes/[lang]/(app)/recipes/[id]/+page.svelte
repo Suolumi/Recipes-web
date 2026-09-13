@@ -16,7 +16,7 @@
     $effect(() => {
         if (!id)
             return
-        getRecipe(id).then(({response, data}) => {
+        getRecipe(id, $locale ?? undefined).then(({response, data}) => {
             if (response.ok && data)
                 recipe = data
             else
