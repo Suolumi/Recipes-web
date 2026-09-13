@@ -52,10 +52,6 @@
 
     async function toggleFavorite(e: MouseEvent) {
         e.stopPropagation();
-        if (!$user) {
-            goto(`/${$locale}/login`);
-            return;
-        }
         heartBump = true;
         const wasFavorite = recipe.favorite;
         recipe = {...recipe, favorite: !wasFavorite, favorite_count: recipe.favorite_count + (wasFavorite ? -1 : 1)};
@@ -124,7 +120,7 @@
                 <Languages size="20" />
             </button>
         {/if}
-        {#if !disabled}
+        {#if !disabled && $user}
             <button
                     onclick={toggleFavorite}
                     class="absolute top-2 z-2 left-2 bg-black/50 hover:bg-black/70 text-white rounded-lg p-1.5 transition-all duration-200 flex items-center gap-1"

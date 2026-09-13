@@ -37,7 +37,24 @@
     "secondaryText": "Maybe this, or that ! Or how about...",
     "search": "Search Recipes...",
     "notFound": "No recipes found",
-    "adjustSearch": "Try adjusting your search or filter criteria"
+    "adjustSearch": "Try adjusting your search or filter criteria",
+    "moreFilters": "More filters",
+    "author": "Author",
+    "authorPlaceholder": "Search by author...",
+    "ingredients": "Ingredients",
+    "ingredientsPlaceholder": "Add ingredient, press Enter",
+    "readyIn": "Ready in about",
+    "prepTime": "Prep time",
+    "totalTime": "Total time",
+    "closestMatch": "Closest matches shown first",
+    "clearAll": "Clear all",
+    "timeAny": "Any time",
+    "timeMinutes": "~{minutes} min",
+    "timeHour": "~1 hour",
+    "activeAuthor": "by {author}",
+    "activeTimePrep": "{time} (prep)",
+    "activeTimeTotal": "{time} (total)",
+    "resultCount": "{count} recipes found"
   },
   "login": {
     "errors": {

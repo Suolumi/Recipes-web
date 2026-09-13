@@ -37,7 +37,24 @@
     "secondaryText": "Ehkä tätä, tai tuota! Tai entäpä...",
     "search": "Hae reseptejä...",
     "notFound": "Reseptejä ei löytynyt",
-    "adjustSearch": "Kokeile muuttaa hakua tai suodattimia"
+    "adjustSearch": "Kokeile muuttaa hakua tai suodattimia",
+    "moreFilters": "Lisää suodattimia",
+    "author": "Tekijä",
+    "authorPlaceholder": "Hae tekijän mukaan...",
+    "ingredients": "Ainekset",
+    "ingredientsPlaceholder": "Lisää ainesosa, paina Enter",
+    "readyIn": "Valmis noin",
+    "prepTime": "Valmisteluaika",
+    "totalTime": "Kokonaisaika",
+    "closestMatch": "Lähimmät tulokset näytetään ensin",
+    "clearAll": "Tyhjennä kaikki",
+    "timeAny": "Mikä tahansa aika",
+    "timeMinutes": "~{minutes} min",
+    "timeHour": "~1 tunti",
+    "activeAuthor": "tekijältä {author}",
+    "activeTimePrep": "{time} (valmistelu)",
+    "activeTimeTotal": "{time} (yhteensä)",
+    "resultCount": "{count} reseptiä löytyi"
   },
   "login": {
     "errors": {

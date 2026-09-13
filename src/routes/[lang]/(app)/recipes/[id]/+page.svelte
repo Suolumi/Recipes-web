@@ -65,10 +65,6 @@
     async function toggleFavorite() {
         if (!recipe)
             return
-        if (!$user) {
-            goto(`/${$locale}/login`);
-            return;
-        }
         heartBump = true;
         const wasFavorite = recipe.favorite;
         recipe = {...recipe, favorite: !wasFavorite, favorite_count: recipe.favorite_count + (wasFavorite ? -1 : 1)};
@@ -161,22 +157,24 @@
                             <Languages size="20" />
                             <span class="text-sm font-semibold">{$_('recipe.translate')}</span>
                         </button>
-                        <button
-                                onclick={toggleFavorite}
-                                class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary hover:text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
-                                aria-label={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
-                                title={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
-                        >
-                            <span
-                                    class="inline-flex {heartBump ? 'heart-bump' : ''}"
-                                    onanimationend={() => heartBump = false}
+                        {#if $user}
+                            <button
+                                    onclick={toggleFavorite}
+                                    class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary hover:text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
+                                    aria-label={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
+                                    title={$_(recipe.favorite ? 'recipeCard.unfavorite' : 'recipeCard.favorite')}
                             >
-                                <Heart size="20" fill={recipe.favorite ? 'currentColor' : 'none'} class={recipe.favorite ? 'text-red-500' : ''} />
-                            </span>
-                            {#if recipe.favorite_count > 0}
-                                <span class="text-sm font-semibold">{recipe.favorite_count}</span>
-                            {/if}
-                        </button>
+                                <span
+                                        class="inline-flex {heartBump ? 'heart-bump' : ''}"
+                                        onanimationend={() => heartBump = false}
+                                >
+                                    <Heart size="20" fill={recipe.favorite ? 'currentColor' : 'none'} class={recipe.favorite ? 'text-red-500' : ''} />
+                                </span>
+                                {#if recipe.favorite_count > 0}
+                                    <span class="text-sm font-semibold">{recipe.favorite_count}</span>
+                                {/if}
+                            </button>
+                        {/if}
                     </div>
                 </div>
 

@@ -37,7 +37,24 @@
     "secondaryText": "Peut-être ça, ou ça ! Ou alors...",
     "search": "Rechercher des recettes...",
     "notFound": "Aucune recette trouvée",
-    "adjustSearch": "Essayez d'ajuster votre recherche ou vos filtres"
+    "adjustSearch": "Essayez d'ajuster votre recherche ou vos filtres",
+    "moreFilters": "Plus de filtres",
+    "author": "Auteur",
+    "authorPlaceholder": "Rechercher par auteur...",
+    "ingredients": "Ingrédients",
+    "ingredientsPlaceholder": "Ajouter un ingrédient, appuyez sur Entrée",
+    "readyIn": "Prêt en environ",
+    "prepTime": "Préparation",
+    "totalTime": "Temps total",
+    "closestMatch": "Résultats les plus proches affichés en premier",
+    "clearAll": "Tout effacer",
+    "timeAny": "N'importe quand",
+    "timeMinutes": "~{minutes} min",
+    "timeHour": "~1 heure",
+    "activeAuthor": "de {author}",
+    "activeTimePrep": "{time} (préparation)",
+    "activeTimeTotal": "{time} (total)",
+    "resultCount": "{count} recettes trouvées"
   },
   "login": {
     "errors": {
