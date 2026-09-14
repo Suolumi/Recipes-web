@@ -960,26 +960,28 @@
                             <span class="bg-primary text-primary-foreground w-8 h-8 rounded-full text-sm font-semibold flex items-center justify-center flex-shrink-0 mt-1">
                                         {index + 1}
                                     </span>
-                            <div class="flex-1 space-y-2">
-                              <div>
-                                <Label for={`step-title-${row.uid}`}>{$_('edit.instructions.title.label')}</Label>
-                                <Input
-                                    id={`step-title-${row.uid}`}
-                                    type="text"
-                                    bind:value={row.title}
-                                    placeholder={$_('edit.instructions.title.placeholder')}
-                                />
+                            <div class="flex-1 flex gap-3 items-start">
+                              <div class="flex-1 min-w-0 space-y-2">
+                                <div>
+                                  <Label for={`step-title-${row.uid}`}>{$_('edit.instructions.title.label')}</Label>
+                                  <Input
+                                      id={`step-title-${row.uid}`}
+                                      type="text"
+                                      bind:value={row.title}
+                                      placeholder={$_('edit.instructions.title.placeholder')}
+                                  />
+                                </div>
+                                <div>
+                                  <Label for={`step-description-${row.uid}`}>{$_('edit.instructions.description.label')}</Label>
+                                  <Textarea
+                                      id={`step-description-${row.uid}`}
+                                      bind:value={row.description}
+                                      placeholder={$_('edit.instructions.description.placeholder')}
+                                      rows={2}
+                                  />
+                                </div>
                               </div>
-                              <div>
-                                <Label for={`step-description-${row.uid}`}>{$_('edit.instructions.description.label')}</Label>
-                                <Textarea
-                                    id={`step-description-${row.uid}`}
-                                    bind:value={row.description}
-                                    placeholder={$_('edit.instructions.description.placeholder')}
-                                    rows={2}
-                                />
-                              </div>
-                              <div>
+                              <div class="flex-shrink-0">
                                 <Label>{$_('edit.instructions.photo.label')}</Label>
                                 {#if pendingPic || row.picture}
                                   <div class="relative inline-block group mt-1">
