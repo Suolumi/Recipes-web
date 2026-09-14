@@ -151,6 +151,7 @@
     "increaseServings": "Increase servings",
     "ingredients": "Ingredients",
     "instructions": "Instructions",
+    "stepPhoto": "Step {step} photo",
     "notFound": "Recipe not found"
   },
   "edit": {
@@ -221,7 +222,13 @@
         "label": "Description",
         "placeholder": "e.g. Preheat the oven to 180°C (350°F) and grease the baking pan"
       },
-      "remove": "Remove"
+      "remove": "Remove",
+      "reorder": "Reorder step",
+      "photo": {
+        "label": "Photo",
+        "alt": "Step {step} photo",
+        "remove": "Remove photo"
+      }
     },
     "submit": "Save Recipe",
     "preview": "Live Preview",

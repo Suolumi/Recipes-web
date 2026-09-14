@@ -151,6 +151,7 @@
     "increaseServings": "Augmenter le nombre de portions",
     "ingredients": "Ingrédients",
     "instructions": "Instructions",
+    "stepPhoto": "Photo de l'étape {step}",
     "notFound": "Recette non trouvée"
   },
   "edit": {
@@ -221,7 +222,13 @@
         "label": "Description",
         "placeholder": "ex. Préchauffer le four à 180°C et graisser le moule"
       },
-      "remove": "Supprimer"
+      "remove": "Supprimer",
+      "reorder": "Réordonner l'étape",
+      "photo": {
+        "label": "Photo",
+        "alt": "Photo de l'étape {step}",
+        "remove": "Supprimer la photo"
+      }
     },
     "submit": "Enregistrer",
     "preview": "Aperçu en direct",

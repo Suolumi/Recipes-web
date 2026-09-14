@@ -151,6 +151,7 @@
     "increaseServings": "Lisää annoksia",
     "ingredients": "Ainekset",
     "instructions": "Ohjeet",
+    "stepPhoto": "Vaiheen {step} kuva",
     "notFound": "Reseptiä ei löytynyt"
   },
   "edit": {
@@ -221,7 +222,13 @@
         "label": "Kuvaus",
         "placeholder": "esim. Esilämmitä uuni 180°C:seen ja voitele vuoka"
       },
-      "remove": "Poista"
+      "remove": "Poista",
+      "reorder": "Järjestä vaihe uudelleen",
+      "photo": {
+        "label": "Kuva",
+        "alt": "Vaiheen {step} kuva",
+        "remove": "Poista kuva"
+      }
     },
     "submit": "Tallenna resepti",
     "preview": "Esikatselu",

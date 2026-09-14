@@ -41,6 +41,7 @@
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
+    let stepLightboxPicture: string | null = $state(null);
     let heartBump = $state(false);
     let canScrollPrev = $state(false);
     let canScrollNext = $state(false);
@@ -75,6 +76,10 @@
             return;
         lightboxIndex = emblaApi ? emblaApi.selectedScrollSnap() : 0;
         lightboxOpen = true;
+    }
+
+    function openStepLightbox(picture: string) {
+        stepLightboxPicture = picture;
     }
 
     async function toggleFavorite() {
@@ -283,11 +288,27 @@
 
                     <div class="space-y-4">
                         {#each recipe.steps as step, index}
-                            <div>
-                                <div class="font-bold text-sm">
-                                    {step.title || `Step ${index + 1}`}
+                            <div class="flex gap-4">
+                                {#if step.picture}
+                                    <button
+                                            type="button"
+                                            onclick={() => openStepLightbox(step.picture!)}
+                                            class="flex-shrink-0 hover:cursor-zoom-in"
+                                            aria-label={$_('recipe.stepPhoto', {values: {step: index + 1}})}
+                                    >
+                                        <img
+                                                src={`${$serverUrl}/recipe-pictures/${step.picture}`}
+                                                alt={step.title || `Step ${index + 1}`}
+                                                class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border hover:scale-105 transition-transform"
+                                        />
+                                    </button>
+                                {/if}
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-sm">
+                                        {step.title || `Step ${index + 1}`}
+                                    </div>
+                                    <p class="text-card-foreground leading-relaxed pl-4 whitespace-pre-line">{step.description}</p>
                                 </div>
-                                <p class="text-card-foreground leading-relaxed pl-4 whitespace-pre-line">{step.description}</p>
                             </div>
                         {/each}
                     </div>
@@ -302,6 +323,13 @@
             startIndex={lightboxIndex}
             alt={recipe.title || 'Recipe Title'}
             onClose={() => lightboxOpen = false}
+    />
+
+    <Lightbox
+            open={stepLightboxPicture !== null}
+            pictures={stepLightboxPicture ? [stepLightboxPicture] : []}
+            alt={recipe.title || 'Recipe Title'}
+            onClose={() => stepLightboxPicture = null}
     />
 {:else if recipe === null}
 <!--    @TODO skeleton loading-->

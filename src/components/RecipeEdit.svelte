@@ -23,7 +23,7 @@
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
-        onSubmit?: (recipe: RecipeForm, newPictures: File[]) => void;
+        onSubmit?: (recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) => void;
         recipe?: RecipeForm
         recipeId?: string
         headLabel: string
@@ -32,7 +32,7 @@
 
     let {
         onChange = (recipe: RecipeForm) => {},
-        onSubmit = (recipe: RecipeForm, newPictures: File[]) => {},
+        onSubmit = (recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) => {},
         recipe = undefined,
         recipeId = undefined,
         headLabel = $_('create.headLabel'),
@@ -41,6 +41,32 @@
 
     let formData = $state<RecipeForm>(getRecipe(recipe));
     let pendingPictures = $state<{file: File, url: string}[]>([])
+
+    // --- Step editing --------------------------------------------------------
+    // Steps carry no server-side identity, but drag-reorder and per-step pending
+    // photo uploads both need a stable client-only key, so editing happens on
+    // `stepRows` (uid + fields) and is flattened back into formData.steps, the
+    // same pattern `sections` below uses for ingredients.
+
+    type EditStep = { uid: string, title: string, description: string, picture: string };
+
+    let stepUid = 0;
+
+    function nextStepUid(): string {
+        stepUid += 1;
+        return `step-${stepUid}`;
+    }
+
+    function buildStepRows(stepsList: Step[]): EditStep[] {
+        return stepsList.map(step => ({uid: nextStepUid(), title: step.title, description: step.description, picture: step.picture ?? ''}));
+    }
+
+    let stepRows = $state<EditStep[]>(untrack(() => buildStepRows(formData.steps)));
+    let stepPendingPictures = $state<Record<string, {file: File, url: string}>>({});
+
+    $effect(() => {
+        formData.steps = stepRows.map(({title, description, picture}) => picture ? {title, description, picture} : {title, description});
+    });
 
     const steps = [
         {id: 'basics', icon: 'M4 6h16M4 12h16M4 18h7'},
@@ -59,6 +85,7 @@
             untrack(() => {
                 formData = getRecipe(recipe)
                 sections = buildSections(formData.ingredients)
+                stepRows = buildStepRows(formData.steps)
             })
     })
 
@@ -111,12 +138,41 @@
         return normalizeRecipe($createRecipeCache && !isBlank($createRecipeCache) ? $createRecipeCache : (recipeProps ?? r))
     }
 
-    function addStep(step: Step) {
-        formData.steps = [...formData.steps, step];
+    function addStep() {
+        stepRows = [...stepRows, {uid: nextStepUid(), title: '', description: '', picture: ''}];
     }
 
-    function removeStep(index: number) {
-        formData.steps = formData.steps.filter((_, i) => i !== index);
+    function removeStep(uid: string) {
+        clearStepPendingPicture(uid);
+        stepRows = stepRows.filter(s => s.uid !== uid);
+    }
+
+    function clearStepPendingPicture(uid: string) {
+        const pending = stepPendingPictures[uid];
+        if (!pending) return;
+        URL.revokeObjectURL(pending.url);
+        const {[uid]: _removed, ...rest} = stepPendingPictures;
+        stepPendingPictures = rest;
+    }
+
+    // A fresh upload always supersedes whatever picture the step already had.
+    function setStepPendingPicture(uid: string, file: File) {
+        clearStepPendingPicture(uid);
+        stepPendingPictures = {...stepPendingPictures, [uid]: {file, url: URL.createObjectURL(file)}};
+        stepRows = stepRows.map(s => s.uid === uid ? {...s, picture: ''} : s);
+    }
+
+    function removeStepPicture(uid: string) {
+        clearStepPendingPicture(uid);
+        stepRows = stepRows.map(s => s.uid === uid ? {...s, picture: ''} : s);
+    }
+
+    function onStepFileSelected(uid: string, files: FileList) {
+        const file = files[0];
+        if (!file) return;
+        cropQueue = [...cropQueue, {file, target: {kind: 'step', uid}}];
+        if (!currentCrop)
+            advanceCropQueue();
     }
 
     async function saveRecipe() {
@@ -124,30 +180,96 @@
             if (nb < 0)
                 return toastError($_('create.toasts.negativeNumber'))
         }
-        onSubmit(formData, pendingPictures.map(picture => picture.file));
+        const newStepPictures: Record<number, File> = {};
+        stepRows.forEach((row, index) => {
+            const pending = stepPendingPictures[row.uid];
+            if (pending)
+                newStepPictures[index] = pending.file;
+        });
+        onSubmit(formData, pendingPictures.map(picture => picture.file), newStepPictures);
     }
 
     function removePicture(index: number) {
         formData.pictures = formData.pictures.filter((_, i) => i !== index);
     }
 
-    let cropQueue = $state<File[]>([])
-    let currentCropFile = $state<File | null>(null)
+    // --- Step drag & drop ---------------------------------------------------
+    // Same pointer-capture approach as the ingredient/category drag below, just
+    // for a flat list.
+
+    let draggingStepUid = $state<string | null>(null);
+    let stepDropIndicator = $state<{ beforeUid: string | null, before: boolean } | null>(null);
+    let stepDragPos = $state<{ x: number, y: number } | null>(null);
+
+    function startStepDrag(e: PointerEvent, uid: string) {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        draggingStepUid = uid;
+        stepDragPos = {x: e.clientX + 14, y: e.clientY + 14};
+        stepDropIndicator = null;
+    }
+
+    function handleStepDragPointerMove(e: PointerEvent) {
+        if (!draggingStepUid) return;
+        stepDragPos = {x: e.clientX + 14, y: e.clientY + 14};
+        let best: { uid: string, mid: number } | null = null;
+        let bestDist = Infinity;
+        for (const row of document.querySelectorAll<HTMLElement>('[data-step-row]')) {
+            const uid = row.dataset.stepUid!;
+            if (uid === draggingStepUid) continue;
+            const rect = row.getBoundingClientRect();
+            const mid = rect.top + rect.height / 2;
+            const dist = Math.abs(e.clientY - mid);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = {uid, mid};
+            }
+        }
+        stepDropIndicator = best ? {beforeUid: best.uid, before: e.clientY < best.mid} : null;
+    }
+
+    function handleStepDragPointerUp() {
+        if (!draggingStepUid) return;
+        const draggedUid = draggingStepUid;
+        const drop = stepDropIndicator;
+        const dragged = stepRows.find(s => s.uid === draggedUid);
+        if (dragged && drop) {
+            let working = stepRows.filter(s => s.uid !== draggedUid);
+            let insertAt = working.length;
+            const pos = working.findIndex(s => s.uid === drop.beforeUid);
+            if (pos !== -1) insertAt = drop.before ? pos : pos + 1;
+            working.splice(insertAt, 0, dragged);
+            stepRows = working;
+        }
+        draggingStepUid = null;
+        stepDropIndicator = null;
+        stepDragPos = null;
+    }
+
+    type CropTarget = { kind: 'recipe' } | { kind: 'step', uid: string };
+    type CropQueueItem = { file: File, target: CropTarget };
+
+    let cropQueue = $state<CropQueueItem[]>([])
+    let currentCrop = $state<CropQueueItem | null>(null)
 
     function advanceCropQueue() {
         const [next, ...rest] = cropQueue
-        currentCropFile = next ?? null
+        currentCrop = next ?? null
         cropQueue = rest
     }
 
     async function onFileUpload(files: FileList) {
-        cropQueue = [...cropQueue, ...Array.from(files)]
-        if (!currentCropFile)
+        cropQueue = [...cropQueue, ...Array.from(files).map(file => ({file, target: {kind: 'recipe'} as const}))]
+        if (!currentCrop)
             advanceCropQueue()
     }
 
     function onCropConfirm(croppedFile: File) {
-        pendingPictures = [...pendingPictures, {file: croppedFile, url: URL.createObjectURL(croppedFile)}]
+        const target = currentCrop?.target
+        if (target?.kind === 'step')
+            setStepPendingPicture(target.uid, croppedFile)
+        else
+            pendingPictures = [...pendingPictures, {file: croppedFile, url: URL.createObjectURL(croppedFile)}]
         advanceCropQueue()
     }
 
@@ -458,6 +580,8 @@
         if (drag.type === 'ingredient') return drag.ingredient.name || $_('edit.ingredients.name.placeholder');
         return sections.find(s => s.id === drag.sectionId)?.name ?? '';
     });
+
+    let stepDragGhostLabel = $derived(stepRows.find(s => s.uid === draggingStepUid)?.title || $_('edit.instructions.title.placeholder'));
 
     $effect(() => {
         function onDocPointerDown(e: PointerEvent) {
@@ -805,45 +929,103 @@
                 <!-- Step 3: Instructions -->
                 {#if currentStep === 2}
                   <div>
-                    {#if formData.steps.length === 0}
+                    {#if stepRows.length === 0}
                       <div class="text-center py-8 px-4 rounded-lg border border-dashed border-border bg-muted/30 mb-4">
                         <p class="text-sm text-muted-foreground">{$_('edit.wizard.empty.instructions')}</p>
                       </div>
                     {/if}
                     <div class="space-y-3">
-                      {#each formData.steps as step, index}
-                        <div class="flex gap-3 items-start rounded-lg border border-border p-4">
-                                    <span class="bg-primary text-primary-foreground w-8 h-8 rounded-full text-sm font-semibold flex items-center justify-center flex-shrink-0 mt-1">
+                      {#each stepRows as row, index (row.uid)}
+                        {@const pendingPic = stepPendingPictures[row.uid]}
+                        <div>
+                          {#if stepDropIndicator?.beforeUid === row.uid && stepDropIndicator.before}
+                            <div class="h-0.5 bg-primary rounded mb-1.5"></div>
+                          {/if}
+                          <div
+                              data-step-row
+                              data-step-uid={row.uid}
+                              class="flex gap-3 items-start rounded-lg border border-border p-4 touch-none transition-opacity {draggingStepUid === row.uid ? 'opacity-35' : ''}"
+                          >
+                            <button
+                                type="button"
+                                onpointerdown={(e) => startStepDrag(e, row.uid)}
+                                onpointermove={handleStepDragPointerMove}
+                                onpointerup={handleStepDragPointerUp}
+                                onpointercancel={handleStepDragPointerUp}
+                                class="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent cursor-grab touch-none transition-colors flex-shrink-0 mt-1"
+                                aria-label={$_('edit.instructions.reorder')}
+                            >
+                              <GripVertical class="w-4 h-4" />
+                            </button>
+                            <span class="bg-primary text-primary-foreground w-8 h-8 rounded-full text-sm font-semibold flex items-center justify-center flex-shrink-0 mt-1">
                                         {index + 1}
                                     </span>
-                          <div class="flex-1 space-y-2">
-                            <div>
-                              <Label for={`step-title-${index}`}>{$_('edit.instructions.title.label')}</Label>
-                              <Input
-                                  id={`step-title-${index}`}
-                                  type="text"
-                                  bind:value={formData.steps[index].title}
-                                  placeholder={$_('edit.instructions.title.placeholder')}
-                              />
+                            <div class="flex-1 space-y-2">
+                              <div>
+                                <Label for={`step-title-${row.uid}`}>{$_('edit.instructions.title.label')}</Label>
+                                <Input
+                                    id={`step-title-${row.uid}`}
+                                    type="text"
+                                    bind:value={row.title}
+                                    placeholder={$_('edit.instructions.title.placeholder')}
+                                />
+                              </div>
+                              <div>
+                                <Label for={`step-description-${row.uid}`}>{$_('edit.instructions.description.label')}</Label>
+                                <Textarea
+                                    id={`step-description-${row.uid}`}
+                                    bind:value={row.description}
+                                    placeholder={$_('edit.instructions.description.placeholder')}
+                                    rows={2}
+                                />
+                              </div>
+                              <div>
+                                <Label>{$_('edit.instructions.photo.label')}</Label>
+                                {#if pendingPic || row.picture}
+                                  <div class="relative inline-block group mt-1">
+                                    <img
+                                        src={pendingPic ? pendingPic.url : `${$serverUrl}/recipe-pictures/${row.picture}`}
+                                        alt={$_('edit.instructions.photo.alt', {values: {step: index + 1}})}
+                                        class="w-24 h-24 object-cover rounded-lg border border-border"
+                                    />
+                                    <button
+                                        type="button"
+                                        onclick={() => removeStepPicture(row.uid)}
+                                        aria-label={$_('edit.instructions.photo.remove')}
+                                        class="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                {:else}
+                                  <label class="mt-1 flex items-center justify-center w-24 h-24 rounded-lg border-2 border-dashed border-border text-muted-foreground hover:border-primary/50 hover:text-foreground cursor-pointer transition-colors">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        class="hidden"
+                                        onchange={(e) => {
+                                            const target = e.target as HTMLInputElement;
+                                            if (target.files) onStepFileSelected(row.uid, target.files);
+                                            target.value = '';
+                                        }}
+                                    />
+                                    <Plus class="w-5 h-5" />
+                                  </label>
+                                {/if}
+                              </div>
                             </div>
-                            <div>
-                              <Label for={`step-description-${index}`}>{$_('edit.instructions.description.label')}</Label>
-                              <Textarea
-                                  id={`step-description-${index}`}
-                                  bind:value={formData.steps[index].description}
-                                  placeholder={$_('edit.instructions.description.placeholder')}
-                                  rows={2}
-                              />
-                            </div>
+                            <button
+                                type="button"
+                                onclick={() => removeStep(row.uid)}
+                                aria-label={$_('edit.instructions.remove')}
+                                class="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus:outline-none focus:ring-2 focus:ring-ring flex-shrink-0 mt-1"
+                            >
+                              <Trash2 class="w-4 h-4" />
+                            </button>
                           </div>
-                          <button
-                              type="button"
-                              onclick={() => removeStep(index)}
-                              aria-label={$_('edit.instructions.remove')}
-                              class="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus:outline-none focus:ring-2 focus:ring-ring flex-shrink-0 mt-1"
-                          >
-                            <Trash2 class="w-4 h-4" />
-                          </button>
+                          {#if stepDropIndicator?.beforeUid === row.uid && !stepDropIndicator.before}
+                            <div class="h-0.5 bg-primary rounded mt-1.5"></div>
+                          {/if}
                         </div>
                       {/each}
                     </div>
@@ -852,7 +1034,7 @@
                           variant="outline"
                           class="w-full"
                           size="md"
-                          onclick={() => addStep({description: '', title: ''})}
+                          onclick={addStep}
                       >
                         {$_('edit.instructions.add')}
                       </Button>
@@ -1005,7 +1187,7 @@
   </div>
 </div>
 
-<ImageCropModal file={currentCropFile} onConfirm={onCropConfirm} onCancel={onCropCancel} />
+<ImageCropModal file={currentCrop?.file ?? null} onConfirm={onCropConfirm} onCancel={onCropCancel} />
 
 {#if dragging && dragPos}
   <div
@@ -1013,5 +1195,14 @@
       style="left:{dragPos.x}px; top:{dragPos.y}px; transform:rotate(-1.5deg);"
   >
     {dragGhostLabel}
+  </div>
+{/if}
+
+{#if draggingStepUid && stepDragPos}
+  <div
+      class="fixed z-50 pointer-events-none bg-card border border-primary rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg"
+      style="left:{stepDragPos.x}px; top:{stepDragPos.y}px; transform:rotate(-1.5deg);"
+  >
+    {stepDragGhostLabel}
   </div>
 {/if}

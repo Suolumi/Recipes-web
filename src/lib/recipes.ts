@@ -23,6 +23,7 @@ export const recipeTypeColors: {
 export type Step = {
     title: string
     description: string
+    picture?: string
 }
 
 export type Ingredient = {
@@ -194,26 +195,33 @@ function recipeBody(recipe: RecipeForm, keepPictureIDs?: string[]) {
     return keepPictureIDs === undefined ? fields : {...fields, keep_picture_ids: keepPictureIDs}
 }
 
-function multipartRecipeBody(recipe: object, files: File[]) {
+// newStepPictures is keyed by a step's final (post-reorder) index in
+// recipe.steps; each entry becomes a `step_picture_<index>` file field the
+// backend correlates back to that step.
+function multipartRecipeBody(recipe: object, files: File[], stepFiles: Record<number, File>) {
     const formData = new FormData()
     formData.append('recipe', JSON.stringify(recipe))
     for (const file of files)
         formData.append('pictures', file)
+    for (const [index, file] of Object.entries(stepFiles))
+        formData.append(`step_picture_${index}`, file)
     return formData
 }
 
-export function createRecipe(recipe: RecipeForm, newPictures: File[] = [], locale?: string) {
+export function createRecipe(recipe: RecipeForm, newPictures: File[] = [], locale?: string, newStepPictures: Record<number, File> = {}) {
     const body = recipeBody(recipe) as Record<string, unknown>
     if (locale) {
         body.locale = locale
     }
-    const payload = newPictures.length > 0 ? multipartRecipeBody(body, newPictures) : body
+    const hasFiles = newPictures.length > 0 || Object.keys(newStepPictures).length > 0
+    const payload = hasFiles ? multipartRecipeBody(body, newPictures, newStepPictures) : body
     return apiFetchJson<Recipe>('/recipes', "POST", payload, null, {'Idempotency-Key': crypto.randomUUID()})
 }
 
-export function editRecipe(recipe: RecipeForm, id: string, newPictures: File[] = []) {
+export function editRecipe(recipe: RecipeForm, id: string, newPictures: File[] = [], newStepPictures: Record<number, File> = {}) {
     const body = recipeBody(recipe, recipe.pictures)
-    const payload = newPictures.length > 0 ? multipartRecipeBody(body, newPictures) : body
+    const hasFiles = newPictures.length > 0 || Object.keys(newStepPictures).length > 0
+    const payload = hasFiles ? multipartRecipeBody(body, newPictures, newStepPictures) : body
     return apiFetchJson<Recipe>(`/recipes/${id}`, "PATCH", payload, null, {'Idempotency-Key': crypto.randomUUID()})
 }
 

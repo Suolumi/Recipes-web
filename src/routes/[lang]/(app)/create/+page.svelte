@@ -8,8 +8,8 @@
     import {apiErrorMessage} from "$lib/api";
     import {locale, _} from "svelte-i18n";
 
-    async function submit(recipe: RecipeForm, newPictures: File[]) {
-        const {response, data} = await createRecipe(recipe, newPictures, $locale ?? undefined)
+    async function submit(recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) {
+        const {response, data} = await createRecipe(recipe, newPictures, $locale ?? undefined, newStepPictures)
         if (response.ok && data) {
             $createRecipeCache = null
             goto(`/${$locale}/recipes/${data.id}`)

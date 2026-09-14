@@ -12,8 +12,8 @@
     const id = page.params.id ?? ''
     let recipe: RecipeForm | undefined = $state(undefined);
 
-    async function submit(recipe: RecipeForm, newPictures: File[]) {
-        const {response, data} = await editRecipe(recipe, id, newPictures)
+    async function submit(recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) {
+        const {response, data} = await editRecipe(recipe, id, newPictures, newStepPictures)
         if (response.ok && data) {
             $editRecipeCache = null
             goto(`/${$locale}/recipes/${data.id}`)
