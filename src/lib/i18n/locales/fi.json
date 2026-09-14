@@ -151,8 +151,7 @@
     "increaseServings": "Lisää annoksia",
     "ingredients": "Ainekset",
     "instructions": "Ohjeet",
-    "notFound": "Reseptiä ei löytynyt",
-    "translate": "Käännä"
+    "notFound": "Reseptiä ei löytynyt"
   },
   "edit": {
     "toasts": {

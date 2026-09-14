@@ -3,7 +3,7 @@
     import {page} from "$app/state";
     import {favoriteRecipe, getIngredientName, getRecipe, groupIngredients, type Recipe, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Languages, Minus, Plus} from "@lucide/svelte";
+    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Minus, Plus} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
     import {toastError} from "$lib/utils";
@@ -75,16 +75,6 @@
             return;
         lightboxIndex = emblaApi ? emblaApi.selectedScrollSnap() : 0;
         lightboxOpen = true;
-    }
-
-    async function translateRecipe() {
-        if (!recipe)
-            return
-        const {data, response} = await getRecipe(recipe.id, $locale ?? '')
-        if (response.ok) {
-            recipe = data;
-            selectedServings = data.quantity;
-        }
     }
 
     async function toggleFavorite() {
@@ -175,15 +165,6 @@
                         <span class="{typeColorClass} px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
                             {$_('recipes.types.' + recipe.kind)}
                         </span>
-                        <button
-                                onclick={translateRecipe}
-                                class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary hover:text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
-                                aria-label="Translate recipe"
-                                title="Translate recipe"
-                        >
-                            <Languages size="20" />
-                            <span class="text-sm font-semibold">{$_('recipe.translate')}</span>
-                        </button>
                         {#if $user}
                             <button
                                     onclick={toggleFavorite}

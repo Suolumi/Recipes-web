@@ -185,7 +185,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {#each userRecipes as recipe}
                     <div class="relative">
-                        <RecipeCard {recipe} translate={false} disabled={false} />
+                        <RecipeCard {recipe} disabled={false} />
                         <Button
                                 variant="outline"
                                 size="sm"

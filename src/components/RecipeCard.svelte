@@ -1,15 +1,15 @@
 <script lang="ts">
-    import {favoriteRecipe, getRecipe, recipeTypeColors, unfavoriteRecipe} from '$lib/recipes';
+    import {favoriteRecipe, recipeTypeColors, unfavoriteRecipe} from '$lib/recipes';
     import {goto} from "$app/navigation";
     import type {RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {ArrowLeft, ArrowRight, Heart, Languages} from "@lucide/svelte";
+    import {ArrowLeft, ArrowRight, Heart} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
     import {toastError} from "$lib/utils";
     import Lightbox from "./Lightbox.svelte";
 
-    let { recipe, translate, disabled = false }: { recipe: RecipePreview, translate: boolean, disabled?: boolean } = $props();
+    let { recipe, disabled = false }: { recipe: RecipePreview, disabled?: boolean } = $props();
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
@@ -51,13 +51,6 @@
             return;
         lightboxIndex = emblaApi ? emblaApi.selectedScrollSnap() : 0;
         lightboxOpen = true;
-    }
-
-    async function translateRecipe() {
-        const {data, response} = await getRecipe(recipe.id, $locale ?? '')
-        if (response.ok) {
-            recipe = data as RecipePreview;
-        }
     }
 
     async function toggleFavorite(e: MouseEvent) {
@@ -122,16 +115,6 @@
                 <p class="embla__slide flex items-center justify-center h-full border-b border-b-border">{$_('recipeCard.noPicture')}</p>
             {/if}
         </div>
-        {#if translate}
-            <button
-                    onclick={(e) => { e.stopPropagation(); translateRecipe(); }}
-                    class="absolute top-2 z-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-lg p-1.5 transition-all duration-200"
-                    aria-label="Translate recipe"
-                    title="Translate recipe"
-            >
-                <Languages size="20" />
-            </button>
-        {/if}
         {#if !disabled && $user}
             <button
                     onclick={toggleFavorite}

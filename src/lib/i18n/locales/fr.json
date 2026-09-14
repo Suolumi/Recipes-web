@@ -151,8 +151,7 @@
     "increaseServings": "Augmenter le nombre de portions",
     "ingredients": "Ingrédients",
     "instructions": "Instructions",
-    "notFound": "Recette non trouvée",
-    "translate": "Traduire"
+    "notFound": "Recette non trouvée"
   },
   "edit": {
     "toasts": {

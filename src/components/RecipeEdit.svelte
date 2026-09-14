@@ -932,7 +932,7 @@
               <div class="lg:sticky lg:top-8 space-y-6">
                 <h2 class="text-2xl font-semibold text-card-foreground mt-4">{$_('edit.preview')}</h2>
 
-                <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: '', favorite: false, favorite_count: 0}} translate={false} disabled />
+                <RecipeCard recipe={{...formData, author: $user ?? {id: '', username: 'aa', picture: ''}, id: '', favorite: false, favorite_count: 0}} disabled />
 
                 <div class="bg-card rounded-xl border border-border p-6">
                   <h3 class="text-lg font-semibold text-foreground mb-4 flex items-center">
