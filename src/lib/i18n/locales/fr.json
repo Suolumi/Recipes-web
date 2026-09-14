@@ -30,7 +30,14 @@
     "description": "La description apparaît ici...",
     "favorite": "Ajouter aux favoris",
     "unfavorite": "Retirer des favoris",
-    "favoriteError": "Impossible de mettre à jour le favori"
+    "favoriteError": "Impossible de mettre à jour le favori",
+    "variationCount": "{count} variantes"
+  },
+  "variationPicker": {
+    "title": "Choisissez une version",
+    "description": "Cette recette a plusieurs versions proposées par différentes personnes.",
+    "createTile": "Proposer votre propre variante",
+    "error": "Impossible de charger les variantes de cette recette"
   },
   "home": {
     "mainText": "Qu'y a-t-il au menu aujourd'hui ?",
@@ -152,7 +159,11 @@
     "ingredients": "Ingrédients",
     "instructions": "Instructions",
     "stepPhoto": "Photo de l'étape {step}",
-    "notFound": "Recette non trouvée"
+    "notFound": "Recette non trouvée",
+    "variations": "Variantes",
+    "variationBanner": "Ceci est une variante d'une autre recette.",
+    "viewOriginal": "Voir la recette originale",
+    "submitVariation": "Proposer une variante"
   },
   "edit": {
     "toasts": {
@@ -267,7 +278,13 @@
     "headLabel": "Créer",
     "commentLabel": "Aujourd'hui je vais les surprendre avec...",
     "noIngredient": "Aucun ingrédient ajouté pour le moment...",
-    "noStep": "Aucune instruction ajoutée pour le moment..."
+    "noStep": "Aucune instruction ajoutée pour le moment...",
+    "variationChoice": {
+      "title": "Comment voulez-vous commencer ?",
+      "description": "Vous créez une variante d'une recette existante. Les images ne sont jamais copiées - vous ajouterez les vôtres.",
+      "copyOption": "Partir d'une copie",
+      "blankOption": "Partir de zéro"
+    }
   },
   "connectAi": {
     "headLabel": "Connecter une IA",

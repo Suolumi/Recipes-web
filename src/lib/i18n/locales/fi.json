@@ -30,7 +30,14 @@
     "description": "Reseptin kuvaus näkyy tässä...",
     "favorite": "Lisää suosikkeihin",
     "unfavorite": "Poista suosikeista",
-    "favoriteError": "Suosikin päivitys epäonnistui"
+    "favoriteError": "Suosikin päivitys epäonnistui",
+    "variationCount": "{count} muunnelmaa"
+  },
+  "variationPicker": {
+    "title": "Valitse versio",
+    "description": "Tällä reseptillä on useita eri henkilöiden lähettämiä versioita.",
+    "createTile": "Ehdota omaa muunnelmaa",
+    "error": "Reseptin muunnelmien lataaminen epäonnistui"
   },
   "home": {
     "mainText": "Mitä on tänään ruokalistalla?",
@@ -152,7 +159,11 @@
     "ingredients": "Ainekset",
     "instructions": "Ohjeet",
     "stepPhoto": "Vaiheen {step} kuva",
-    "notFound": "Reseptiä ei löytynyt"
+    "notFound": "Reseptiä ei löytynyt",
+    "variations": "Muunnelmat",
+    "variationBanner": "Tämä on muunnelma toisesta reseptistä.",
+    "viewOriginal": "Näytä alkuperäinen resepti",
+    "submitVariation": "Ehdota muunnelmaa"
   },
   "edit": {
     "toasts": {
@@ -267,7 +278,13 @@
     "headLabel": "Luo",
     "commentLabel": "Tänään yllätän kaikki...",
     "noIngredient": "Ainesosia ei ole vielä lisätty...",
-    "noStep": "Ohjeita ei ole vielä lisätty..."
+    "noStep": "Ohjeita ei ole vielä lisätty...",
+    "variationChoice": {
+      "title": "Miten haluat aloittaa?",
+      "description": "Olet luomassa muunnelmaa olemassa olevasta reseptistä. Kuvia ei koskaan kopioida - lisäät omasi.",
+      "copyOption": "Aloita kopiosta",
+      "blankOption": "Aloita tyhjästä"
+    }
   },
   "connectAi": {
     "headLabel": "Yhdistä tekoäly",

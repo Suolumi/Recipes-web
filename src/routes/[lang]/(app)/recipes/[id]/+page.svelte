@@ -1,18 +1,24 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {favoriteRecipe, getIngredientName, getRecipe, groupIngredients, type Recipe, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
+    import {favoriteRecipe, getFamily, getIngredientName, getRecipe, groupIngredients, type Recipe, type RecipePreview, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
     import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Minus, Plus} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
     import {toastError} from "$lib/utils";
     import Lightbox from "../../../../../components/Lightbox.svelte";
+    import RecipeCard from "../../../../../components/RecipeCard.svelte";
 
     const id = page.params.id
     const { data } = $props()
     let recipe: Recipe | null | undefined = $state(data.recipe)
     let selectedServings = $state(data.recipe?.quantity ?? 1)
+    let siblingVariations: RecipePreview[] = $state([])
+
+    // The recipe currently viewed may itself be a variation; siblings are
+    // always fetched relative to the family root, never the variation.
+    let rootId = $derived(recipe?.variation_of ?? recipe?.id)
 
     $effect(() => {
         if (!id)
@@ -25,6 +31,25 @@
                 toastError($_('settings.errors.getRecipes'))
         })
     })
+
+    $effect(() => {
+        if (!rootId) {
+            siblingVariations = []
+            return
+        }
+        getFamily(rootId, $locale ?? undefined).then(({variations}) => {
+            // Exclude the recipe currently being viewed: when it's itself a
+            // variation, it's included in "this root's variations" like any
+            // sibling, but it isn't its own sibling.
+            if (variations.response.ok && variations.data)
+                siblingVariations = variations.data.items.filter(v => v.id !== id)
+        })
+    })
+
+    function submitVariation() {
+        if (rootId)
+            goto(`/${$locale}/create?variation_of=${rootId}`)
+    }
 
     let ingredientGroups = $derived(groupIngredients(recipe?.ingredients ?? []));
     let servingsRatio = $derived(recipe && recipe.quantity > 0 ? selectedServings / recipe.quantity : 1);
@@ -188,8 +213,24 @@
                                 {/if}
                             </button>
                         {/if}
+                        {#if $user}
+                            <button
+                                    onclick={submitVariation}
+                                    class="bg-background hover:cursor-pointer hover:bg-accent border-2 border-primary text-primary px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
+                            >
+                                <Plus size="20" />
+                                <span class="text-sm font-semibold">{$_('recipe.submitVariation')}</span>
+                            </button>
+                        {/if}
                     </div>
                 </div>
+
+                {#if recipe.variation_of}
+                    <p class="text-sm text-muted-foreground mb-4">
+                        {$_('recipe.variationBanner')}
+                        <a href={`/${$locale}/recipes/${recipe.variation_of}`} class="text-primary hover:underline font-medium">{$_('recipe.viewOriginal')}</a>
+                    </p>
+                {/if}
 
                 <p class="text-xl text-muted-foreground mb-6 text-pretty whitespace-pre-line">{recipe.description}</p>
 
@@ -315,6 +356,17 @@
                 </div>
             </div>
         </div>
+
+        {#if siblingVariations.length > 0}
+            <div class="bg-card rounded-lg border border-border p-6 mt-8">
+                <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('recipe.variations')}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {#each siblingVariations as variation (variation.id)}
+                        <RecipeCard recipe={variation} />
+                    {/each}
+                </div>
+            </div>
+        {/if}
     </div>
 
     <Lightbox

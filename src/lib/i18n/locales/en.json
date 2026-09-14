@@ -30,7 +30,14 @@
     "description": "Recipe description will appear here...",
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites",
-    "favoriteError": "Couldn't update favorite"
+    "favoriteError": "Couldn't update favorite",
+    "variationCount": "{count} variations"
+  },
+  "variationPicker": {
+    "title": "Choose a version",
+    "description": "This recipe has multiple versions submitted by different people.",
+    "createTile": "Submit your own variation",
+    "error": "Couldn't load this recipe's variations"
   },
   "home": {
     "mainText": "What's on the menu today?",
@@ -152,7 +159,11 @@
     "ingredients": "Ingredients",
     "instructions": "Instructions",
     "stepPhoto": "Step {step} photo",
-    "notFound": "Recipe not found"
+    "notFound": "Recipe not found",
+    "variations": "Variations",
+    "variationBanner": "This is a variation of another recipe.",
+    "viewOriginal": "View the original",
+    "submitVariation": "Submit a variation"
   },
   "edit": {
     "toasts": {
@@ -267,7 +278,13 @@
     "headLabel": "Create",
     "commentLabel": "Today I will surprise everyone with...",
     "noIngredient": "No ingredients added yet...",
-    "noStep": "No instructions added yet..."
+    "noStep": "No instructions added yet...",
+    "variationChoice": {
+      "title": "How would you like to start?",
+      "description": "You're creating a variation of an existing recipe. Pictures are never copied - you'll add your own.",
+      "copyOption": "Start from a copy",
+      "blankOption": "Start blank"
+    }
   },
   "connectAi": {
     "headLabel": "Connect to AI",

@@ -1,15 +1,20 @@
 <script lang="ts">
-    import {favoriteRecipe, recipeTypeColors, unfavoriteRecipe} from '$lib/recipes';
+    import {favoriteRecipe, getFamily, recipeTypeColors, unfavoriteRecipe} from '$lib/recipes';
     import {goto} from "$app/navigation";
-    import type {RecipePreview} from "$lib/recipes";
+    import type {Recipe, RecipePreview} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {ArrowLeft, ArrowRight, Heart} from "@lucide/svelte";
+    import {ArrowLeft, ArrowRight, Heart, Plus} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {locale, _} from "svelte-i18n";
     import {toastError} from "$lib/utils";
     import Lightbox from "./Lightbox.svelte";
+    import Modal from "./Modal.svelte";
+    import RecipeCard from "./RecipeCard.svelte";
 
-    let { recipe, disabled = false }: { recipe: RecipePreview, disabled?: boolean } = $props();
+    // suppressPicker forces a direct navigation on click, bypassing the
+    // variation picker below - used for cards rendered inside the picker
+    // modal itself, so picking the root there doesn't recursively reopen it.
+    let { recipe, disabled = false, suppressPicker = false }: { recipe: RecipePreview, disabled?: boolean, suppressPicker?: boolean } = $props();
     let emblaApi: any = $state();
     let lightboxOpen = $state(false);
     let lightboxIndex = $state(0);
@@ -17,8 +22,46 @@
     let canScrollPrev = $state(false);
     let canScrollNext = $state(false);
 
+    let pickerOpen = $state(false);
+    let pickerLoading = $state(false);
+    let familyRoot: Recipe | null = $state(null);
+    let familyVariations: RecipePreview[] = $state([]);
+
     function viewRecipe(id: string) {
         goto(`/${$locale}/recipes/${id}`);
+    }
+
+    // A root with variations opens a picker instead of navigating straight
+    // through - a variation's own card (recipe.variation_of set) always
+    // navigates directly, since it already represents one specific version.
+    function handleClick() {
+        if (disabled)
+            return;
+        if (!suppressPicker && !recipe.variation_of && recipe.variation_count > 0) {
+            openPicker();
+            return;
+        }
+        viewRecipe(recipe.id);
+    }
+
+    async function openPicker() {
+        pickerOpen = true;
+        pickerLoading = true;
+        try {
+            const {root, variations} = await getFamily(recipe.id, $locale ?? undefined);
+            if (root.response.ok && root.data && variations.response.ok && variations.data) {
+                familyRoot = root.data;
+                familyVariations = variations.data.items;
+            } else
+                toastError($_('variationPicker.error'));
+        } finally {
+            pickerLoading = false;
+        }
+    }
+
+    function submitVariation() {
+        pickerOpen = false;
+        goto(`/${$locale}/create?variation_of=${recipe.id}`);
     }
 
     function updateScrollState() {
@@ -76,8 +119,8 @@
         class={`bg-card rounded-lg border border-border overflow-hidden ${disabled ? '' : 'hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer'} flex flex-col`}
         role="button"
         tabindex="0"
-        onclick={() => !disabled && viewRecipe(recipe.id)}
-        onkeydown={(e) => e.key === 'Enter' && !disabled && viewRecipe(recipe.id)}
+        onclick={handleClick}
+        onkeydown={(e) => e.key === 'Enter' && handleClick()}
 >
     <div class="relative">
         {#if canScrollPrev}
@@ -138,9 +181,16 @@
     <div class="p-6 flex-1">
         <div class="flex items-start justify-between mb-3">
             <h3 class="text-xl font-semibold text-card-foreground text-balance">{recipe.title || $_('recipeCard.title')}</h3>
-            <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-2">
-        {$_('recipes.types.' + recipe.kind)}
-      </span>
+            <div class="flex items-center gap-2 ml-2 flex-shrink-0">
+                {#if !recipe.variation_of && recipe.variation_count > 0}
+                    <span class="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                        {$_('recipeCard.variationCount', {values: {count: recipe.variation_count}})}
+                    </span>
+                {/if}
+                <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                    {$_('recipes.types.' + recipe.kind)}
+                </span>
+            </div>
         </div>
 
         <p class="text-muted-foreground mb-4 text-pretty whitespace-pre-line">{recipe.description ? recipe.description.length > 200 ? recipe.description.slice(0, 200) + '...' : recipe.description : $_('recipeCard.description')}</p>
@@ -185,6 +235,36 @@
         alt={recipe.title || 'Recipe Title'}
         onClose={() => lightboxOpen = false}
 />
+
+{#if !suppressPicker}
+    <Modal
+            open={pickerOpen}
+            title={$_('variationPicker.title')}
+            description={$_('variationPicker.description')}
+            onClose={() => pickerOpen = false}
+    >
+        {#if pickerLoading}
+            <div class="py-8 text-center text-muted-foreground">…</div>
+        {:else}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
+                {#if familyRoot}
+                    <RecipeCard recipe={familyRoot} suppressPicker={true} />
+                {/if}
+                {#each familyVariations as variation (variation.id)}
+                    <RecipeCard recipe={variation} suppressPicker={true} />
+                {/each}
+                <button
+                        type="button"
+                        onclick={submitVariation}
+                        class="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-muted-foreground hover:border-primary hover:text-primary transition-colors hover:cursor-pointer min-h-[160px]"
+                >
+                    <Plus size="28" />
+                    <span class="font-medium text-center">{$_('variationPicker.createTile')}</span>
+                </button>
+            </div>
+        {/if}
+    </Modal>
+{/if}
 
 <style>
     @keyframes heart-bump {

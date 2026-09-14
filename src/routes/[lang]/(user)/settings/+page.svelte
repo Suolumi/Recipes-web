@@ -51,6 +51,7 @@
     $effect(() => {
         getRecipes({
             author: $user?.username ?? '',
+            own_recipes: true,
             limit: 100,
             locale: $locale ?? 'en'
         }).then(({response, data}) => {

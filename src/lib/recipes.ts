@@ -48,6 +48,11 @@ export type Recipe = {
     pictures: string[]
     favorite: boolean
     favorite_count: number
+    // variation_of is the id of the recipe this one is a variation of, unset
+    // for an original/root recipe. variation_count is how many variations a
+    // root has (always 0 for a variation itself).
+    variation_of?: string
+    variation_count: number
 }
 
 export type RecipePreview = {
@@ -63,6 +68,8 @@ export type RecipePreview = {
     pictures: string[]
     favorite: boolean
     favorite_count: number
+    variation_of?: string
+    variation_count: number
 }
 
 export type RecipeForm = {
@@ -90,6 +97,12 @@ export type GetRecipesRequest = {
     locale?: string
     search_locale?: string
     favorite?: boolean
+    // variation_of lists only that recipe's variations, never the root.
+    variation_of?: string
+    // own_recipes lists every recipe matching author flatly (roots and
+    // variations alike, no collapsing) - only the Settings "My Recipes" view
+    // sets this.
+    own_recipes?: boolean
 }
 
 export type GetRecipesResponse = {
@@ -190,6 +203,18 @@ export function getRecipes(params: GetRecipesRequest) {
     return apiFetchJson<GetRecipesResponse>('/recipes', "GET", null, params)
 }
 
+// getFamily fetches rootId's recipe and its variations (never rootId itself)
+// together, for the detail page's Variations panel and the variation picker
+// modal. Callers must already have resolved rootId (recipe.variation_of ??
+// recipe.id) - a variation's own id here would return an empty family.
+export async function getFamily(rootId: string, locale?: string) {
+    const [root, variations] = await Promise.all([
+        getRecipe(rootId, locale),
+        getRecipes({variation_of: rootId, locale}),
+    ])
+    return {root, variations}
+}
+
 function recipeBody(recipe: RecipeForm, keepPictureIDs?: string[]) {
     const {pictures, ...fields} = recipe
     return keepPictureIDs === undefined ? fields : {...fields, keep_picture_ids: keepPictureIDs}
@@ -208,10 +233,13 @@ function multipartRecipeBody(recipe: object, files: File[], stepFiles: Record<nu
     return formData
 }
 
-export function createRecipe(recipe: RecipeForm, newPictures: File[] = [], locale?: string, newStepPictures: Record<number, File> = {}) {
+export function createRecipe(recipe: RecipeForm, newPictures: File[] = [], locale?: string, newStepPictures: Record<number, File> = {}, variationOf?: string) {
     const body = recipeBody(recipe) as Record<string, unknown>
     if (locale) {
         body.locale = locale
+    }
+    if (variationOf) {
+        body.variation_of = variationOf
     }
     const hasFiles = newPictures.length > 0 || Object.keys(newStepPictures).length > 0
     const payload = hasFiles ? multipartRecipeBody(body, newPictures, newStepPictures) : body
