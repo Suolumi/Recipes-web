@@ -186,7 +186,7 @@
         <div class="relative mt-4">
             <div
                     bind:this={typeScrollEl}
-                    class="flex gap-2 overflow-x-auto pb-1"
+                    class="flex flex-wrap gap-2 md:flex-nowrap md:overflow-x-auto md:pb-1"
             >
                 {#each recipeTypes as type}
                     <button
