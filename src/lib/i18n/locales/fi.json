@@ -9,7 +9,7 @@
     "settings": "Asetukset",
     "myRecipes": "Minun reseptini",
     "logout": "Kirjaudu ulos",
-    "diy": "Askartelu",
+    "diy": "DIY",
     "admin": "Ylläpito"
   },
   "fileUpload": {
@@ -34,7 +34,7 @@
     "unfavorite": "Poista suosikeista",
     "favoriteError": "Suosikin päivitys epäonnistui",
     "variationCount": "{count} muunnelmaa",
-    "diyBadge": "Askartelu"
+    "diyBadge": "DIY"
   },
   "variationPicker": {
     "title": "Valitse versio",
@@ -152,7 +152,7 @@
     },
     "filterAll": "Kaikki",
     "filterFood": "Ruoka",
-    "filterDiy": "Askartelu"
+    "filterDiy": "DIY"
   },
   "recipe": {
     "back": "Takaisin resepteihin",
