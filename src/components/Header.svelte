@@ -138,6 +138,14 @@
                                 >
                                     {$_('header.myRecipes')}
                                 </button>
+                                {#if $user.admin}
+                                    <button
+                                            onclick={() => { goto(`/${$locale}/admin`); showProfileDropdown = false; }}
+                                            class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                                    >
+                                        {$_('header.admin')}
+                                    </button>
+                                {/if}
                                 <button
                                         onclick={logout}
                                         class="block w-full text-left px-4 py-2 text-sm text-foreground transition-colors hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -225,6 +233,14 @@
                                                     >
                                                         {$_('header.settings')}
                                                     </button>
+                                                    {#if $user.admin}
+                                                        <button
+                                                                onclick={() => { drawerOpen = false; goto(`/${$locale}/admin`) }}
+                                                                class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
+                                                        >
+                                                            {$_('header.admin')}
+                                                        </button>
+                                                    {/if}
                                                     <button
                                                             onclick={logout}
                                                             class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"

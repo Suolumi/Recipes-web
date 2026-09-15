@@ -9,7 +9,8 @@
     "settings": "Settings",
     "myRecipes": "My recipes",
     "logout": "Logout",
-    "diy": "DIY"
+    "diy": "DIY",
+    "admin": "Admin"
   },
   "fileUpload": {
     "click": "Click to upload",
@@ -483,6 +484,115 @@
       },
       "photos": {
         "hint": "Add clear photos to bring your project to life."
+      }
+    }
+  },
+  "admin": {
+    "unauthorized": {
+      "title": "Not authorized",
+      "description": "You don't have access to the back-office."
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "recipes": "Recipes",
+      "console": "Console"
+    },
+    "errors": {
+      "loadStats": "Couldn't load stats",
+      "cleanup": "Couldn't run image cleanup",
+      "loadUsers": "Couldn't load users",
+      "setAdminStatus": "Couldn't update admin status",
+      "sendPasswordReset": "Couldn't send the password reset email",
+      "revokeMcpToken": "Couldn't revoke the MCP token",
+      "updatePicture": "Couldn't update the profile picture",
+      "deleteUser": "Couldn't delete this user",
+      "loadRecipes": "Couldn't load recipes",
+      "deleteRecipe": "Couldn't delete this recipe",
+      "retranslate": "Couldn't schedule retranslation"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "totalUsers": "Users",
+      "totalAdmins": "Admins",
+      "totalRecipes": "Recipes",
+      "byCategory": "Recipes by category",
+      "maintenance": "Maintenance",
+      "cleanupDescription": "Delete unreferenced picture files older than 24h, right now.",
+      "cleanupButton": "Run image cleanup",
+      "cleanupRunning": "Running…",
+      "cleanupSuccess": "Removed {count} unreferenced image(s)"
+    },
+    "users": {
+      "title": "Users",
+      "searchPlaceholder": "Search by username…",
+      "search": "Search",
+      "changePicture": "Change profile picture",
+      "adminBadge": "Admin",
+      "demote": "Remove admin",
+      "promote": "Make admin",
+      "sendReset": "Send reset email",
+      "revokeMcp": "Revoke MCP token",
+      "delete": "Delete",
+      "none": "No users found",
+      "prev": "Previous",
+      "next": "Next",
+      "deleteConfirmTitle": "Delete this user?",
+      "deleteConfirmDescription": "This permanently deletes {username} and their profile picture.",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete",
+      "statusUpdated": "Admin status updated",
+      "resetSent": "Password reset email sent",
+      "mcpRevoked": "MCP token revoked",
+      "deleted": "User deleted"
+    },
+    "recipes": {
+      "title": "Recipes",
+      "searchPlaceholder": "Search recipes...",
+      "variationBadge": "Variation",
+      "edit": "Edit",
+      "retranslate": "Retranslate",
+      "delete": "Delete",
+      "none": "No recipes found",
+      "prev": "Previous",
+      "next": "Next",
+      "deleteConfirmTitle": "Delete this recipe?",
+      "deleteConfirmDescription": "This permanently deletes \"{title}\".",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete",
+      "deleted": "Recipe deleted",
+      "retranslateScheduled": "Retranslation scheduled"
+    },
+    "console": {
+      "loadError": "Couldn't load the list of admin routes",
+      "title": "Console",
+      "filterPlaceholder": "Filter actions…",
+      "none": "No matching actions",
+      "categories": {
+        "users": "Users",
+        "recipes": "Recipes",
+        "system": "System"
+      },
+      "pick": "Pick…",
+      "pathLabel": "Path & query",
+      "bodyLabel": "Body (JSON)",
+      "bodyInvalid": "Invalid JSON",
+      "responseLabel": "Response",
+      "submitting": "Submitting…",
+      "submit": "Submit",
+      "selectPrompt": "Select an action on the left to get started.",
+      "confirmTitle": "Are you sure?",
+      "confirmDescription": "This action is destructive and cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "success": "Done",
+      "error": "The action failed",
+      "userPicker": {
+        "title": "Choose a user",
+        "description": "Search for a user by username.",
+        "searchPlaceholder": "Search users...",
+        "noResults": "No users found",
+        "error": "Couldn't search users"
       }
     }
   }

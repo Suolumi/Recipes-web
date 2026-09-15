@@ -9,7 +9,8 @@
     "settings": "Asetukset",
     "myRecipes": "Minun reseptini",
     "logout": "Kirjaudu ulos",
-    "diy": "Askartelu"
+    "diy": "Askartelu",
+    "admin": "Ylläpito"
   },
   "fileUpload": {
     "click": "Klikkaa ladataksesi",
@@ -483,6 +484,115 @@
       },
       "photos": {
         "hint": "Lisää selkeitä kuvia esittelemään valmista projektiasi."
+      }
+    }
+  },
+  "admin": {
+    "unauthorized": {
+      "title": "Ei käyttöoikeutta",
+      "description": "Sinulla ei ole pääsyä ylläpitoon."
+    },
+    "nav": {
+      "dashboard": "Kojelauta",
+      "users": "Käyttäjät",
+      "recipes": "Reseptit",
+      "console": "Konsoli"
+    },
+    "errors": {
+      "loadStats": "Tilastojen lataaminen epäonnistui",
+      "cleanup": "Kuvien siivous epäonnistui",
+      "loadUsers": "Käyttäjien lataaminen epäonnistui",
+      "setAdminStatus": "Ylläpitäjätilan päivitys epäonnistui",
+      "sendPasswordReset": "Salasanan palautusviestin lähetys epäonnistui",
+      "revokeMcpToken": "MCP-tunnuksen peruutus epäonnistui",
+      "updatePicture": "Profiilikuvan päivitys epäonnistui",
+      "deleteUser": "Käyttäjän poistaminen epäonnistui",
+      "loadRecipes": "Reseptien lataaminen epäonnistui",
+      "deleteRecipe": "Reseptin poistaminen epäonnistui",
+      "retranslate": "Uudelleenkäännöksen ajoitus epäonnistui"
+    },
+    "dashboard": {
+      "title": "Kojelauta",
+      "totalUsers": "Käyttäjät",
+      "totalAdmins": "Ylläpitäjät",
+      "totalRecipes": "Reseptit",
+      "byCategory": "Reseptit kategorioittain",
+      "maintenance": "Ylläpito",
+      "cleanupDescription": "Poistaa heti yli 24h vanhat viittaamattomat kuvatiedostot.",
+      "cleanupButton": "Käynnistä kuvien siivous",
+      "cleanupRunning": "Käynnissä…",
+      "cleanupSuccess": "Poistettiin {count} viittaamatonta kuvaa"
+    },
+    "users": {
+      "title": "Käyttäjät",
+      "searchPlaceholder": "Hae käyttäjänimellä…",
+      "search": "Hae",
+      "changePicture": "Vaihda profiilikuva",
+      "adminBadge": "Admin",
+      "demote": "Poista ylläpitäjyys",
+      "promote": "Tee ylläpitäjäksi",
+      "sendReset": "Lähetä palautusviesti",
+      "revokeMcp": "Peruuta MCP-tunnus",
+      "delete": "Poista",
+      "none": "Käyttäjiä ei löytynyt",
+      "prev": "Edellinen",
+      "next": "Seuraava",
+      "deleteConfirmTitle": "Poistetaanko tämä käyttäjä?",
+      "deleteConfirmDescription": "Tämä poistaa pysyvästi käyttäjän {username} ja tämän profiilikuvan.",
+      "cancel": "Peruuta",
+      "confirmDelete": "Poista",
+      "statusUpdated": "Ylläpitäjätila päivitetty",
+      "resetSent": "Salasanan palautusviesti lähetetty",
+      "mcpRevoked": "MCP-tunnus peruutettu",
+      "deleted": "Käyttäjä poistettu"
+    },
+    "recipes": {
+      "title": "Reseptit",
+      "searchPlaceholder": "Hae reseptejä...",
+      "variationBadge": "Muunnelma",
+      "edit": "Muokkaa",
+      "retranslate": "Käännä uudelleen",
+      "delete": "Poista",
+      "none": "Reseptejä ei löytynyt",
+      "prev": "Edellinen",
+      "next": "Seuraava",
+      "deleteConfirmTitle": "Poistetaanko tämä resepti?",
+      "deleteConfirmDescription": "Tämä poistaa pysyvästi reseptin ”{title}”.",
+      "cancel": "Peruuta",
+      "confirmDelete": "Poista",
+      "deleted": "Resepti poistettu",
+      "retranslateScheduled": "Uudelleenkäännös ajoitettu"
+    },
+    "console": {
+      "loadError": "Ylläpitotoimintojen listaa ei voitu ladata",
+      "title": "Konsoli",
+      "filterPlaceholder": "Suodata toimintoja…",
+      "none": "Ei vastaavia toimintoja",
+      "categories": {
+        "users": "Käyttäjät",
+        "recipes": "Reseptit",
+        "system": "Järjestelmä"
+      },
+      "pick": "Valitse…",
+      "pathLabel": "Polku ja kysely",
+      "bodyLabel": "Sisältö (JSON)",
+      "bodyInvalid": "Virheellinen JSON",
+      "responseLabel": "Vastaus",
+      "submitting": "Lähetetään…",
+      "submit": "Lähetä",
+      "selectPrompt": "Valitse toiminto vasemmalta aloittaaksesi.",
+      "confirmTitle": "Oletko varma?",
+      "confirmDescription": "Tämä toiminto on tuhoisa eikä sitä voi perua.",
+      "cancel": "Peruuta",
+      "confirm": "Vahvista",
+      "success": "Valmis",
+      "error": "Toiminto epäonnistui",
+      "userPicker": {
+        "title": "Valitse käyttäjä",
+        "description": "Hae käyttäjää käyttäjänimellä.",
+        "searchPlaceholder": "Hae käyttäjiä...",
+        "noResults": "Käyttäjiä ei löytynyt",
+        "error": "Käyttäjien haku epäonnistui"
       }
     }
   }

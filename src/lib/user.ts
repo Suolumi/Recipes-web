@@ -2,6 +2,7 @@ import {apiFetchJson} from "$lib/api";
 
 export type User = {
     id: string
+    admin: boolean
     username: string
     email?: string
     picture: string

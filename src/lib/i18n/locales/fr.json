@@ -9,7 +9,8 @@
     "settings": "Paramètres",
     "myRecipes": "Mes recettes",
     "logout": "Déconnexion",
-    "diy": "Bricolage"
+    "diy": "Bricolage",
+    "admin": "Administration"
   },
   "fileUpload": {
     "click": "Cliquez pour ajouter",
@@ -483,6 +484,115 @@
       },
       "photos": {
         "hint": "Ajoutez des photos claires pour donner vie à votre projet."
+      }
+    }
+  },
+  "admin": {
+    "unauthorized": {
+      "title": "Non autorisé",
+      "description": "Vous n'avez pas accès à l'administration."
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "users": "Utilisateurs",
+      "recipes": "Recettes",
+      "console": "Console"
+    },
+    "errors": {
+      "loadStats": "Impossible de charger les statistiques",
+      "cleanup": "Impossible de lancer le nettoyage des images",
+      "loadUsers": "Impossible de charger les utilisateurs",
+      "setAdminStatus": "Impossible de mettre à jour le statut administrateur",
+      "sendPasswordReset": "Impossible d'envoyer l'e-mail de réinitialisation",
+      "revokeMcpToken": "Impossible de révoquer le jeton MCP",
+      "updatePicture": "Impossible de mettre à jour la photo de profil",
+      "deleteUser": "Impossible de supprimer cet utilisateur",
+      "loadRecipes": "Impossible de charger les recettes",
+      "deleteRecipe": "Impossible de supprimer cette recette",
+      "retranslate": "Impossible de programmer la retraduction"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "totalUsers": "Utilisateurs",
+      "totalAdmins": "Administrateurs",
+      "totalRecipes": "Recettes",
+      "byCategory": "Recettes par catégorie",
+      "maintenance": "Maintenance",
+      "cleanupDescription": "Supprime immédiatement les fichiers images non référencés de plus de 24h.",
+      "cleanupButton": "Lancer le nettoyage des images",
+      "cleanupRunning": "En cours…",
+      "cleanupSuccess": "{count} image(s) non référencée(s) supprimée(s)"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "searchPlaceholder": "Rechercher par nom d'utilisateur…",
+      "search": "Rechercher",
+      "changePicture": "Changer la photo de profil",
+      "adminBadge": "Admin",
+      "demote": "Retirer l'admin",
+      "promote": "Rendre admin",
+      "sendReset": "Envoyer l'e-mail de réinitialisation",
+      "revokeMcp": "Révoquer le jeton MCP",
+      "delete": "Supprimer",
+      "none": "Aucun utilisateur trouvé",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "deleteConfirmTitle": "Supprimer cet utilisateur ?",
+      "deleteConfirmDescription": "Ceci supprime définitivement {username} et sa photo de profil.",
+      "cancel": "Annuler",
+      "confirmDelete": "Supprimer",
+      "statusUpdated": "Statut administrateur mis à jour",
+      "resetSent": "E-mail de réinitialisation envoyé",
+      "mcpRevoked": "Jeton MCP révoqué",
+      "deleted": "Utilisateur supprimé"
+    },
+    "recipes": {
+      "title": "Recettes",
+      "searchPlaceholder": "Rechercher des recettes...",
+      "variationBadge": "Variation",
+      "edit": "Modifier",
+      "retranslate": "Retraduire",
+      "delete": "Supprimer",
+      "none": "Aucune recette trouvée",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "deleteConfirmTitle": "Supprimer cette recette ?",
+      "deleteConfirmDescription": "Ceci supprime définitivement « {title} ».",
+      "cancel": "Annuler",
+      "confirmDelete": "Supprimer",
+      "deleted": "Recette supprimée",
+      "retranslateScheduled": "Retraduction programmée"
+    },
+    "console": {
+      "loadError": "Impossible de charger la liste des actions d'administration",
+      "title": "Console",
+      "filterPlaceholder": "Filtrer les actions…",
+      "none": "Aucune action correspondante",
+      "categories": {
+        "users": "Utilisateurs",
+        "recipes": "Recettes",
+        "system": "Système"
+      },
+      "pick": "Choisir…",
+      "pathLabel": "Chemin et requête",
+      "bodyLabel": "Corps (JSON)",
+      "bodyInvalid": "JSON invalide",
+      "responseLabel": "Réponse",
+      "submitting": "Envoi…",
+      "submit": "Envoyer",
+      "selectPrompt": "Sélectionnez une action à gauche pour commencer.",
+      "confirmTitle": "Êtes-vous sûr ?",
+      "confirmDescription": "Cette action est destructrice et ne peut pas être annulée.",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "success": "Terminé",
+      "error": "L'action a échoué",
+      "userPicker": {
+        "title": "Choisir un utilisateur",
+        "description": "Recherchez un utilisateur par nom d'utilisateur.",
+        "searchPlaceholder": "Rechercher des utilisateurs...",
+        "noResults": "Aucun utilisateur trouvé",
+        "error": "Impossible de rechercher des utilisateurs"
       }
     }
   }

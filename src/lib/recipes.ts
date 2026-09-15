@@ -11,6 +11,12 @@ export type RecipeCategory = "food" | "diy"
 
 export const RecipeCategories: RecipeCategory[] = ["food", "diy"]
 
+// TIME_PRESETS/TimePreset back the "ready in" filter shared by the recipe
+// search filter UI (home, diy, and the admin back-office's recipe browse).
+export const TIME_PRESETS = ['any', '15', '30', '45', '60'] as const
+
+export type TimePreset = typeof TIME_PRESETS[number]
+
 export const recipeTypeColors: {
     [key: string]: string
 } = {
