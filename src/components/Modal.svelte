@@ -11,6 +11,7 @@
         children: Snippet;
         footer?: Snippet;
         class?: string;
+        style?: string;
     }
 
     let {
@@ -22,7 +23,8 @@
         onClose = () => {},
         children,
         footer,
-        class: className = ''
+        class: className = '',
+        style = ''
     }: Props = $props();
 
     function handleBackdropClick(event: MouseEvent): void {
@@ -51,12 +53,13 @@
             role="presentation"
     >
         <div
-                class="w-full max-w-lg rounded-lg border border-border bg-card text-card-foreground shadow-xl {className}"
+                class="w-full max-w-lg rounded-lg border border-border bg-card text-card-foreground shadow-xl flex flex-col overflow-hidden {className}"
+                {style}
                 role="dialog"
                 aria-modal="true"
                 aria-label={title || 'Modal'}
         >
-            <div class="flex items-start justify-between border-b border-border px-6 py-4">
+            <div class="flex items-start justify-between border-b border-border px-6 py-4 flex-shrink-0">
                 <div>
                     {#if title}
                         <h2 class="text-xl font-semibold text-card-foreground">{title}</h2>
@@ -79,12 +82,12 @@
                 {/if}
             </div>
 
-            <div class="px-6 py-4">
+            <div class="px-6 py-4 flex-1 overflow-y-auto">
                 {@render children()}
             </div>
 
             {#if footer}
-                <div class="flex justify-end gap-2 border-t border-border px-6 py-4">
+                <div class="flex justify-end gap-2 border-t border-border px-6 py-4 flex-shrink-0">
                     {@render footer()}
                 </div>
             {/if}

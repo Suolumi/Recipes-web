@@ -73,11 +73,11 @@
                         {$_('header.allRecipes')}
                     </button>
                     <button
-                            onclick={() => goto(`/${$locale}/create`)}
-                            class="text-foreground hover:text-primary transition-colors font-medium hover:cursor-pointer"
-                            aria-label="Create Recipe"
+                        onclick={() => goto(`/${$locale}/diy`)}
+                        class="text-foreground hover:text-primary transition-colors font-medium hover:cursor-pointer"
+                        aria-label="DIY"
                     >
-                        {$_('header.createRecipe')}
+                        {$_('header.diy')}
                     </button>
                     <button
                             onclick={() => goto(`/${$locale}/connect-ai`)}
@@ -174,17 +174,16 @@
                             </button>
                         </Drawer.Trigger>
                         <Drawer.Portal>
-                            <Drawer.Overlay class="fixed inset-0 bg-black/40" />
+                            <Drawer.Overlay class="fixed inset-0 bg-black/40 z-50" />
                             <Drawer.Content
-                                    class="absolute bottom-0 right-0 top-0 z-50 flex h-[95%] w-[60%] rounded-t-[10px] bg-white"
+                                    class="fixed bottom-0 right-0 top-0 z-50 flex w-[60%] max-w-xs rounded-l-[10px] bg-card border-l border-border shadow-xl"
                             >
                                 <div class="flex items-center justify-center ml-1.5">
                                     <div class="h-12 w-1.5 flex-shrink-0 rounded-full bg-zinc-300 items-center"></div>
                                 </div>
-                                <div class="fixed top-0 right-0 h-full w-64 bg-card border-l border-border z-50 md:hidden shadow-xl">
-                                    <div class="flex flex-col h-full mt-5">
-                                        <!-- Menu items -->
-                                        <div class="flex-1 overflow-y-auto py-4">
+                                <div class="flex flex-col h-full w-full mt-5">
+                                    <!-- Menu items -->
+                                    <div class="flex-1 overflow-y-auto py-4">
                                             <button
                                                     onclick={() => {drawerOpen = false; goto(`/${$locale}/home`)}}
                                                     class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
@@ -192,10 +191,10 @@
                                                 {$_('header.allRecipes')}
                                             </button>
                                             <button
-                                                    onclick={() => {drawerOpen = false; goto(`/${$locale}/create`)}}
+                                                    onclick={() => {drawerOpen = false; goto(`/${$locale}/diy`)}}
                                                     class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
                                             >
-                                                {$_('header.createRecipe')}
+                                                {$_('header.diy')}
                                             </button>
                                             <button
                                                     onclick={() => {drawerOpen = false; goto(`/${$locale}/connect-ai`)}}
@@ -234,7 +233,6 @@
                                                     </button>
                                                 </div>
                                             {/if}
-                                        </div>
                                     </div>
                                 </div>
                             </Drawer.Content>

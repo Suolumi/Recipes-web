@@ -116,7 +116,7 @@
 </script>
 
 <div
-        class={`bg-card rounded-lg border border-border overflow-hidden ${disabled ? '' : 'hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer'} flex flex-col`}
+        class={`bg-card rounded-lg border border-border overflow-hidden ${disabled ? '' : 'hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer'} flex flex-col h-full`}
         role="button"
         tabindex="0"
         onclick={handleClick}
@@ -187,9 +187,15 @@
                         {$_('recipeCard.variationCount', {values: {count: recipe.variation_count}})}
                     </span>
                 {/if}
-                <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
-                    {$_('recipes.types.' + recipe.kind)}
-                </span>
+                {#if recipe.category === 'diy'}
+                    <span class="bg-muted text-muted-foreground px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                        {$_('recipeCard.diyBadge')}
+                    </span>
+                {:else}
+                    <span class="{typeColorClass} px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                        {$_('recipes.types.' + recipe.kind)}
+                    </span>
+                {/if}
             </div>
         </div>
 
@@ -242,11 +248,12 @@
             title={$_('variationPicker.title')}
             description={$_('variationPicker.description')}
             onClose={() => pickerOpen = false}
+            style="width: 60vw; max-width: 1600px; height: 85vh;"
     >
         {#if pickerLoading}
             <div class="py-8 text-center text-muted-foreground">…</div>
         {:else}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {#if familyRoot}
                     <RecipeCard recipe={familyRoot} suppressPicker={true} />
                 {/if}

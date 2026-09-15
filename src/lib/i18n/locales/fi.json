@@ -1,14 +1,15 @@
 {
   "header": {
     "appName": "Sauté",
-    "allRecipes": "Kaikki reseptit",
+    "allRecipes": "Reseptit",
     "createRecipe": "Luo resepti",
     "connectAI": "Yhdistä tekoäly",
     "login": "Kirjaudu sisään",
     "register": "Rekisteröidy",
     "settings": "Asetukset",
     "myRecipes": "Minun reseptini",
-    "logout": "Kirjaudu ulos"
+    "logout": "Kirjaudu ulos",
+    "diy": "Askartelu"
   },
   "fileUpload": {
     "click": "Klikkaa ladataksesi",
@@ -31,7 +32,8 @@
     "favorite": "Lisää suosikkeihin",
     "unfavorite": "Poista suosikeista",
     "favoriteError": "Suosikin päivitys epäonnistui",
-    "variationCount": "{count} muunnelmaa"
+    "variationCount": "{count} muunnelmaa",
+    "diyBadge": "Askartelu"
   },
   "variationPicker": {
     "title": "Valitse versio",
@@ -146,7 +148,10 @@
       "cancel": "Peruuta",
       "confirm": "Vahvista",
       "success": "Resepti poistettu onnistuneesti"
-    }
+    },
+    "filterAll": "Kaikki",
+    "filterFood": "Ruoka",
+    "filterDiy": "Askartelu"
   },
   "recipe": {
     "back": "Takaisin resepteihin",
@@ -163,7 +168,9 @@
     "variations": "Muunnelmat",
     "variationBanner": "Tämä on muunnelma toisesta reseptistä.",
     "viewOriginal": "Näytä alkuperäinen resepti",
-    "submitVariation": "Ehdota muunnelmaa"
+    "submitVariation": "Ehdota muunnelmaa",
+    "referenceExpand": "Näytä ainekset",
+    "referenceCollapse": "Piilota ainekset"
   },
   "edit": {
     "toasts": {
@@ -195,11 +202,21 @@
     "rest": {
       "label": "Lepoaika"
     },
-    "images": "Reseptin kuvat",
     "ingredients": {
-      "title": "Ainekset",
       "add": "Lisää ainesosa",
       "addToSection": "Lisää ainesosa osioon {section}",
+      "addRecipeRef": "Lisää resepti ainesosaksi",
+      "recipePicker": {
+        "title": "Valitse resepti",
+        "description": "Etsi resepti käytettäväksi ainesosana.",
+        "searchPlaceholder": "Etsi reseptejä...",
+        "noResults": "Reseptejä ei löytynyt",
+        "error": "Reseptejä ei voitu hakea"
+      },
+      "refLabel": {
+        "label": "Mukautettu nimike (valinnainen)",
+        "placeholder": "esim. Piirakkataikina"
+      },
       "addCategory": "Lisää kategoria",
       "categoryNamePlaceholder": "Kategorian nimi",
       "deleteCategory": "Poista kategoria",
@@ -223,7 +240,6 @@
       "remove": "Poista ainesosa"
     },
     "instructions": {
-      "label": "Ohjeet",
       "add": "Lisää vaihe",
       "title": {
         "label": "Vaiheen otsikko",
@@ -351,14 +367,16 @@
   "recipes": {
     "types": {
       "all": "Kaikki",
-      "snack": "Välipala",
+      "breakfast": "Aamiainen",
       "starter": "Alkuruoka",
       "dish": "Pääruoka",
       "side-dish": "Lisuke",
       "sauce": "Kastike",
+      "baking": "Leivonta",
+      "snack": "Välipala",
+      "plate": "Tarjotin",
       "dessert": "Jälkiruoka",
-      "drink": "Juoma",
-      "plate": "Tarjotin"
+      "drink": "Juoma"
     },
     "min": "min",
     "h": "t"
@@ -390,5 +408,82 @@
     "submit": "Nollaa salasana",
     "success": "Salasana nollattu onnistuneesti",
     "error": "Virhe salasanaa nollattaessa"
+  },
+  "diyHome": {
+    "mainText": "Muutakin kuin ruokaa",
+    "secondaryText": "Käsintehty saippua, kotikonstit, askareet - projekteja, jotka kannattaa tehdä itse.",
+    "createProject": "Uusi projekti",
+    "materials": "Materiaalit",
+    "materialsPlaceholder": "Lisää materiaali, paina Enter",
+    "notFound": "Projekteja ei löytynyt",
+    "adjustSearch": "Kokeile muuttaa hakua tai suodattimia"
+  },
+  "diyRecipe": {
+    "ingredients": "Materiaalit",
+    "servings": "Tuotos",
+    "cook": "Aktiiviaika",
+    "rest": "Kypsytysaika"
+  },
+  "diyEdit": {
+    "headLabel": "Uusi projekti",
+    "commentLabel": "Tänään teen...",
+    "editHeadLabel": "Muokkaa projektia",
+    "editCommentLabel": "Hio projektiasi",
+    "details": "Projektin tiedot",
+    "title": {
+      "label": "Projektin otsikko",
+      "placeholder": "esim. Laventeli-kaurasaippua"
+    },
+    "description": {
+      "placeholder": "esim. Lempeä, kosteuttava saippua laventelilla ja kauralla, sopii herkälle iholle"
+    },
+    "servings": {
+      "label": "Tuotos"
+    },
+    "cook": {
+      "label": "Aktiiviaika"
+    },
+    "rest": {
+      "label": "Kypsytysaika"
+    },
+    "ingredients": {
+      "name": {
+        "label": "Materiaali",
+        "placeholder": "esim. Lipeä, Oliiviöljy, Eteerinen öljy"
+      },
+      "add": "Lisää materiaali"
+    },
+    "instructions": {
+      "title": {
+        "placeholder": "esim. Sulata saippuapohja"
+      },
+      "description": {
+        "placeholder": "esim. Sulata saippuapohja vesihauteessa, kunnes se on täysin nestemäistä, sekoittaen väliin"
+      }
+    },
+    "photos": {
+      "alt": "Projektin kuva {index}",
+      "newAlt": "Uusi projektin kuva {index}"
+    },
+    "submit": "Tallenna projekti",
+    "toasts": {
+      "save": "Projektia ei voitu tallentaa",
+      "create": "Projektin luominen epäonnistui"
+    },
+    "wizard": {
+      "basics": {
+        "hint": "Anna projektille nimi, lyhyt kuvaus ja ajat."
+      },
+      "ingredients": {
+        "name": "Materiaalit",
+        "hint": "Listaa kaikki tarvittava määrineen ja yksikköineen."
+      },
+      "instructions": {
+        "hint": "Jaa projekti selkeisiin, järjestettyihin vaiheisiin."
+      },
+      "photos": {
+        "hint": "Lisää selkeitä kuvia esittelemään valmista projektiasi."
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@
 
     const id = page.params.id ?? ''
     let recipe: RecipeForm | undefined = $state(undefined);
+    let excludeFamily: string | undefined = $state(undefined);
 
     async function submit(recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) {
         const {response, data} = await editRecipe(recipe, id, newPictures, newStepPictures)
@@ -18,17 +19,26 @@
             $editRecipeCache = null
             goto(`/${$locale}/recipes/${data.id}`)
         } else
-            toastError(apiErrorMessage(data, $_('edit.toasts.save')))
+            toastError(apiErrorMessage(data, recipe?.category === 'diy' ? $_('diyEdit.toasts.save') : $_('edit.toasts.save')))
     }
 
     onMount(() => {
         if (!id)
             return
         getRecipe(id).then(({response, data}) => {
-            if (response.ok && data)
+            if (response.ok && data) {
                 recipe = data as RecipeForm
+                excludeFamily = data.variation_of ?? data.id
+            }
         })
     })
 </script>
 
-<RecipeEdit onSubmit={submit} {recipe} recipeId={id} headLabel={$_('edit.headLabel')} commentLabel={$_('edit.commentLabel')} />
+<RecipeEdit
+        onSubmit={submit}
+        {recipe}
+        recipeId={id}
+        {excludeFamily}
+        headLabel={recipe?.category === 'diy' ? $_('diyEdit.editHeadLabel') : $_('edit.headLabel')}
+        commentLabel={recipe?.category === 'diy' ? $_('diyEdit.editCommentLabel') : $_('edit.commentLabel')}
+/>

@@ -3,21 +3,27 @@ import {apiFetchJson} from "$lib/api";
 
 type FetchFn = typeof fetch;
 
-export type RecipeType = "snack" | "starter" | "dish" | "side-dish" | "sauce" | "dessert" | "drink" | "plate"
+export type RecipeType = "breakfast" | "starter" | "dish" | "side-dish" | "sauce" | "baking" | "snack" | "plate" | "dessert" | "drink"
 
-export const RecipeTypes: RecipeType[] = ["snack","starter","dish","side-dish","sauce","dessert","drink","plate"]
+export const RecipeTypes: RecipeType[] = ["breakfast","starter","dish","side-dish","sauce","baking","snack","plate","dessert","drink"]
+
+export type RecipeCategory = "food" | "diy"
+
+export const RecipeCategories: RecipeCategory[] = ["food", "diy"]
 
 export const recipeTypeColors: {
     [key: string]: string
 } = {
+    breakfast: "bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-300",
+    starter: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
     dish: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
     "side-dish": "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
-    dessert: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-300",
-    starter: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
     sauce: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
-    drink: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
+    baking: "bg-lime-100 text-lime-800 dark:bg-lime-900/20 dark:text-lime-300",
     snack: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
-    plate: "bg-amber-100 text-amber-800 dark:bg-amber-100/20 dark:text-amber-300",
+    plate: "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300",
+    dessert: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-300",
+    drink: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
 }
 
 export type Step = {
@@ -31,6 +37,24 @@ export type Ingredient = {
     quantity: number
     unit: string
     label: string
+    // recipe_ref, when set, makes this ingredient a reference to another
+    // recipe's root/family instead of free text (name is then always empty).
+    // Quantity/unit still mean "how much of that sub-recipe", scaling with
+    // the parent's serving scaler like any other ingredient.
+    recipe_ref?: string
+    // ref_label is an optional custom display label for a reference
+    // ingredient; blank falls back to the referenced recipe's live current
+    // title (resolved_ref_title).
+    ref_label?: string
+    // resolved_ref_title is server-decorated, read-only - ref_label if set,
+    // else the referenced recipe's live current title. Never send this back
+    // on write.
+    resolved_ref_title?: string
+    // variation_count is carried over client-side from the RecipePreview
+    // picked in RecipePickerModal - the server doesn't decorate it on
+    // existing recipe_ref ingredients yet, so it's only known for a
+    // reference picked during the current edit session.
+    variation_count?: number
 }
 
 export type Recipe = {
@@ -43,6 +67,7 @@ export type Recipe = {
     cooking_time: number
     resting_time: number
     kind: RecipeType
+    category: RecipeCategory
     ingredients: Ingredient[]
     steps: Step[]
     pictures: string[]
@@ -65,6 +90,7 @@ export type RecipePreview = {
     cooking_time: number
     resting_time: number
     kind: RecipeType
+    category: RecipeCategory
     pictures: string[]
     favorite: boolean
     favorite_count: number
@@ -77,6 +103,7 @@ export type RecipeForm = {
     description: string
     quantity: number
     kind: RecipeType
+    category: RecipeCategory
     preparation_time: number
     cooking_time: number
     resting_time: number
@@ -94,6 +121,10 @@ export type GetRecipesRequest = {
     total_time?: number
     ingredients?: string[]
     kind?: RecipeType
+    // category, omitted, lists the food feed (server excludes diy by
+    // default); pass 'diy' for the DIY browse page. Ignored by
+    // variation_of/own_recipes requests, which are category-agnostic.
+    category?: RecipeCategory
     locale?: string
     search_locale?: string
     favorite?: boolean
@@ -103,6 +134,10 @@ export type GetRecipesRequest = {
     // variations alike, no collapsing) - only the Settings "My Recipes" view
     // sets this.
     own_recipes?: boolean
+    // exclude_family hides that root id from a listing - used by the "add
+    // recipe as ingredient" picker so a recipe can't offer itself/its own
+    // family as a reference target.
+    exclude_family?: string
 }
 
 export type GetRecipesResponse = {
@@ -193,6 +228,20 @@ export function getIngredientName(ingredient: Ingredient, ratio: number = 1): st
         return `${quantity} ${ingredient.name}`
     }
     return ingredient.name
+}
+
+// getReferenceQuantity formats just the quantity/unit portion of a
+// reference ingredient row (e.g. "1 batch"), reusing the same
+// friendly-fraction scaling as getIngredientName; the title/link is
+// rendered separately since it needs to be a clickable element, not plain
+// text. Returns '' when the ingredient has no quantity (e.g. "use the whole
+// recipe").
+export function getReferenceQuantity(ingredient: Ingredient, ratio: number = 1): string {
+    if (ingredient.quantity && ingredient.quantity > 0) {
+        const quantity = ratio === 1 ? ingredient.quantity : formatScaledQuantity(ingredient.quantity * ratio)
+        return ingredient.unit && ingredient.unit !== '' ? `${quantity} ${ingredient.unit}` : String(quantity)
+    }
+    return ''
 }
 
 export function getRecipe(id: string, locale?: string, f: FetchFn = fetch) {

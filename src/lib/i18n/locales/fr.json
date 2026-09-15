@@ -1,14 +1,15 @@
 {
   "header": {
     "appName": "Sauté",
-    "allRecipes": "Toutes les recettes",
+    "allRecipes": "Recettes",
     "createRecipe": "Créer une recette",
     "connectAI": "Connecter une IA",
     "login": "Connexion",
     "register": "Inscription",
     "settings": "Paramètres",
     "myRecipes": "Mes recettes",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "diy": "Bricolage"
   },
   "fileUpload": {
     "click": "Cliquez pour ajouter",
@@ -31,7 +32,8 @@
     "favorite": "Ajouter aux favoris",
     "unfavorite": "Retirer des favoris",
     "favoriteError": "Impossible de mettre à jour le favori",
-    "variationCount": "{count} variantes"
+    "variationCount": "{count} variantes",
+    "diyBadge": "Bricolage"
   },
   "variationPicker": {
     "title": "Choisissez une version",
@@ -146,7 +148,10 @@
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "success": "Recette supprimée avec succès"
-    }
+    },
+    "filterAll": "Tout",
+    "filterFood": "Cuisine",
+    "filterDiy": "Bricolage"
   },
   "recipe": {
     "back": "Retour aux recettes",
@@ -163,7 +168,9 @@
     "variations": "Variantes",
     "variationBanner": "Ceci est une variante d'une autre recette.",
     "viewOriginal": "Voir la recette originale",
-    "submitVariation": "Proposer une variante"
+    "submitVariation": "Proposer une variante",
+    "referenceExpand": "Afficher les ingrédients",
+    "referenceCollapse": "Masquer les ingrédients"
   },
   "edit": {
     "toasts": {
@@ -195,11 +202,21 @@
     "rest": {
       "label": "Repos"
     },
-    "images": "Images",
     "ingredients": {
-      "title": "Ingrédients",
       "add": "Ajouter un ingrédient",
       "addToSection": "Ajouter un ingrédient à {section}",
+      "addRecipeRef": "Ajouter une recette comme ingrédient",
+      "recipePicker": {
+        "title": "Choisir une recette",
+        "description": "Recherchez une recette à utiliser comme ingrédient.",
+        "searchPlaceholder": "Rechercher des recettes...",
+        "noResults": "Aucune recette trouvée",
+        "error": "Impossible de rechercher des recettes"
+      },
+      "refLabel": {
+        "label": "Libellé personnalisé (optionnel)",
+        "placeholder": "ex. Pâte à tarte"
+      },
       "addCategory": "Ajouter une catégorie",
       "categoryNamePlaceholder": "Nom de la catégorie",
       "deleteCategory": "Supprimer la catégorie",
@@ -223,7 +240,6 @@
       "remove": "Supprimer l'ingrédient"
     },
     "instructions": {
-      "label": "Instructions",
       "add": "Ajouter une étape",
       "title": {
         "label": "Titre",
@@ -351,14 +367,16 @@
   "recipes": {
     "types": {
       "all": "Toutes",
-      "snack": "Snack",
+      "breakfast": "Petit-déjeuner",
       "starter": "Entrée",
       "dish": "Plat",
       "side-dish": "Accompagnement",
       "sauce": "Sauce",
+      "baking": "Pâtisserie",
+      "snack": "Snack",
+      "plate": "Plateau télé",
       "dessert": "Dessert",
-      "drink": "Boisson",
-      "plate": "Plateau télé"
+      "drink": "Boisson"
     },
     "min": "min",
     "h": "h"
@@ -390,5 +408,82 @@
     "submit": "Réinitialiser le mot de passe",
     "success": "Mot de passe réinitialisé",
     "error": "Erreur lors de la réinitialisation de mot de passe"
+  },
+  "diyHome": {
+    "mainText": "Au-delà de la cuisine",
+    "secondaryText": "Savon fait maison, remèdes maison, astuces du quotidien - des projets à faire soi-même.",
+    "createProject": "Nouveau projet",
+    "materials": "Matériaux",
+    "materialsPlaceholder": "Ajouter un matériau, appuyez sur Entrée",
+    "notFound": "Aucun projet trouvé",
+    "adjustSearch": "Essayez d’ajuster votre recherche ou vos filtres"
+  },
+  "diyRecipe": {
+    "ingredients": "Matériaux",
+    "servings": "Quantité produite",
+    "cook": "Temps actif",
+    "rest": "Temps de cure"
+  },
+  "diyEdit": {
+    "headLabel": "Nouveau projet",
+    "commentLabel": "Aujourd’hui, je fabrique...",
+    "editHeadLabel": "Modifier le projet",
+    "editCommentLabel": "Affinez votre projet",
+    "details": "Détails du projet",
+    "title": {
+      "label": "Titre du projet",
+      "placeholder": "ex. Savon lavande et flocons d'avoine"
+    },
+    "description": {
+      "placeholder": "ex. Un savon doux et hydratant à la lavande et aux flocons d'avoine, idéal pour les peaux sensibles"
+    },
+    "servings": {
+      "label": "Quantité produite"
+    },
+    "cook": {
+      "label": "Temps actif"
+    },
+    "rest": {
+      "label": "Temps de cure"
+    },
+    "ingredients": {
+      "name": {
+        "label": "Matériau",
+        "placeholder": "ex. Soude, Huile d'olive, Huile essentielle"
+      },
+      "add": "Ajouter un matériau"
+    },
+    "instructions": {
+      "title": {
+        "placeholder": "ex. Faire fondre la base de savon"
+      },
+      "description": {
+        "placeholder": "ex. Faire fondre la base de savon au bain-marie jusqu'à ce qu'elle soit bien liquide, en remuant de temps en temps"
+      }
+    },
+    "photos": {
+      "alt": "Photo du projet {index}",
+      "newAlt": "Nouvelle photo du projet {index}"
+    },
+    "submit": "Enregistrer le projet",
+    "toasts": {
+      "save": "Impossible d'enregistrer le projet",
+      "create": "Échec de la création du projet"
+    },
+    "wizard": {
+      "basics": {
+        "hint": "Donnez un nom, une courte description et les temps à votre projet."
+      },
+      "ingredients": {
+        "name": "Matériaux",
+        "hint": "Listez tout ce qui est nécessaire, avec les quantités et unités."
+      },
+      "instructions": {
+        "hint": "Décomposez le projet en étapes claires et ordonnées."
+      },
+      "photos": {
+        "hint": "Ajoutez des photos claires pour donner vie à votre projet."
+      }
+    }
   }
 }

@@ -9,8 +9,9 @@
     import {toastError} from "$lib/utils";
     import Lightbox from "../../../../../components/Lightbox.svelte";
     import RecipeCard from "../../../../../components/RecipeCard.svelte";
+    import RecipeRefIngredient from "../../../../../components/RecipeRefIngredient.svelte";
 
-    const id = page.params.id
+    let id = $derived(page.params.id)
     const { data } = $props()
     let recipe: Recipe | null | undefined = $state(data.recipe)
     let selectedServings = $state(data.recipe?.quantity ?? 1)
@@ -126,6 +127,18 @@
     }
 
     const typeColorClass = $derived(recipeTypeColors[(recipe ?? {kind: ''}).kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
+
+    // Terminology lookup: for a diy-category recipe, tries `diyRecipe.<key>`
+    // first and falls back to `recipe.<key>` when no diy-specific override
+    // exists (svelte-i18n returns the key itself on a miss).
+    function t(key: string): string {
+        if (recipe?.category === 'diy') {
+            const diyKey = 'diyRecipe.' + key
+            const diyValue = $_(diyKey)
+            if (diyValue !== diyKey) return diyValue
+        }
+        return $_('recipe.' + key)
+    }
 </script>
 
 <svelte:head>
@@ -192,9 +205,15 @@
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <h1 class="text-3xl sm:text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
                     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                        <span class="{typeColorClass} px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
-                            {$_('recipes.types.' + recipe.kind)}
-                        </span>
+                        {#if recipe.category === 'diy'}
+                            <span class="bg-muted text-muted-foreground px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
+                                {$_('recipeCard.diyBadge')}
+                            </span>
+                        {:else}
+                            <span class="{typeColorClass} px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
+                                {$_('recipes.types.' + recipe.kind)}
+                            </span>
+                        {/if}
                         {#if $user}
                             <button
                                     onclick={toggleFavorite}
@@ -234,7 +253,7 @@
 
                 <p class="text-xl text-muted-foreground mb-6 text-pretty whitespace-pre-line">{recipe.description}</p>
 
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-4">
                     <div class="flex items-center gap-x-2">
                         {#if recipe.author.picture}
                             <img
@@ -250,22 +269,22 @@
                         <span class="text-lg font-medium text-card-foreground">{$_('recipeCard.by')} {recipe.author?.username || 'Author Name'}</span>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-muted-foreground text-sm sm:text-base">
+                    <div class="grid grid-cols-2 sm:flex sm:flex-nowrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-muted-foreground text-sm sm:text-base">
                         <div class="flex items-center">
                             <Clock size="20" class="mr-2 text-black dark:text-current" />
                             <span class="whitespace-nowrap">{$_('recipe.prep')}: {recipe.preparation_time >= 60 ? `${recipe.preparation_time / 60}${$_('recipes.h')} ` : ''}{recipe.preparation_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Flame size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.cook')}: {recipe.cooking_time >= 60 ? `${recipe.cooking_time / 60}${$_('recipes.h')} ` : ''}{recipe.cooking_time % 60}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{t('cook')}: {recipe.cooking_time >= 60 ? `${recipe.cooking_time / 60}${$_('recipes.h')} ` : ''}{recipe.cooking_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Wind size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap">{$_('recipe.rest')}: {recipe.resting_time >= 60 ? `${recipe.resting_time / 60}${$_('recipes.h')} ` : ''}{recipe.resting_time % 60}{$_('recipes.min')}</span>
+                            <span class="whitespace-nowrap">{t('rest')}: {recipe.resting_time >= 60 ? `${recipe.resting_time / 60}${$_('recipes.h')} ` : ''}{recipe.resting_time % 60}{$_('recipes.min')}</span>
                         </div>
                         <div class="flex items-center">
                             <Users size="20" class="mr-2 text-black dark:text-current" />
-                            <span class="whitespace-nowrap mr-2">{$_('recipe.servings')}:</span>
+                            <span class="whitespace-nowrap mr-2">{t('servings')}:</span>
                             <div class="flex items-center gap-2">
                                 <button
                                         type="button"
@@ -297,7 +316,7 @@
                 <div class="bg-card rounded-lg border border-border p-6 sticky top-24">
                     <h2 class="text-2xl font-semibold text-card-foreground mb-6 flex items-center">
                         <FileText class="mr-3 text-primary" />
-                        {$_('recipe.ingredients')}
+                        {t('ingredients')}
                     </h2>
 
                     <div class="space-y-4">
@@ -310,7 +329,11 @@
                                     {#each group.items as ingredient}
                                         <li class="flex items-start">
                                             <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                            <span class="text-card-foreground">{getIngredientName(ingredient, servingsRatio)}</span>
+                                            {#if ingredient.recipe_ref}
+                                                <RecipeRefIngredient {ingredient} ratio={servingsRatio} />
+                                            {:else}
+                                                <span class="text-card-foreground">{getIngredientName(ingredient, servingsRatio)}</span>
+                                            {/if}
                                         </li>
                                     {/each}
                                 </ul>
@@ -367,6 +390,7 @@
                 </div>
             </div>
         {/if}
+
     </div>
 
     <Lightbox

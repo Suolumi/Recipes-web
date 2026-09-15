@@ -5,11 +5,15 @@
     import Select from './Select.svelte';
     import Label from './Label.svelte';
     import RecipeCard from "./RecipeCard.svelte";
+    import RecipePickerModal from "./RecipePickerModal.svelte";
     import {
         getIngredientName,
+        getReferenceQuantity,
         groupIngredients,
         type Ingredient,
+        type RecipeCategory,
         type RecipeForm,
+        type RecipePreview,
         RecipeTypes,
         type Step
     } from "$lib/recipes";
@@ -19,13 +23,22 @@
     import {untrack} from "svelte";
     import {_} from 'svelte-i18n'
     import {toastError} from "$lib/utils";
-    import {Trash2, GripVertical, EllipsisVertical, Plus, Pencil} from "@lucide/svelte";
+    import {Trash2, GripVertical, EllipsisVertical, Plus, Pencil, Link2} from "@lucide/svelte";
 
     interface Props {
         onChange?: (recipe: RecipeForm) => void;
         onSubmit?: (recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) => void;
         recipe?: RecipeForm
         recipeId?: string
+        // excludeFamily is this recipe's own root id (if it has one yet) -
+        // passed to the recipe-reference picker so a recipe can't offer
+        // itself/its own family as a reference target.
+        excludeFamily?: string
+        // category drives the blank-form default when no recipe/cache exists
+        // yet (a variation or edit's own recipe.category always wins once
+        // loaded, see getRecipe/normalizeRecipe) and picks the terminology
+        // set (t()) plus whether the food kind/type selector shows.
+        category?: RecipeCategory
         headLabel: string
         commentLabel: string
     }
@@ -35,9 +48,40 @@
         onSubmit = (recipe: RecipeForm, newPictures: File[], newStepPictures: Record<number, File>) => {},
         recipe = undefined,
         recipeId = undefined,
+        excludeFamily = undefined,
+        category = 'food',
         headLabel = $_('create.headLabel'),
         commentLabel = $_('create.commentLabel'),
     }: Props = $props()
+
+    // Terminology lookup: for a diy-category recipe, tries `<diyNamespace>.<key>`
+    // first and falls back to `<namespace>.<key>` when no diy-specific
+    // override exists (svelte-i18n returns the key itself on a miss).
+    function categoryLabel(namespace: string, diyNamespace: string, key: string, values?: Record<string, string | number>): string {
+        if (formData.category === 'diy') {
+            const diyKey = diyNamespace + '.' + key
+            const diyValue = $_(diyKey, values ? {values} : undefined)
+            if (diyValue !== diyKey) return diyValue
+        }
+        return $_(namespace + '.' + key, values ? {values} : undefined)
+    }
+
+    function t(key: string, values?: Record<string, string | number>): string {
+        return categoryLabel('edit', 'diyEdit', key, values)
+    }
+
+    let recipePickerOpen = $state(false);
+    let recipePickerTargetSection = $state<string | null>(null);
+
+    function openRecipePicker(sectionId: string) {
+        recipePickerTargetSection = sectionId;
+        recipePickerOpen = true;
+    }
+
+    function onRecipePicked(picked: RecipePreview) {
+        if (recipePickerTargetSection)
+            addRecipeRefToSection(recipePickerTargetSection, picked);
+    }
 
     let formData = $state<RecipeForm>(getRecipe(recipe));
     let pendingPictures = $state<{file: File, url: string}[]>([])
@@ -100,7 +144,7 @@
     function normalizeRecipe(data: RecipeForm): RecipeForm {
         return {
             ...data,
-            ingredients: (data.ingredients ?? []).map(ingredient => ({...ingredient, label: ingredient.label ?? ''})),
+            ingredients: (data.ingredients ?? []).map(ingredient => ({...ingredient, label: ingredient.label ?? '', ref_label: ingredient.ref_label ?? ''})),
             steps: data.steps ?? [],
             pictures: data.pictures ?? [],
         }
@@ -122,6 +166,7 @@
             description: '',
             quantity: 0,
             kind: 'dish',
+            category: category,
             preparation_time: 0,
             cooking_time: 0,
             resting_time: 0,
@@ -286,7 +331,7 @@
 
     let hasPictures = $derived(((formData.pictures?.length ?? 0) > 0 && !formData.pictures[0].includes('placeholder')) || pendingPictures.length > 0);
 
-    let previewIngredientGroups = $derived(groupIngredients(formData.ingredients.filter(i => i.name.trim())));
+    let previewIngredientGroups = $derived(groupIngredients(formData.ingredients.filter(i => i.name.trim() || i.recipe_ref)));
 
     // --- Ingredient categories -------------------------------------------------
     // The backend only stores a free-text `label` per ingredient; a "category" is
@@ -401,6 +446,16 @@
     function addIngredientToSection(sectionId: string) {
         sections = sections.map(s => s.id === sectionId
             ? {...s, ingredients: [...s.ingredients, {name: '', quantity: 0, unit: '', label: s.name ?? ''}]}
+            : s);
+    }
+
+    function addRecipeRefToSection(sectionId: string, recipe: RecipePreview) {
+        sections = sections.map(s => s.id === sectionId
+            ? {...s, ingredients: [...s.ingredients, {
+                name: '', quantity: 1, unit: '', label: s.name ?? '',
+                recipe_ref: recipe.id, ref_label: '', resolved_ref_title: recipe.title,
+                variation_count: recipe.variation_count,
+            }]}
             : s);
     }
 
@@ -602,7 +657,7 @@
 
   <div class="grid grid-cols-1 gap-8">
     <div class="bg-card rounded-lg border border-border p-6">
-      <h2 class="text-2xl font-semibold text-card-foreground mb-6">{$_('edit.details')}</h2>
+      <h2 class="text-2xl font-semibold text-card-foreground mb-6">{t('details')}</h2>
       <div class="space-y-6">
         <div class="grid grid-cols-1 gap-8">
           <!-- Form column -->
@@ -637,7 +692,7 @@
                                     {/if}
                                 </span>
                       <span class="text-xs font-medium hidden sm:block {isActive ? 'text-foreground' : 'text-muted-foreground'}">
-                                    {$_('edit.wizard.' + step.id + '.name')}
+                                    {t('wizard.' + step.id + '.name')}
                                 </span>
                     </button>
                     {#if index < steps.length - 1}
@@ -654,33 +709,35 @@
                   {$_('edit.wizard.stepLabel', {values: {current: currentStep + 1, total: steps.length}})}
                 </p>
                 <h2 class="text-2xl font-semibold text-card-foreground">
-                  {$_('edit.wizard.' + steps[currentStep].id + '.name')}
+                  {t('wizard.' + steps[currentStep].id + '.name')}
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  {$_('edit.wizard.' + steps[currentStep].id + '.hint')}
+                  {t('wizard.' + steps[currentStep].id + '.hint')}
                 </p>
 
                 <!-- Step 1: Basics -->
                 {#if currentStep === 0}
                   <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label for="recipe-title" required>{$_('edit.title.label')}</Label>
+                      <div class={formData.category === 'diy' ? 'md:col-span-2' : ''}>
+                        <Label for="recipe-title" required>{t('title.label')}</Label>
                         <Input
                             id="recipe-title"
                             type="text"
                             bind:value={formData.title}
-                            placeholder={$_('edit.title.placeholder')}
+                            placeholder={t('title.placeholder')}
                         />
                       </div>
-                      <div>
-                        <Label for="recipe-type">{$_('edit.type.label')}</Label>
-                        <Select
-                            id="recipe-type"
-                            bind:value={formData.kind}
-                            options={RecipeTypes.map(e => ({label: $_('recipes.types.' + e), value: e}))}
-                        />
-                      </div>
+                      {#if formData.category !== 'diy'}
+                        <div>
+                          <Label for="recipe-type">{$_('edit.type.label')}</Label>
+                          <Select
+                              id="recipe-type"
+                              bind:value={formData.kind}
+                              options={RecipeTypes.map(e => ({label: $_('recipes.types.' + e), value: e}))}
+                          />
+                        </div>
+                      {/if}
                     </div>
 
                     <div>
@@ -688,13 +745,13 @@
                       <Textarea
                           id="description"
                           bind:value={formData.description}
-                          placeholder={$_('edit.description.placeholder')}
+                          placeholder={t('description.placeholder')}
                           rows={3}
                       />
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
-                        <Label for="servings">{$_('edit.servings.label')}</Label>
+                        <Label for="servings">{t('servings.label')}</Label>
                         <Input id="servings" type="number" bind:value={formData.quantity} min={1} />
                       </div>
                       <div>
@@ -702,11 +759,11 @@
                         <Input id="prep-time" type="number" bind:value={formData.preparation_time} min={0} />
                       </div>
                       <div>
-                        <Label for="cook-time">{$_('edit.cook.label')} ({$_('recipes.min')})</Label>
+                        <Label for="cook-time">{t('cook.label')} ({$_('recipes.min')})</Label>
                         <Input id="cook-time" type="number" bind:value={formData.cooking_time} min={0} />
                       </div>
                       <div>
-                        <Label for="resting-time">{$_('edit.rest.label')} ({$_('recipes.min')})</Label>
+                        <Label for="resting-time">{t('rest.label')} ({$_('recipes.min')})</Label>
                         <Input id="resting-time" type="number" bind:value={formData.resting_time} min={0} />
                       </div>
                     </div>
@@ -818,72 +875,98 @@
                                     <GripVertical class="w-4 h-4" />
                                   </button>
 
-                                  <div class="col-span-5">
-                                    <Input
-                                        type="text"
-                                        bind:value={ingredient.name}
-                                        placeholder={$_('edit.ingredients.name.placeholder')}
-                                        required
-                                        aria-label={$_('edit.ingredients.name.label')}
-                                    />
-                                  </div>
-                                  <div class="col-span-2">
-                                    <Input
-                                        type="number"
-                                        bind:value={ingredient.quantity}
-                                        placeholder={$_('edit.ingredients.quantity.placeholder')}
-                                        aria-label={$_('edit.ingredients.quantity.label')}
-                                    />
-                                  </div>
-                                  <div class="col-span-2">
-                                    <Input
-                                        type="text"
-                                        bind:value={ingredient.unit}
-                                        placeholder={$_('edit.ingredients.unit.placeholder')}
-                                        aria-label={$_('edit.ingredients.unit.label')}
-                                    />
-                                  </div>
-
-                                  <div class="col-span-1 flex justify-center relative" data-keep-menu>
-                                    <button
-                                        type="button"
-                                        onclick={(e) => { e.stopPropagation(); openMenuFor = openMenuFor === ingredient ? null : ingredient; }}
-                                        class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                                        aria-label={$_('edit.ingredients.moveTo')}
-                                    >
-                                      <EllipsisVertical class="w-4 h-4" />
-                                    </button>
-                                    {#if openMenuFor === ingredient}
-                                      <div data-keep-menu class="absolute right-0 top-9 z-30 min-w-[180px] bg-card border border-border rounded-lg shadow-lg p-1.5 flex flex-col gap-0.5">
-                                        <div class="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-2 pt-1 pb-0.5">
-                                          {$_('edit.ingredients.moveTo')}
-                                        </div>
-                                        {#each sections.filter(s => s.id !== section.id) as target (target.id)}
-                                          <button
-                                              type="button"
-                                              onclick={() => moveIngredientToSection(ingredient, section.id, target.id)}
-                                              class="text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-foreground"
-                                          >
-                                            {target.name ?? $_('edit.ingredients.uncategorized')}
-                                          </button>
-                                        {/each}
+                                  {#if ingredient.recipe_ref}
+                                    <div class="col-span-5 flex flex-col gap-1 self-end">
+                                      <div class="flex items-center gap-1 text-sm font-medium text-card-foreground">
+                                        <Link2 class="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                                        <span class="truncate">{ingredient.ref_label || ingredient.resolved_ref_title}</span>
+                                        {#if ingredient.variation_count && ingredient.variation_count > 0}
+                                            <span class="ml-auto flex-shrink-0 bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                                                {$_('recipeCard.variationCount', {values: {count: ingredient.variation_count}})}
+                                            </span>
+                                        {/if}
                                       </div>
-                                    {/if}
-                                  </div>
+                                      <Input
+                                          type="text"
+                                          bind:value={() => ingredient.ref_label ?? '', (v) => ingredient.ref_label = v}
+                                          placeholder={$_('edit.ingredients.refLabel.placeholder')}
+                                          aria-label={$_('edit.ingredients.refLabel.label')}
+                                      />
+                                    </div>
+                                  {:else}
+                                    <div class="col-span-5 self-end">
+                                      <Input
+                                          type="text"
+                                          bind:value={ingredient.name}
+                                          placeholder={t('ingredients.name.placeholder')}
+                                          required
+                                          aria-label={t('ingredients.name.label')}
+                                      />
+                                    </div>
+                                  {/if}
+                                  <div class="col-span-6 self-end flex items-center gap-2">
+                                    <div class="flex-[2]">
+                                      <Input
+                                          type="number"
+                                          bind:value={ingredient.quantity}
+                                          placeholder={$_('edit.ingredients.quantity.placeholder')}
+                                          aria-label={$_('edit.ingredients.quantity.label')}
+                                      />
+                                    </div>
+                                    <div class="flex-[2]">
+                                      <Input
+                                          type="text"
+                                          bind:value={ingredient.unit}
+                                          placeholder={$_('edit.ingredients.unit.placeholder')}
+                                          aria-label={$_('edit.ingredients.unit.label')}
+                                      />
+                                    </div>
 
-                                  <div class="col-span-1 flex justify-center">
-                                    <button
-                                        type="button"
-                                        onclick={() => removeIngredientFromSection(section.id, ingredient)}
-                                        aria-label={$_('edit.ingredients.remove')}
-                                        class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                                    >
-                                      <Trash2 class="w-4 h-4" />
-                                    </button>
+                                    <div class="flex-none flex justify-center relative" data-keep-menu>
+                                      <button
+                                          type="button"
+                                          onclick={(e) => { e.stopPropagation(); openMenuFor = openMenuFor === ingredient ? null : ingredient; }}
+                                          class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                          aria-label={$_('edit.ingredients.moveTo')}
+                                      >
+                                        <EllipsisVertical class="w-4 h-4" />
+                                      </button>
+                                      {#if openMenuFor === ingredient}
+                                        <div data-keep-menu class="absolute right-0 top-9 z-30 min-w-[180px] bg-card border border-border rounded-lg shadow-lg p-1.5 flex flex-col gap-0.5">
+                                          <div class="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-2 pt-1 pb-0.5">
+                                            {$_('edit.ingredients.moveTo')}
+                                          </div>
+                                          {#each sections.filter(s => s.id !== section.id) as target (target.id)}
+                                            <button
+                                                type="button"
+                                                onclick={() => moveIngredientToSection(ingredient, section.id, target.id)}
+                                                class="text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent hover:text-accent-foreground text-foreground"
+                                            >
+                                              {target.name ?? $_('edit.ingredients.uncategorized')}
+                                            </button>
+                                          {/each}
+                                        </div>
+                                      {/if}
+                                    </div>
+
+                                    <div class="flex-none flex justify-center">
+                                      <button
+                                          type="button"
+                                          onclick={() => removeIngredientFromSection(section.id, ingredient)}
+                                          aria-label={$_('edit.ingredients.remove')}
+                                          class="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                      >
+                                        <Trash2 class="w-4 h-4" />
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
 
-                                {#if ingredient.name.trim()}
+                                {#if ingredient.recipe_ref}
+                                  <p class="text-xs text-muted-foreground mt-1 pl-1">
+                                    {$_('edit.ingredients.preview', {values: {text: `${getReferenceQuantity(ingredient)} ${ingredient.ref_label || ingredient.resolved_ref_title}`.trim()}})}
+                                  </p>
+                                {:else if ingredient.name.trim()}
                                   <p class="text-xs text-muted-foreground mt-1 pl-1">
                                     {$_('edit.ingredients.preview', {values: {text: getIngredientName(ingredient)}})}
                                   </p>
@@ -896,15 +979,25 @@
                             {/each}
                           </div>
 
-                          <div class="mt-3">
+                          <div class="mt-3 flex gap-2">
                             <Button
                                 variant="outline"
-                                class="w-full"
+                                class="flex-1"
                                 size="sm"
                                 onclick={() => addIngredientToSection(section.id)}
                             >
-                              {section.name ? $_('edit.ingredients.addToSection', {values: {section: section.name}}) : $_('edit.ingredients.add')}
+                              {section.name ? $_('edit.ingredients.addToSection', {values: {section: section.name}}) : t('ingredients.add')}
                             </Button>
+                            {#if formData.category !== 'diy'}
+                              <Button
+                                  variant="outline"
+                                  class="flex-1"
+                                  size="sm"
+                                  onclick={() => openRecipePicker(section.id)}
+                              >
+                                {t('ingredients.addRecipeRef')}
+                              </Button>
+                            {/if}
                           </div>
 
                           {#if isSectionDropBelow(section)}
@@ -968,7 +1061,7 @@
                                       id={`step-title-${row.uid}`}
                                       type="text"
                                       bind:value={row.title}
-                                      placeholder={$_('edit.instructions.title.placeholder')}
+                                      placeholder={t('instructions.title.placeholder')}
                                   />
                                 </div>
                                 <div>
@@ -976,7 +1069,7 @@
                                   <Textarea
                                       id={`step-description-${row.uid}`}
                                       bind:value={row.description}
-                                      placeholder={$_('edit.instructions.description.placeholder')}
+                                      placeholder={t('instructions.description.placeholder')}
                                       rows={2}
                                   />
                                 </div>
@@ -1055,7 +1148,7 @@
                           <div class="relative group">
                             <img
                                 src={`${$serverUrl}/recipe-pictures/${image}`}
-                                alt="Recipe image {index + 1}"
+                                alt={t('photos.alt', {index: index + 1})}
                                 class="w-full aspect-video object-cover rounded-lg border border-border"
                             />
                             <button
@@ -1071,7 +1164,7 @@
                           <div class="relative group">
                             <img
                                 src={picture.url}
-                                alt="New recipe image {index + 1}"
+                                alt={t('photos.newAlt', {index: index + 1})}
                                 class="w-full aspect-video object-cover rounded-lg border border-border"
                             />
                             <button
@@ -1104,7 +1197,7 @@
                     </Button>
                   {:else}
                     <Button onclick={saveRecipe}>
-                      {$_('edit.submit')}
+                      {t('submit')}
                     </Button>
                   {/if}
                 </div>
@@ -1123,7 +1216,7 @@
                     <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
-                    {$_('recipe.ingredients')}
+                    {categoryLabel('recipe', 'diyRecipe', 'ingredients')}
                   </h3>
 
                   {#if previewIngredientGroups.length > 0}
@@ -1138,7 +1231,11 @@
                               <li class="flex items-start text-sm">
                                 <div class="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
                                 <span class="text-foreground">
-                                                {getIngredientName(ingredient)}
+                                                {#if ingredient.recipe_ref}
+                                                  {`${getReferenceQuantity(ingredient)} ${ingredient.ref_label || ingredient.resolved_ref_title}`.trim()}
+                                                {:else}
+                                                  {getIngredientName(ingredient)}
+                                                {/if}
                                             </span>
                               </li>
                             {/each}
@@ -1190,6 +1287,13 @@
 </div>
 
 <ImageCropModal file={currentCrop?.file ?? null} onConfirm={onCropConfirm} onCancel={onCropCancel} />
+
+<RecipePickerModal
+    open={recipePickerOpen}
+    {excludeFamily}
+    onClose={() => recipePickerOpen = false}
+    onSelect={onRecipePicked}
+/>
 
 {#if dragging && dragPos}
   <div

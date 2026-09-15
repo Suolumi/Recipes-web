@@ -1,14 +1,15 @@
 {
   "header": {
     "appName": "Sauté",
-    "allRecipes": "All Recipes",
+    "allRecipes": "Recipes",
     "createRecipe": "Create Recipe",
     "connectAI": "Connect to AI",
     "login": "Login",
     "register": "Register",
     "settings": "Settings",
     "myRecipes": "My recipes",
-    "logout": "Logout"
+    "logout": "Logout",
+    "diy": "DIY"
   },
   "fileUpload": {
     "click": "Click to upload",
@@ -31,7 +32,8 @@
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites",
     "favoriteError": "Couldn't update favorite",
-    "variationCount": "{count} variations"
+    "variationCount": "{count} variations",
+    "diyBadge": "DIY"
   },
   "variationPicker": {
     "title": "Choose a version",
@@ -146,7 +148,10 @@
     "submit": "Update profile",
     "recipeCount": "Your Recipes",
     "noRecipes": "You haven't created any recipes yet.",
-    "createRecipe": "Create Your First Recipe"
+    "createRecipe": "Create Your First Recipe",
+    "filterAll": "All",
+    "filterFood": "Food",
+    "filterDiy": "DIY"
   },
   "recipe": {
     "back": "Back to Recipes",
@@ -163,7 +168,9 @@
     "variations": "Variations",
     "variationBanner": "This is a variation of another recipe.",
     "viewOriginal": "View the original",
-    "submitVariation": "Submit a variation"
+    "submitVariation": "Submit a variation",
+    "referenceExpand": "Show ingredients",
+    "referenceCollapse": "Hide ingredients"
   },
   "edit": {
     "toasts": {
@@ -195,11 +202,21 @@
     "rest": {
       "label": "Rest Time"
     },
-    "images": "Recipe Images",
     "ingredients": {
-      "title": "Ingredients",
       "add": "Add Ingredient",
       "addToSection": "Add ingredient to {section}",
+      "addRecipeRef": "Add recipe as ingredient",
+      "recipePicker": {
+        "title": "Choose a recipe",
+        "description": "Search for a recipe to use as an ingredient.",
+        "searchPlaceholder": "Search recipes...",
+        "noResults": "No recipes found",
+        "error": "Couldn't search recipes"
+      },
+      "refLabel": {
+        "label": "Custom label (optional)",
+        "placeholder": "e.g. Tarte Dough"
+      },
       "addCategory": "Add category",
       "categoryNamePlaceholder": "Category name",
       "deleteCategory": "Delete category",
@@ -223,7 +240,6 @@
       "remove": "Remove ingredient"
     },
     "instructions": {
-      "label": "Instructions",
       "add": "Add step",
       "title": {
         "label": "Step Title",
@@ -351,14 +367,16 @@
   "recipes": {
     "types": {
       "all": "All",
-      "snack": "Snack",
+      "breakfast": "Breakfast",
       "starter": "Starter",
       "dish": "Dish",
       "side-dish": "Side dish",
       "sauce": "Sauce",
+      "baking": "Baking",
+      "snack": "Snack",
+      "plate": "Snack platter",
       "dessert": "Dessert",
-      "drink": "Drink",
-      "plate": "Snack platter"
+      "drink": "Drink"
     },
     "min": "min",
     "h": "h"
@@ -390,5 +408,82 @@
     "submit": "Reset password",
     "success": "Password successfully reset",
     "error": "Error while trying to reset the password"
+  },
+  "diyHome": {
+    "mainText": "Beyond the kitchen",
+    "secondaryText": "Handmade soap, home remedies, household fixes - projects worth doing yourself.",
+    "createProject": "New Project",
+    "materials": "Materials",
+    "materialsPlaceholder": "Add material, press Enter",
+    "notFound": "No projects found",
+    "adjustSearch": "Try adjusting your search or filter criteria"
+  },
+  "diyRecipe": {
+    "ingredients": "Materials",
+    "servings": "Yield",
+    "cook": "Active Time",
+    "rest": "Curing Time"
+  },
+  "diyEdit": {
+    "headLabel": "New Project",
+    "commentLabel": "Today I'm making...",
+    "editHeadLabel": "Edit Project",
+    "editCommentLabel": "Refine your project",
+    "details": "Project Details",
+    "title": {
+      "label": "Project Title",
+      "placeholder": "e.g. Lavender Oatmeal Soap"
+    },
+    "description": {
+      "placeholder": "e.g. A gentle, moisturizing soap bar with lavender and oatmeal, great for sensitive skin"
+    },
+    "servings": {
+      "label": "Yield"
+    },
+    "cook": {
+      "label": "Active Time"
+    },
+    "rest": {
+      "label": "Curing Time"
+    },
+    "ingredients": {
+      "name": {
+        "label": "Material",
+        "placeholder": "e.g. Lye, Olive oil, Essential oil"
+      },
+      "add": "Add Material"
+    },
+    "instructions": {
+      "title": {
+        "placeholder": "e.g. Melt the soap base"
+      },
+      "description": {
+        "placeholder": "e.g. Melt the soap base in a double boiler until fully liquid, stirring occasionally"
+      }
+    },
+    "photos": {
+      "alt": "Project image {index}",
+      "newAlt": "New project image {index}"
+    },
+    "submit": "Save Project",
+    "toasts": {
+      "save": "Couldn't save project",
+      "create": "Failed to create project"
+    },
+    "wizard": {
+      "basics": {
+        "hint": "Give your project a name, a short description and its timing."
+      },
+      "ingredients": {
+        "name": "Materials",
+        "hint": "List everything needed, with quantities and units."
+      },
+      "instructions": {
+        "hint": "Break the project down into clear, ordered steps."
+      },
+      "photos": {
+        "hint": "Add clear photos to bring your project to life."
+      }
+    }
   }
 }

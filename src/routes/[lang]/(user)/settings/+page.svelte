@@ -4,7 +4,7 @@
     import Label from '../../../../components/Label.svelte';
     import RecipeCard from '../../../../components/RecipeCard.svelte';
     import {goto} from "$app/navigation";
-    import {getRecipes, type RecipePreview} from "$lib/recipes";
+    import {getRecipes, type RecipeCategory, type RecipePreview} from "$lib/recipes";
     import {serverUrl, user} from "$lib/stores";
     import { SquarePen, Trash, Camera } from '@lucide/svelte';
     import {updateSelf, updateUserPicture, type UserSettingsForm} from "$lib/user";
@@ -20,6 +20,15 @@
     })
 
     let userRecipes: RecipePreview[] = $state([])
+    let categoryFilter: 'all' | RecipeCategory = $state('all')
+    // A recipe with no category at all predates this field and counts as
+    // food (see the backend's own $ne-based default-listing filter) -
+    // otherwise legacy recipes would vanish from the "Food" tab.
+    const matchesCategoryFilter = (r: RecipePreview) =>
+        categoryFilter === 'all' ||
+        (categoryFilter === 'food' && (!r.category || r.category === 'food')) ||
+        r.category === categoryFilter
+    let filteredRecipes = $derived(userRecipes.filter(matchesCategoryFilter))
     let fileInput = $state<HTMLInputElement>();
     let modal = $state({
         isOpen: false,
@@ -37,13 +46,17 @@
     }
 
     function deleteR(id: string) {
-        deleteRecipe(id).then(() => {
-            toastSuccess($_('settings.delete.success'))
+        deleteRecipe(id).then(({response}) => {
+            if (response.ok) {
+                toastSuccess($_('settings.delete.success'))
+                userRecipes = userRecipes.filter(e => e.id !== id)
+            } else {
+                toastError($_('settings.errors.delete'));
+            }
         }).catch(err => {
             console.log(err)
             toastError($_('settings.errors.delete'));
         }).finally(() => {
-            userRecipes = userRecipes.filter(e => e.id !== id)
             modal.isOpen = false
         })
     }
@@ -180,12 +193,25 @@
 
     <!-- User's Recipes -->
     <div class="bg-card rounded-lg border border-border p-6">
-        <h2 class="text-xl font-semibold text-card-foreground mb-4">{$_('settings.recipeCount')} ({userRecipes.length})</h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <h2 class="text-xl font-semibold text-card-foreground">{$_('settings.recipeCount')} ({filteredRecipes.length})</h2>
+            <div class="inline-flex rounded-lg border border-border p-1 self-start">
+                {#each [['all', 'settings.filterAll'], ['food', 'settings.filterFood'], ['diy', 'settings.filterDiy']] as [value, key] (value)}
+                    <button
+                            type="button"
+                            onclick={() => categoryFilter = value as 'all' | RecipeCategory}
+                            class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors hover:cursor-pointer {categoryFilter === value ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}"
+                    >
+                        {$_(key)}
+                    </button>
+                {/each}
+            </div>
+        </div>
 
-        {#if userRecipes.length > 0}
+        {#if filteredRecipes.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {#each userRecipes as recipe}
-                    <div class="relative">
+                {#each filteredRecipes as recipe}
+                    <div class="relative h-full">
                         <RecipeCard {recipe} disabled={false} />
                         <Button
                                 variant="outline"

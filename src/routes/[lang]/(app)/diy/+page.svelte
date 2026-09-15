@@ -2,7 +2,7 @@
     import { untrack } from 'svelte';
     import RecipeCard from '../../../../components/RecipeCard.svelte';
     import Button from '../../../../components/Button.svelte';
-    import {getRecipes, recipeTypeColors, type GetRecipesRequest, type RecipePreview, type RecipeType, RecipeTypes} from "$lib/recipes";
+    import {getRecipes, type GetRecipesRequest, type RecipePreview} from "$lib/recipes";
     import {searchUsers, type User as AuthorUser} from "$lib/user";
     import {serverUrl} from "$lib/stores";
     import { _, locale } from 'svelte-i18n';
@@ -14,7 +14,6 @@
     type TimePreset = typeof TIME_PRESETS[number];
 
     let searchTerm = $state('');
-    let selectedType = $state('all');
     let filtersOpen = $state(false);
     let author = $state('');
     let selectedAuthorUser: AuthorUser | undefined = $state(undefined);
@@ -26,16 +25,6 @@
     let ingredients: string[] = $state([]);
     let timeBasis: 'prep' | 'total' = $state('total');
     let timeTarget: TimePreset = $state('any');
-    let typeScrollEl: HTMLDivElement | undefined = $state();
-    let typeCanScrollLeft = $state(false);
-    let typeCanScrollRight = $state(false);
-
-    function updateTypeScrollShadows() {
-        if (!typeScrollEl)
-            return
-        typeCanScrollLeft = typeScrollEl.scrollLeft > 4
-        typeCanScrollRight = typeScrollEl.scrollLeft + typeScrollEl.clientWidth < typeScrollEl.scrollWidth - 4
-    }
 
     let recipes: RecipePreview[] = $state([])
     let totalCount: number | undefined = $state(undefined);
@@ -52,7 +41,7 @@
     let requestId = 0;
 
     const hasActiveFilters = $derived(
-        selectedType !== 'all' || author.length > 0 || ingredients.length > 0 || timeTarget !== 'any'
+        author.length > 0 || ingredients.length > 0 || timeTarget !== 'any'
     );
 
     function timeLabel(preset: TimePreset): string {
@@ -94,7 +83,6 @@
     }
 
     function clearAllFilters() {
-        selectedType = 'all'
         clearAuthor()
         ingredients = []
         ingredientInput = ''
@@ -102,9 +90,7 @@
     }
 
     function buildRequest(offset: number): GetRecipesRequest {
-        const request: GetRecipesRequest = {}
-        if (selectedType !== 'all')
-            request.kind = selectedType as RecipeType
+        const request: GetRecipesRequest = {category: 'diy'}
         if (searchTerm.length > 0)
             request.title = searchTerm
         if (author.length > 0)
@@ -158,7 +144,7 @@
     }
 
     $effect(() => {
-        searchTerm; selectedType; $locale; author; ingredients; timeBasis; timeTarget;
+        searchTerm; $locale; author; ingredients; timeBasis; timeTarget;
         untrack(() => {
             recipes = []
             hasMore = true
@@ -206,35 +192,17 @@
         observer.observe(sentinel)
         return () => observer.disconnect()
     })
-
-    $effect(() => {
-        if (!typeScrollEl)
-            return
-        updateTypeScrollShadows()
-        const observer = new ResizeObserver(updateTypeScrollShadows)
-        observer.observe(typeScrollEl)
-        typeScrollEl.addEventListener('scroll', updateTypeScrollShadows)
-        return () => {
-            observer.disconnect()
-            typeScrollEl?.removeEventListener('scroll', updateTypeScrollShadows)
-        }
-    })
-
-    const recipeTypes = $derived([{
-        value: 'all',
-        label: $_('recipes.types.all'),
-    }, ...RecipeTypes.map(e => ({value: e, label: $_('recipes.types.' + e)}))]);
 </script>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-            <h1 class="text-4xl font-bold text-foreground mb-4 text-balance">{$_('home.mainText')}</h1>
-            <p class="text-xl text-muted-foreground text-pretty">{$_('home.secondaryText')}</p>
+            <h1 class="text-4xl font-bold text-foreground mb-4 text-balance">{$_('diyHome.mainText')}</h1>
+            <p class="text-xl text-muted-foreground text-pretty">{$_('diyHome.secondaryText')}</p>
         </div>
-        <Button onclick={() => goto(`/${$locale}/create`)} class="flex items-center gap-2 whitespace-nowrap">
+        <Button onclick={() => goto(`/${$locale}/create?category=diy`)} class="flex items-center gap-2 whitespace-nowrap">
             <Plus class="w-4 h-4" />
-            {$_('header.createRecipe')}
+            {$_('diyHome.createProject')}
         </Button>
     </div>
 
@@ -260,28 +228,6 @@
                 {$_('home.moreFilters')}
                 <ChevronDown class="w-4 h-4 transition-transform {filtersOpen ? 'rotate-180' : ''}" />
             </button>
-        </div>
-
-        <div class="relative mt-4">
-            <div
-                    bind:this={typeScrollEl}
-                    class="flex gap-2 overflow-x-auto pb-1"
-            >
-                {#each recipeTypes as type}
-                    <button
-                            type="button"
-                            onclick={() => selectedType = type.value}
-                            class="flex-none px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border-2 transition-colors
-                                {type.value === 'all'
-                                    ? (selectedType === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-foreground border-border')
-                                    : (recipeTypeColors[type.value] + (selectedType === type.value ? ' border-current' : ' border-transparent'))}"
-                    >
-                        {type.label}
-                    </button>
-                {/each}
-            </div>
-            <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent transition-opacity {typeCanScrollLeft ? 'opacity-100' : 'opacity-0'}"></div>
-            <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-card to-transparent transition-opacity {typeCanScrollRight ? 'opacity-100' : 'opacity-0'}"></div>
         </div>
 
         {#if filtersOpen}
@@ -341,11 +287,11 @@
                 </div>
 
                 <div class="flex flex-col gap-2 min-w-[220px] flex-1">
-                    <label class="text-sm font-medium text-foreground" for="ingredient-filter">{$_('home.ingredients')}</label>
+                    <label class="text-sm font-medium text-foreground" for="ingredient-filter">{$_('diyHome.materials')}</label>
                     <input
                             id="ingredient-filter"
                             type="text"
-                            placeholder={$_('home.ingredientsPlaceholder')}
+                            placeholder={$_('diyHome.materialsPlaceholder')}
                             bind:value={ingredientInput}
                             onkeydown={onIngredientKeyDown}
                             class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -412,14 +358,6 @@
 
     {#if hasActiveFilters}
         <div class="flex flex-wrap items-center gap-2 mb-6 -mt-4">
-            {#if selectedType !== 'all'}
-                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
-                    {$_('recipes.types.' + selectedType)}
-                    <button type="button" onclick={() => selectedType = 'all'} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">
-                        <X class="w-3.5 h-3.5" />
-                    </button>
-                </span>
-            {/if}
             {#if author.length > 0}
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
                     {$_('home.activeAuthor')}
@@ -467,8 +405,8 @@
             <svg class="mx-auto w-16 h-16 text-muted-foreground mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33"></path>
             </svg>
-            <h3 class="text-xl font-semibold text-foreground mb-2">{$_('home.notFound')}</h3>
-            <p class="text-muted-foreground">{$_('home.adjustSearch')}</p>
+            <h3 class="text-xl font-semibold text-foreground mb-2">{$_('diyHome.notFound')}</h3>
+            <p class="text-muted-foreground">{$_('diyHome.adjustSearch')}</p>
         </div>
     {/if}
 
