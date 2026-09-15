@@ -252,17 +252,6 @@
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <h1 class="text-3xl sm:text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
                     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                        {#if wakeLockSupported}
-                            <button
-                                    onclick={toggleWakeLock}
-                                    class="hover:cursor-pointer border-2 px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap {wakeLockActive ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent border-primary text-primary'}"
-                                    aria-pressed={wakeLockActive}
-                                    aria-label={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
-                                    title={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
-                            >
-                                <Coffee size="20" fill={wakeLockActive ? 'currentColor' : 'none'} />
-                            </button>
-                        {/if}
                         {#if recipe.category === 'diy'}
                             <span class="bg-muted text-muted-foreground px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
                                 {$_('recipeCard.diyBadge')}
@@ -403,10 +392,24 @@
 
             <div class="lg:col-span-2">
                 <div class="bg-card rounded-lg border border-border p-6">
-                    <h2 class="text-2xl font-semibold text-card-foreground mb-6 flex items-center">
-                        <List class="mr-3 text-primary" />
-                        {$_('recipe.instructions')}
-                    </h2>
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                        <h2 class="text-2xl font-semibold text-card-foreground flex items-center">
+                            <List class="mr-3 text-primary" />
+                            {$_('recipe.instructions')}
+                        </h2>
+                        {#if wakeLockSupported}
+                            <button
+                                    onclick={toggleWakeLock}
+                                    class="hover:cursor-pointer border-2 px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap {wakeLockActive ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent border-primary text-primary'}"
+                                    aria-pressed={wakeLockActive}
+                                    aria-label={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
+                                    title={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
+                            >
+                                <Coffee size="18" fill={wakeLockActive ? 'currentColor' : 'none'} />
+                                <span class="text-sm font-medium">{$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}</span>
+                            </button>
+                        {/if}
+                    </div>
 
                     <div class="space-y-4">
                         {#each recipe.steps as step, index}
