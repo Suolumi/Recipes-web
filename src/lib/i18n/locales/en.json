@@ -171,7 +171,9 @@
     "viewOriginal": "View the original",
     "submitVariation": "Submit a variation",
     "referenceExpand": "Show ingredients",
-    "referenceCollapse": "Hide ingredients"
+    "referenceCollapse": "Hide ingredients",
+    "keepAwakeOn": "Keep screen awake",
+    "keepAwakeOff": "Allow screen to sleep"
   },
   "edit": {
     "toasts": {

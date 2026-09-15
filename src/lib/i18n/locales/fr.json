@@ -171,7 +171,9 @@
     "viewOriginal": "Voir la recette originale",
     "submitVariation": "Proposer une variante",
     "referenceExpand": "Afficher les ingrédients",
-    "referenceCollapse": "Masquer les ingrédients"
+    "referenceCollapse": "Masquer les ingrédients",
+    "keepAwakeOn": "Empêcher la mise en veille de l'écran",
+    "keepAwakeOff": "Autoriser la mise en veille de l'écran"
   },
   "edit": {
     "toasts": {

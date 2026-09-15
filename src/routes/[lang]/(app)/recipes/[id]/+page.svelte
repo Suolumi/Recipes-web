@@ -1,9 +1,10 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
+    import {browser} from "$app/environment";
     import {favoriteRecipe, getFamily, getIngredientName, getRecipe, groupIngredients, type Recipe, type RecipePreview, recipeTypeColors, unfavoriteRecipe} from "$lib/recipes";
     import emblaCarouselSvelte from "embla-carousel-svelte";
-    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Minus, Plus} from "@lucide/svelte";
+    import {FileText, List, Users, Wind, Flame, Clock, ArrowLeft, ArrowRight, Heart, Minus, Plus, Coffee} from "@lucide/svelte";
     import {serverUrl, user} from "$lib/stores";
     import {_, locale} from "svelte-i18n";
     import {toastError} from "$lib/utils";
@@ -128,6 +129,52 @@
 
     const typeColorClass = $derived(recipeTypeColors[(recipe ?? {kind: ''}).kind] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300");
 
+    // Wake Lock API keeps the screen on while cooking so it doesn't dim/lock
+    // mid-recipe. The lock is auto-released by the browser whenever the tab
+    // is hidden, so it's re-acquired on visibilitychange while still enabled.
+    const wakeLockSupported = browser && 'wakeLock' in navigator;
+    let wakeLockActive = $state(false);
+    let wakeLockSentinel: WakeLockSentinel | null = null;
+
+    async function requestWakeLock() {
+        if (!wakeLockSupported)
+            return;
+        try {
+            wakeLockSentinel = await navigator.wakeLock.request('screen');
+            wakeLockSentinel.addEventListener('release', () => wakeLockActive = false);
+            wakeLockActive = true;
+        } catch {
+            wakeLockActive = false;
+        }
+    }
+
+    function releaseWakeLock() {
+        wakeLockSentinel?.release();
+        wakeLockSentinel = null;
+        wakeLockActive = false;
+    }
+
+    function toggleWakeLock() {
+        if (wakeLockActive)
+            releaseWakeLock();
+        else
+            requestWakeLock();
+    }
+
+    $effect(() => {
+        if (!browser)
+            return;
+        function handleVisibility() {
+            if (wakeLockActive && document.visibilityState === 'visible' && !wakeLockSentinel)
+                requestWakeLock();
+        }
+        document.addEventListener('visibilitychange', handleVisibility);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibility);
+            releaseWakeLock();
+        };
+    });
+
     // Terminology lookup: for a diy-category recipe, tries `diyRecipe.<key>`
     // first and falls back to `recipe.<key>` when no diy-specific override
     // exists (svelte-i18n returns the key itself on a miss).
@@ -205,6 +252,17 @@
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <h1 class="text-3xl sm:text-4xl font-bold text-card-foreground text-balance">{recipe.title}</h1>
                     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                        {#if wakeLockSupported}
+                            <button
+                                    onclick={toggleWakeLock}
+                                    class="hover:cursor-pointer border-2 px-3 py-2 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap {wakeLockActive ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent border-primary text-primary'}"
+                                    aria-pressed={wakeLockActive}
+                                    aria-label={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
+                                    title={$_(wakeLockActive ? 'recipe.keepAwakeOff' : 'recipe.keepAwakeOn')}
+                            >
+                                <Coffee size="20" fill={wakeLockActive ? 'currentColor' : 'none'} />
+                            </button>
+                        {/if}
                         {#if recipe.category === 'diy'}
                             <span class="bg-muted text-muted-foreground px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap ml-4">
                                 {$_('recipeCard.diyBadge')}

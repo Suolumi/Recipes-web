@@ -171,7 +171,9 @@
     "viewOriginal": "Näytä alkuperäinen resepti",
     "submitVariation": "Ehdota muunnelmaa",
     "referenceExpand": "Näytä ainekset",
-    "referenceCollapse": "Piilota ainekset"
+    "referenceCollapse": "Piilota ainekset",
+    "keepAwakeOn": "Estä näytön sammuminen",
+    "keepAwakeOff": "Salli näytön sammuminen"
   },
   "edit": {
     "toasts": {
