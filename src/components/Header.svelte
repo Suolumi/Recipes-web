@@ -108,7 +108,7 @@
                 </button>
 
                 {#if $user}
-                    <div class="relative md:mr-0 mr-2">
+                    <div class="relative hidden md:block">
                         <button
                                 onclick={() => showProfileDropdown = true}
                                 bind:this={dropdownRef}
@@ -232,6 +232,12 @@
                                                             class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
                                                     >
                                                         {$_('header.settings')}
+                                                    </button>
+                                                    <button
+                                                            onclick={() => { goto(`/${$locale}/settings`); drawerOpen = false; }}
+                                                            class="block w-full text-left px-6 py-3 text-foreground hover:bg-muted transition-colors font-medium"
+                                                    >
+                                                        {$_('header.myRecipes')}
                                                     </button>
                                                     {#if $user.admin}
                                                         <button
