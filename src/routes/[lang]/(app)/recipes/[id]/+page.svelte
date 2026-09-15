@@ -200,13 +200,13 @@
 {#if recipe}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
-                onclick={() => goto(`/${$locale}/home`)}
+                onclick={() => goto(`/${$locale}/${recipe?.category === 'diy' ? 'diy' : 'home'}`)}
                 class="flex items-center hover:cursor-pointer text-primary hover:text-primary/80 transition-colors mb-6"
         >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            {$_('recipe.back')}
+            {t('back')}
         </button>
 
         <div class="bg-card rounded-lg border border-border overflow-hidden mb-8">

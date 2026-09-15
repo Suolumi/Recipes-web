@@ -423,9 +423,10 @@
   },
   "diyRecipe": {
     "ingredients": "Materiaalit",
-    "servings": "Tuotos",
+    "servings": "Määrä",
     "cook": "Aktiiviaika",
-    "rest": "Kypsytysaika"
+    "rest": "Kypsytysaika",
+    "back": "Takaisin DIY:hen"
   },
   "diyEdit": {
     "headLabel": "Uusi projekti",
@@ -441,7 +442,7 @@
       "placeholder": "esim. Lempeä, kosteuttava saippua laventelilla ja kauralla, sopii herkälle iholle"
     },
     "servings": {
-      "label": "Tuotos"
+      "label": "Määrä"
     },
     "cook": {
       "label": "Aktiiviaika"

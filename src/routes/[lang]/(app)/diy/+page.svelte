@@ -3,7 +3,7 @@
     import RecipeCard from '../../../../components/RecipeCard.svelte';
     import RecipeFilters from '../../../../components/RecipeFilters.svelte';
     import Button from '../../../../components/Button.svelte';
-    import {getRecipes, type GetRecipesRequest, type RecipePreview, type TimePreset} from "$lib/recipes";
+    import {getRecipes, type GetRecipesRequest, type RecipePreview} from "$lib/recipes";
     import { _, locale } from 'svelte-i18n';
     import { goto } from '$app/navigation';
     import { Plus, SearchX } from '@lucide/svelte';
@@ -13,8 +13,6 @@
     let searchTerm = $state('');
     let author = $state('');
     let ingredients: string[] = $state([]);
-    let timeBasis: 'prep' | 'total' = $state('total');
-    let timeTarget: TimePreset = $state('any');
 
     let recipes: RecipePreview[] = $state([])
     let totalCount: number | undefined = $state(undefined);
@@ -38,13 +36,6 @@
             request.author = author
         if (ingredients.length > 0)
             request.ingredients = ingredients
-        if (timeTarget !== 'any') {
-            const minutes = Number(timeTarget)
-            if (timeBasis === 'prep')
-                request.preparation_time = minutes
-            else
-                request.total_time = minutes
-        }
         request.locale = $locale ?? 'en'
         request.search_locale = $locale ?? 'en'
         request.limit = PAGE_SIZE
@@ -85,7 +76,7 @@
     }
 
     $effect(() => {
-        searchTerm; $locale; author; ingredients; timeBasis; timeTarget;
+        searchTerm; $locale; author; ingredients;
         untrack(() => {
             recipes = []
             hasMore = true
@@ -119,11 +110,10 @@
 
     <RecipeFilters
             showKind={false}
+            showTime={false}
             bind:searchTerm
             bind:author
             bind:ingredients
-            bind:timeBasis
-            bind:timeTarget
             searchPlaceholder={$_('home.search')}
             ingredientsLabel={$_('diyHome.materials')}
             ingredientsPlaceholder={$_('diyHome.materialsPlaceholder')}

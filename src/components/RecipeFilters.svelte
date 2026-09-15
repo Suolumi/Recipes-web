@@ -11,11 +11,15 @@
         selectedType?: string;
         author: string;
         ingredients: string[];
-        timeBasis: 'prep' | 'total';
-        timeTarget: TimePreset;
+        // timeBasis/timeTarget are only read/written when showTime is true.
+        timeBasis?: 'prep' | 'total';
+        timeTarget?: TimePreset;
         // showKind hides the kind-pill row entirely when false (the diy
         // browse page doesn't filter by kind).
         showKind?: boolean;
+        // showTime hides the "ready in" time filter entirely when false (the
+        // diy browse page has no time filter - see current-state notes).
+        showTime?: boolean;
         searchPlaceholder: string;
         ingredientsLabel: string;
         ingredientsPlaceholder: string;
@@ -29,6 +33,7 @@
         timeBasis = $bindable('total'),
         timeTarget = $bindable('any'),
         showKind = true,
+        showTime = true,
         searchPlaceholder,
         ingredientsLabel,
         ingredientsPlaceholder,
@@ -53,7 +58,7 @@
     }
 
     const hasActiveFilters = $derived(
-        (showKind && selectedType !== 'all') || author.length > 0 || ingredients.length > 0 || timeTarget !== 'any'
+        (showKind && selectedType !== 'all') || author.length > 0 || ingredients.length > 0 || (showTime && timeTarget !== 'any')
     );
 
     function timeLabel(preset: TimePreset): string {
@@ -100,7 +105,8 @@
         clearAuthor()
         ingredients = []
         ingredientInput = ''
-        timeTarget = 'any'
+        if (showTime)
+            timeTarget = 'any'
     }
 
     $effect(() => {
@@ -280,6 +286,7 @@
                 {/if}
             </div>
 
+            {#if showTime}
             <div class="flex flex-col gap-2 min-w-[220px] flex-1">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-sm font-medium text-foreground">{$_('home.readyIn')}</span>
@@ -322,6 +329,7 @@
                     <p class="text-xs text-muted-foreground">{$_('home.closestMatch')}</p>
                 {/if}
             </div>
+            {/if}
         </div>
     {/if}
 </div>
@@ -354,7 +362,7 @@
                 </button>
             </span>
         {/each}
-        {#if timeTarget !== 'any'}
+        {#if showTime && timeTarget !== 'any'}
             <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-card border border-border text-sm text-foreground">
                 {$_(timeBasis === 'prep' ? 'home.activeTimePrep' : 'home.activeTimeTotal', {values: {time: timeLabel(timeTarget)}})}
                 <button type="button" onclick={() => timeTarget = 'any'} class="p-1.5 -m-1.5 text-muted-foreground hover:text-foreground">

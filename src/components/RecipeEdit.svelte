@@ -754,18 +754,20 @@
                         <Label for="servings">{t('servings.label')}</Label>
                         <Input id="servings" type="number" bind:value={formData.quantity} min={1} />
                       </div>
-                      <div>
-                        <Label for="prep-time">{$_('edit.prep.label')} ({$_('recipes.min')})</Label>
-                        <Input id="prep-time" type="number" bind:value={formData.preparation_time} min={0} />
-                      </div>
-                      <div>
-                        <Label for="cook-time">{t('cook.label')} ({$_('recipes.min')})</Label>
-                        <Input id="cook-time" type="number" bind:value={formData.cooking_time} min={0} />
-                      </div>
-                      <div>
-                        <Label for="resting-time">{t('rest.label')} ({$_('recipes.min')})</Label>
-                        <Input id="resting-time" type="number" bind:value={formData.resting_time} min={0} />
-                      </div>
+                      {#if formData.category !== 'diy'}
+                        <div>
+                          <Label for="prep-time">{$_('edit.prep.label')} ({$_('recipes.min')})</Label>
+                          <Input id="prep-time" type="number" bind:value={formData.preparation_time} min={0} />
+                        </div>
+                        <div>
+                          <Label for="cook-time">{t('cook.label')} ({$_('recipes.min')})</Label>
+                          <Input id="cook-time" type="number" bind:value={formData.cooking_time} min={0} />
+                        </div>
+                        <div>
+                          <Label for="resting-time">{t('rest.label')} ({$_('recipes.min')})</Label>
+                          <Input id="resting-time" type="number" bind:value={formData.resting_time} min={0} />
+                        </div>
+                      {/if}
                     </div>
                   </div>
                 {/if}

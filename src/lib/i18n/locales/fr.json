@@ -423,9 +423,10 @@
   },
   "diyRecipe": {
     "ingredients": "Matériaux",
-    "servings": "Quantité produite",
+    "servings": "Quantité",
     "cook": "Temps actif",
-    "rest": "Temps de cure"
+    "rest": "Temps de cure",
+    "back": "Retour au DIY"
   },
   "diyEdit": {
     "headLabel": "Nouveau projet",
@@ -441,7 +442,7 @@
       "placeholder": "ex. Un savon doux et hydratant à la lavande et aux flocons d'avoine, idéal pour les peaux sensibles"
     },
     "servings": {
-      "label": "Quantité produite"
+      "label": "Quantité"
     },
     "cook": {
       "label": "Temps actif"

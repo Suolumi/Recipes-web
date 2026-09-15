@@ -423,9 +423,10 @@
   },
   "diyRecipe": {
     "ingredients": "Materials",
-    "servings": "Yield",
+    "servings": "Quantity",
     "cook": "Active Time",
-    "rest": "Curing Time"
+    "rest": "Curing Time",
+    "back": "Back to DIY"
   },
   "diyEdit": {
     "headLabel": "New Project",
@@ -441,7 +442,7 @@
       "placeholder": "e.g. A gentle, moisturizing soap bar with lavender and oatmeal, great for sensitive skin"
     },
     "servings": {
-      "label": "Yield"
+      "label": "Quantity"
     },
     "cook": {
       "label": "Active Time"
